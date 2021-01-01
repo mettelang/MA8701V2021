@@ -4,12 +4,12 @@ author: "Mette Langaas IMF/NTNU"
 subtitle: 'L1: Introduction'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  beamer_presentation:
-    slide_level: 1
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
+  beamer_presentation:
+    slide_level: 1
   pdf_document:
     toc: yes
     toc_depth: 2
