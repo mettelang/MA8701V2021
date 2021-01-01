@@ -4,12 +4,12 @@ author: "Mette Langaas IMF/NTNU"
 subtitle: 'L1: Introduction'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
+  beamer_presentation:
+    slide_level: 1
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
-  beamer_presentation:
-    slide_level: 1
   pdf_document:
     toc: yes
     toc_depth: 2
@@ -399,7 +399,7 @@ The _Bayes classifier_ classifies to the most probable class using the condition
 
 ---
 
-# Classification
+## Classification (recap)
 
 What do we know about classification? (TMA4268 and TMA4315 mainly, or ELS ch 4.1-4.5, except 4.4.4)
 
@@ -429,7 +429,7 @@ We use this for
 
 ---
 
-Plan:
+## Plan
 
 1) Look at $\text{EPE}(x_0)$ (now called Err($x_0$)) and how model complexity can be broken down into irreducible error, squared bias and variance (should be known from before)
 2) Study EPE (Err) unconditional and conditional on the training set
@@ -440,7 +440,7 @@ Plan:
 ---
 
 
-### The bias-variance trade-off 
+## The bias-variance trade-off 
 
 (ELS p26 and 7.3)
 
@@ -466,7 +466,7 @@ $$ \text{Err}(x_0)=\text{E}[(Y-\hat{f}(x_0))^2 \mid X=x_0]=\sigma_{\varepsilon}^
 
 ---
 
-#### Derivation
+### Derivation
 
 From TMA4268: <https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html> and in particular <https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html>
 
@@ -529,10 +529,6 @@ include_graphics("ELSfig71.png")
 ```
 
 ---
-
-
-
-
 
 # Exercises
 
