@@ -1,0 +1,1204 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  ignorenonframetext,
+]{beamer}
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={MA8701 Advanced methods in statistical inference and learning},
+  pdfauthor={Mette Langaas IMF/NTNU},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\newif\ifbibliography
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{MA8701 Advanced methods in statistical inference and learning}
+\subtitle{L1: Introduction}
+\author{Mette Langaas IMF/NTNU}
+\date{04 January, 2021}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{Learning outcome}
+\protect\hypertarget{learning-outcome}{}
+
+\textbf{1. Knowledge}
+
+\begin{itemize}
+\tightlist
+\item
+  Understand and explain the central theoretical aspects in statistical
+  inference and learning.
+\item
+  Understand and explain how to use methods from statistical inference
+  and learning to perform a sound data analysis.
+\item
+  Be able to evaluate strengths and weaknesses for the methods and
+  choose between different methods in a given data analysis situation.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\textbf{2. Skills}
+
+Be able to analyse a dataset using methods from statistical inference
+and learning in practice (using R or Python), and give a good
+presentation and discussion of the choices done and the results found.
+
+\textbf{3. Competence}
+
+\begin{itemize}
+\tightlist
+\item
+  The students will be able to participate in scientific discussions,
+  read research presented in statistical journals, and carry out
+  research in statistics at high international level.
+\item
+  They will be able to participate in applied projects, and analyse data
+  using methods from statistical inference and learning.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Useful/required previous knowledge}
+\protect\hypertarget{usefulrequired-previous-knowledge}{}
+
+\begin{itemize}
+\tightlist
+\item
+  TMA4267 Linear Statistical Methods,
+\item
+  TMA4268 Statistical learning,
+\item
+  TMA4295 Statistical inference,
+\item
+  TMA4300 Computer intensive statistical methods,
+\item
+  TMA4315 Generalized linear models
+\item
+  Good understanding and experience with R, or with Python, for
+  statistical data analysis.
+\item
+  Knowledge of RMarkdown for writing reports and presentations
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\includegraphics{./overviewv1.png}
+
+\end{frame}
+
+\begin{frame}{Course topics}
+\protect\hypertarget{course-topics}{}
+
+\begin{flushleft}\includegraphics[width=0.2\linewidth]{ELSbookcover} \end{flushleft}
+
+The starting point is that we cover important parts of
+
+The Elements of Statistical Learning: Data Mining, Inference, and
+Prediction, Second Edition (Springer Series in Statistics, 2009) by
+Trevor Hastie, Robert Tibshirani, and Jerome Friedman.
+
+but, since the book is from 2008 this means that for many topic we need
+(to be up to date) additional selected material in the form of book
+chapters and research articles.
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Introduction {[}this part, one week{]}}
+
+Sort out assumed background knowledge, and learn something new
+
+\begin{itemize}
+\tightlist
+\item
+  Notation
+\item
+  Statistical decision theoretic framework (partly new)
+\item
+  Regression (what do we know)
+\item
+  Classification (ditto)
+\item
+  Model selection and model assessment - including bias-variance
+  trade-off (mostly new)
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Part 1: Shrinkage {[}3 weeks{]}}
+
+or ``Regularized linear and generalized linear models''.
+
+\begin{itemize}
+\tightlist
+\item
+  ELS 3.2.3,3.4, 3.8, 4.4.4.
+\item
+  Hastie, Tibshirani, Wainwright (HTW): ``Statistical Learning with
+  Sparsity: The Lasso and Generalizations''. Selected chapters.
+\item
+  Post-selective inference (articles)
+\item
+  An introduction to analysing text
+\end{itemize}
+
+Includes one data analysis project with short report.
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Part 2: Ensembles {[}4 (5) weeks{]}}
+
+\begin{itemize}
+\tightlist
+\item
+  trees, bagging and forests
+\item
+  general ensembles (similar to super learner)
+\item
+  boosting
+\item
+  hyper-parameter tuning
+\end{itemize}
+
+Selected chapters in ELS (8.7, 8.8, 9.2, parts of 10, 15, 16) and
+several articles.
+
+\end{block}
+
+\begin{block}{Part 3: Neural nets {[}(2) 3 weeks{]}}
+
+\begin{itemize}
+\tightlist
+\item
+  Goodfellow, Bengio, Courville: Deep learning (2016). MIT press.
+  \url{https://www.deeplearningbook.org/}. Selected chapters.
+\item
+  Evaluating uncertainty
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Part 4: XAI {[}2 weeks{]}}
+
+Lectured by Kjersti Aas.
+
+Articles on
+
+\begin{itemize}
+\tightlist
+\item
+  LIME,
+\item
+  partial dependence plots,
+\item
+  Shapley values,
+\item
+  relative weights and
+\item
+  counterfactuals.
+\end{itemize}
+
+\end{block}
+
+\begin{block}{Closing {[}1 week{]}}
+
+\begin{itemize}
+\tightlist
+\item
+  w/oral presentations of second data project from Parts 2-4.
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Learning methods and activities}
+\protect\hypertarget{learning-methods-and-activities}{}
+
+Herbert A. Simon (Cognitive science, Nobel Laureate): \emph{Learning
+results from what the student does and thinks and only from what the
+student does and thinks. The teacher can advance learning only by
+influencing what the student does to learn.}
+
+\begin{itemize}
+\item
+  Lectures will be on 14 Mondays 9.15-12 in S21 (and zoom). We will not
+  record the teaching because we will try to include student activities
+  in groups (on tables or break-out rooms).
+\item
+  Exploring different study techniques (one or more each lecture).
+\item
+  Problem sets to work on between lectures.
+\item
+  Final individual oral exam (25\% of pass/fail grade) in May.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{itemize}
+\item
+  One practical compulsory group project in data analysis (application
+  of course theory using R or Python) with short report. Topic: Part 1
+  on Shrinkage, chosen data set discussed with lecturer before start.
+  Due mid February. First given comments by one other group, then
+  evaluated by course responsible. (25\% of pass/fail grade)
+\item
+  One article group presentation, orally (15 minutes+questions).
+  Material from Parts 2 and 3 preferred, and must be decided on with
+  lecturer (might also be parts of your own master thesis if
+  applicable). Due before Easter. (25\% of pass/fail)
+\item
+  Practical compulsory project in data analysis (application of course
+  theory using R or Python) with oral presentation (15
+  minutes+questions). Topic: Part 2-4, data set and methods discussed
+  with lecturer before start. Due after Part 4 is finished. (25\% of
+  pass/fail grade)
+\item
+  For the two data analysis projects: one should be with a data set
+  requiring regression and one with classification type analysis.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Course wiki}
+\protect\hypertarget{course-wiki}{}
+
+\url{https://wiki.math.ntnu.no/ma8701/2021v/start}
+
+\textbf{Questions?}
+
+\end{frame}
+
+\begin{frame}[fragile]{Class activity: Cat or dog?}
+\protect\hypertarget{class-activity-cat-or-dog}{}
+
+Aim: get to know each other - to improve on subsequent group work!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{while}\NormalTok{ (at least one student not presented) }
+\NormalTok{   lecturer give two alternatives, you choose one. }
+\NormalTok{   lecturer choose a few students to present their view }
+\NormalTok{   together with giving their name and study programme }
+\NormalTok{   (and say }\ControlFlowTok{if}\NormalTok{ they are looking }\ControlFlowTok{for}\NormalTok{ group members)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{itemize}
+\tightlist
+\item
+  Dog person or cat person?
+\item
+  When performing logistic regression - do you then say you do
+  statistical learning or machine learning?
+\item
+  I will show you the result of a descriptive analysis: summary or
+  graphical display?
+\item
+  Learning something new: read a book or watch a video?
+\item
+  Analysing data: R or python?
+\item
+  Analysing data: report p-values and or confidence intervals
+\item
+  In class: taking notes or not?
+\item
+  Use camel case or snake case for programming?
+\end{itemize}
+
+camel: writing compound words such that each word in the middle of the
+phrase begins with a capital letter, with no intervening spaces or
+punctuation. ``camelCase'' or ``CamelCase''.
+
+snake: writing compound words where the elements are separated with one
+underscore character (\_) and no spaces, with each element's initial
+letter usually lower cased within the compound and the first letter
+either upper- or lower case as in ``foo\_bar''
+
+\end{frame}
+
+\begin{frame}{Introduction: Plan}
+\protect\hypertarget{introduction-plan}{}
+
+(finally - we start on the fun stuff!)
+
+\begin{itemize}
+\tightlist
+\item
+  Notation
+\item
+  Statistical decision theoretic framework (partly new)
+\end{itemize}
+
+Remind about assumed background knowledge (already known),
+
+\begin{itemize}
+\tightlist
+\item
+  Regression (ELS ch 3, except 3.2.3, 3.2.4, 3.4, 3.7, 3.8)
+\item
+  Classification (ELS ch 4.1-4.5, except 4.4.4)
+\end{itemize}
+
+and then cover new aspects for
+
+\begin{itemize}
+\tightlist
+\item
+  Model selection and assessment (ELS Ch 7.1-7.6, 7.10-7.12), including
+  statistical learning and the bias-variance trade-off (ELS ch 2)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Notation}
+\protect\hypertarget{notation}{}
+
+(mainly from ELS)
+
+We will only consider supervised methods.
+
+\begin{itemize}
+\tightlist
+\item
+  Response \(Y\) (or \(G\)): dependent variable, outcome, usually
+  univariate (but may be multivariate)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    quantitative \(Y\): for regression
+  \item
+    qualitative, categorical \(G\): for classification, some times dummy
+    variable coding used (named one-hot coding in machine learning)
+  \end{itemize}
+\item
+  Covariates \(X_1, X_2, \ldots, X_p\): ``independent variables'',
+  predictors, features
+
+  \begin{itemize}
+  \tightlist
+  \item
+    continuous, discrete: used directly
+  \item
+    categorical, discrete: often dummy variable coding used
+  \end{itemize}
+\end{itemize}
+
+We aim to construct a rule, function, learner: \(f(X)\), to predict
+\(Y\) (or \(G\)).
+
+\end{frame}
+
+\begin{frame}
+
+Random variables and (column) vectors are written as uppercase letters
+\(X\), and \(Y\), while observed values are written with lowercase
+\((x,y)\). (Dimensions specified if needed.)
+
+Matrices are presented with bold face: \({\bf X}\), often
+\(N \times (p+1)\).
+
+ELS uses boldface also for \({\bf x}_j\) being a vector of all \(N\)
+observations of variable \(j\), but the vector of observed variables for
+observation \(i\) is just \(x_i\).
+
+\end{frame}
+
+\begin{frame}
+
+Both the response \emph{and covariates} will be considered to be random,
+and drawn from some joint distribution
+\(P(X_1,X_2,\ldots, X_p,Y)=P(X,Y)\) or \(P(X,G)\).
+
+Conditional distribution: \(P(X,Y)=P(Y \mid X)P(X)\) or
+\(P(Y\mid X=x)P(X=x)\)
+
+and double expectation is often used
+
+\[\text{E}[L(Y,f(X))]=\text{E}_{X,Y}[L(Y,f(X))]=\text{E}_{X}\text{E}_{Y \mid X}[L(Y,f(X))]\]
+where \(L\) is a loss function (to be defined next) and \(f(X)\) some
+function to predict \(Y\) (or \(G\)).
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Training set}
+
+(ELS 2.1)
+
+A set of size \(N\) of independent pairs \((x_i,y_i)\) is called the
+\emph{training set} and often denoted \({\cal T}\).
+
+The training data is used to estimate the unknown function \(f\).
+
+Test data is in general thought of as future data, and plays an
+important role in both
+
+\begin{itemize}
+\tightlist
+\item
+  model selection (finding the best model among a candidate set) and
+  also for
+\item
+  model assessment (assess the performance of the fitted model on future
+  data).
+\end{itemize}
+
+We will consider theoretical results for future test data, and also look
+at different ways to split or resample available data.
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Two core regression methods}
+
+are multiple linear regression (MLR) and \(k\)-nearest neighbour (kNN).
+
+\textbf{Group discussion:}
+
+For the two methods
+
+\begin{itemize}
+\tightlist
+\item
+  Set up the formal definition for \(f\)
+\item
+  What top results do you remember? Write them down.
+\item
+  What are challenges?
+\item
+  What changes need to be done to each of the two methods for
+  classification?
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Regression and MLR}
+
+\textbf{Resources}
+
+(mostly what we learned in TMA4267, or ELS ch 3, except 3.2.3, 3.2.4,
+3.4, 3.7, 3.8)
+
+\begin{itemize}
+\tightlist
+\item
+  From TMA4268:
+  \url{https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html}
+  and in particular
+  \url{https://www.math.ntnu.no/emner/TMA4268/2019v/3LinReg/3LinReg.html}
+\item
+  From TMA4315:
+  \url{https://www.math.ntnu.no/emner/TMA4315/2018h/TMA4315overviewH2018.html}
+  and in particular
+  \url{https://www.math.ntnu.no/emner/TMA4315/2018h/2MLR.html}
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Statistical decision theoretic framework}
+\protect\hypertarget{statistical-decision-theoretic-framework}{}
+
+(ELS ch 2.4)
+
+is a mathematical framework for developing models \(f\) - and assessing
+optimality.
+
+First, regression:
+
+\begin{itemize}
+\tightlist
+\item
+  \(X \in \Re^p\)
+\item
+  \(Y \in \Re\)
+\item
+  \(P(X,Y)\) joint distribution of covariates and respons
+\end{itemize}
+
+Aim: find a function \(f(X)\) for predicting \(X\) from some inputs
+\(X\).
+
+Ingredients: Loss function \(L(Y,f(X))\) - for \emph{penalizing errors
+in the prediction}.
+
+Criterion for choosing \(f\): Expected prediction error (EPE)
+\[ \text{EPE}(f)=\text{E}_{X,Y}[L(Y,f(X))]=\int_{x,y}L(y,f(x))p(x,y)dxdy\]
+Choose \(f\) to minimize the \(\text{EPE}(f)\).
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Squared error loss}
+
+\[ \text{EPE}(f)=\text{E}_{X,Y}[L(Y,f(X))]=\text{E}_{X}\text{E}_{Y \mid X}[(Y-f(X))^2\mid X]\]
+
+We want to minimize EPE, and see that it is sufficient to minimize
+\(\text{E}_{Y\mid X}[(Y-f(X))^2\mid X]\) for each \(X=x\) (pointwise):
+
+\[ f(x)=\text{argmin}_c \text{E}_{Y \mid X}[(Y-c)^2 \mid X=x]\] This
+gives as result the conditional expectation - the best prediction at any
+point \(X=x\):
+
+\[ f(x)=\text{E}[Y \mid X=x]\] Proof: by differentiating and setting
+equal 0, see for example page 8 of
+\url{https://getd.libs.uga.edu/pdfs/ma_james_c_201412_ms.pdf}
+
+In practice: need to estimate \(f\).
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Linear regression}
+
+\(f(x)\approx x^T \beta\)
+
+Marginally: \(\text{argmin}_{\beta} \text{E}[(Y-X^T\beta)^2]\) gives
+\(\beta=\text{E}[X X^T]^{-1}\text{E}[XY]\)
+
+We may replace expectations with averages in training data to estimate
+\(\beta\).
+
+This is not conditional on \(X\), but we have assumed a linear
+relationship.
+
+Conditionally (known from before): if we assume that
+\((X,Y) \sim N_{p+1}(\mu,\Sigma)\) then we have seen that
+\(\text{E}(Y\mid X)\) is linear in \(X\) and \(\text{Cov}(Y \mid X)\) is
+independent of \(X\).
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Absolute loss}
+
+Regression with absolute (L1) loss: \(L(Y,f(X))=\lvert Y-f(X) \rvert\)
+gives \(\hat{f}(x)=\text{median}(Y\mid X=x)\).
+
+Proof: for example pages 8-11 of
+\url{https://getd.libs.uga.edu/pdfs/ma_james_c_201412_ms.pdf}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Classification loss}
+
+\begin{itemize}
+\tightlist
+\item
+  \(X \in \Re^p\)
+\item
+  \(G \in {\cal G}=\{1,\ldots,K\}\)
+\item
+  \(\hat{G}(X) \in {\cal G}=\{1,\ldots,K\}\)
+\item
+  \(L(G,\hat{G}(X))\) is a \(K\times K\) matrix where
+  \(K=\lvert G \rvert\), with elements \(l_{jk}\) giving the price to
+  pay to misclassify an observation with true class \(g_j\) to class
+  \(g_k\).
+\item
+  Elements on the diagonal of \(L\) is 0, and off-diagonal elements are
+  often \(1\).
+\end{itemize}
+
+We would like to find \(\hat{G}\) to minimize the EPE:
+
+\[\text{EPE}=\text{E}_{G,X}[L(G,\hat{G}(X))]=\text{E}_X \text{E}_{G\mid X}[L(G,\hat{G}(X))]\]
+\[=\text{E}_X \{ \sum_{k=1}^K L(g_k,\hat{G}(X))P(G=g_k \mid X=x) \} \]
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+Also here it is sufficient to minimize the loss for each value of \(x\)
+(pointwise)
+\[ \hat{G}=\text{argmin}_{g \in {\cal G}}\sum_{k=1}^K L(g_k,\hat{G}(X))P(G=g_k \mid X=x) \]
+
+In the special case of 0-1 loss (off-diagonal elements in \(L\) equal to
+1):
+
+\[ \hat{G}=\text{argmin}_{g \in {\cal G}}\sum_{k=1}^K L(g_k,\hat{G}(X))P(G=g_k \mid X=x)\]
+All \(k\) except the correct class gives loss \(1\) with probability
+\(P(G=g_k \mid X=x)\), which is summed. This equals \(1\) minus the
+conditional probability of the correct class \(g\).
+
+\end{frame}
+
+\begin{frame}
+
+\[\hat{G}=\text{argmin}_{g \in {\cal G}} [1-P(G=g \mid X=x)]\]
+\[=\text{argmax}_{g \in {\cal G}}P(G=g \mid X=x)\]
+
+The \emph{Bayes classifier} classifies to the most probable class using
+the conditional distrbution \(P(G \mid X)\). The class boundaries are
+class the \emph{Bayes decision boundaries} and the error rate is the
+\emph{Bayes rate}.
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Classification (recap)}
+
+What do we know about classification? (TMA4268 and TMA4315 mainly, or
+ELS ch 4.1-4.5, except 4.4.4)
+
+\begin{itemize}
+\tightlist
+\item
+  Sampling vs diagnostic paradigm, parametric vs non-parametric methods
+\item
+  \(k\)NN, LDA, logistic and multinomial regression
+\end{itemize}
+
+\textbf{Resources}
+
+(mostly what we learned in TMA4267, or ELS ch 4.1-4.5, except 4.4.4)
+
+\begin{itemize}
+\tightlist
+\item
+  From TMA4268:
+  \url{https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html}
+  and in particular
+  \url{https://www.math.ntnu.no/emner/TMA4268/2019v/4Classif/4Classif.html}
+  and
+  \url{https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html\#k-nearest_neighbour_classifier}
+\item
+  From TMA4315:
+  \url{https://www.math.ntnu.no/emner/TMA4315/2018h/TMA4315overviewH2018.html}
+  and in particular
+  \url{https://www.math.ntnu.no/emner/TMA4315/2018h/3BinReg.html} and
+  \url{https://www.math.ntnu.no/emner/TMA4315/2018h/6Categorical.html}.
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Model assessment and selection}
+\protect\hypertarget{model-assessment-and-selection}{}
+
+(ELS Ch 7.1-7.6,7.10-7.12)
+
+The generalization performance of \(\hat{f}\) can be evaluated from the
+EPE (expected prediction error) on an independent test set.
+
+We use this for
+
+\begin{itemize}
+\tightlist
+\item
+  Model assessment: evaluate the performance of a selected model
+\item
+  Model selection: select the best model for a specific task - among a
+  set of models
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Plan}
+
+\begin{enumerate}
+[1)]
+\tightlist
+\item
+  Look at \(\text{EPE}(x_0)\) (now called Err(\(x_0\))) and how model
+  complexity can be broken down into irreducible error, squared bias and
+  variance (should be known from before)
+\item
+  Study EPE (Err) unconditional and conditional on the training set
+\item
+  Study optimism of the training error rate, and how in-sample error may
+  shed light
+\item
+  Cross-validation and .632 bootstrap estimates of EPE
+\item
+  How will we build on this in Parts 1-4?
+\end{enumerate}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{The bias-variance trade-off}
+
+(ELS p26 and 7.3)
+
+Assume: \[ Y=f(X)+\varepsilon\] where \(\text{E}(\varepsilon)=0\) and
+\(\text{Var}(\varepsilon)=\sigma_{\varepsilon}^2\).
+
+For the bias-variance decomposition we only consider the squared loss.
+Why?
+
+In Ch 7 we use the notation Err instead of EPE (expected prediction
+error) that we used in Ch 2.
+
+Let \(\text{Err}(x_0)\) be the expected prediction error of a regression
+fit \(\hat{f}(X)\) at a (new) input value \(X=x_0\). As in Ch 2 the
+expected value is over \((X,Y)\) for Err, and we may look at
+\[ \text{Err}=E_{x_0} \text{Err}(x_0)\]
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\[ \text{Err}(x_0)=\text{E}[(Y-\hat{f}(x_0))^2 \mid X=x_0]=\sigma_{\varepsilon}^2 +  \text{Var}[\hat{f}(x_0)]+[\text{Bias}(\hat{f}(x_0))]^2\]
+
+\begin{itemize}
+\tightlist
+\item
+  First term: irreducible error, \(\text{Var}(\varepsilon)=\sigma^2\)
+  and is always present unless we have measurements without error. This
+  term cannot be reduced regardless how well our statistical model fits
+  the data.
+\item
+  Second term: variance of the prediction at \(x_0\) or the expected
+  deviation around the mean at \(x_0\). If the variance is high, there
+  is large uncertainty associated with the prediction.
+\item
+  Third term: squared bias. The bias gives an estimate of how much the
+  prediction differs from the true mean. If the bias is low the model
+  gives a prediction which is close to the true value.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Derivation}
+
+From TMA4268:
+\url{https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html}
+and in particular
+\url{https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html}
+
+\small
+
+\begin{align*} \text{Err}(x_0)&=\text{E}[(Y-\hat{f}(x_0))^2 \mid X=x_0]\\
+&=\text{E}[Y^2 + \hat{f}(x_0)^2 - 2 Y \hat{f}(x_0)\mid X=x_0] \\
+&= \text{E}[Y^2\mid X=x_0] + \text{E}[\hat{f}(x_0)^2\mid X=x_0] - \text{E}[2Y \hat{f}(x_0)\mid X=x_0]\\
+&= \text{Var}[Y\mid X=x_0] + \text{E}[Y\mid X=x_0]^2 + \text{Var}[\hat{f}(x_0)\mid X=x_0] + \text{E}[\hat{f}(x_0)\mid X=x_0]^2 - 2 \text{E}[Y\mid X=x_0]\text{E}[\hat{f}(x_0)\mid X=x_0] \\
+&= \text{Var}[Y\mid X=x_0]+f(x_0)^2+\text{Var}[\hat{f}(x_0)\mid X=x_0]+\text{E}[\hat{f}(x_0)\mid X=x_0]^2-2f(x_0)\text{E}[\hat{f}(x_0)\mid X=x_0]\\
+&= \text{Var}[Y\mid X=x_0]+\text{Var}[\hat{f}(x_0)\mid X=x_0]+(f(x_0)-\text{E}[\hat{f}(x_0)\mid X=x_0])^2\\
+&= \text{Var}(\varepsilon\mid X=x_0) +  \text{Var}[\hat{f}(x_0)\mid X=x_0]+[\text{Bias}(\hat{f}(x_0))\mid X=x_0]^2
+\end{align*} \normalsize
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+(For some applications also the training Xs are fixed.)
+
+See the exercises below to study the results for \(k\)NN and OLS.
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Studying \(\text{Err}\) and the new
+\(\text{Err}_{\cal T}\)}
+
+(ELS 7.2 and 7.4, and we are now back to a general loss function - but
+first have regression in mind)
+
+If we now keep the training set fixed (we would do that in practice -
+since we usually only have one training set):
+
+\[ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{f}(X))^2\mid {\cal T}]\]
+
+as before the expected value is with respect to \((X,Y)\), but the
+training set is fixed - so that this is the test set error is for this
+specific training set \({\cal T}\).
+
+Getting back to the unconditional version, we use
+\[ \text{Err}=\text{E}[L(Y,\hat{f}(X))^2\mid {\cal T}]=\text{E} [\text{Err}_{\cal T}]\]
+
+We want to estimate \(\text{Err}_{\cal T}\), but we will soon see that
+it turns out that most methods estimate \(\text{Err}\).
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Training error}
+
+(also referred to as apparent error)
+
+For a regression problem: The training error is the average loss over
+the training sample:
+\[\overline{\text{err}}=\frac{1}{N} \sum_{i=1}^N L(y_i,\hat{f}(x_i))\]
+
+The following is Figure 7.1 from the ELS book. The text (page 220) also
+reads that ``100 simulated training sets of size 50'' and that ``lasso
+produced sequence of fits''.
+
+Explain what you see - in particular what is the red and blue lines and
+the bold lines. What can you conclude from the figure?
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\includegraphics{ELSfig71.png}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Conclusion}
+
+(from Figure 7.1)
+
+The training error \(\overline{\text{err}}\) is not a good estimate for
+the \(\text{Err}_{\cal T}\) nor the \(\text{Err}\).
+
+If we are in a \emph{data rich situation} we ``just'' divide our data
+into three parts, and use
+
+\begin{itemize}
+\tightlist
+\item
+  one for training
+\item
+  one for validation (model selection)
+\item
+  one for testing (model assessment)
+\end{itemize}
+
+A typical split might be 50-60\% training and 20-25\% validation and
+test, but this depends on the complexity of the model to be fitted and
+the signal-to-noise ratio in the data.
+
+The focus in Ch 7 of ELS is to present methods to be used in the
+situations where we \emph{don´t have enough data} to rely on the
+training-validation-testing split.
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Loss function and traning error for classification}
+
+\begin{itemize}
+\tightlist
+\item
+  \(X \in \Re^p\)
+\item
+  \(G \in {\cal G}=\{1,\ldots,K\}\)
+\item
+  \(\hat{G}(X) \in {\cal G}=\{1,\ldots,K\}\)
+\end{itemize}
+
+0-1 loss with \$ \hat{G}(X)=\text{argmax}\_k \hat{p}\_k(X)\$
+\[L(G,\hat{G}(X))=I(G\neq \hat{G}(X))\] \(-2\)-loglikelihood loss (why
+\(-2\)?): \[ L(G,\hat{p}(X))=-2 \text{log} \hat{p}_G(X)\] ---
+
+Test error (only replace \(\hat{f}\) with \(\hat{G}\)):
+\[ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{G}(X))^2\mid {\cal T}]\]
+\[ \text{Err}=\text{E}[L(Y,\hat{G}(X))^2\mid {\cal T}]=\text{E} [\text{Err}_{\cal T}]\]
+
+Training error (for \(-2\)loglikelihood loss)
+\[\overline{\text{err}}=-\frac{2}{N}\sum_{i=1}^N \text{log}\hat{p}_{g_i}(x_i)\]
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Optimism of the training error rate}
+
+(again - focus is on regression)
+
+First, nothing new, but new notation \((X^0,Y^0)\) to specify a new test
+observation drawn from the joint distribution \(F\):
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Exercises}
+\protect\hypertarget{exercises}{}
+
+The exercises are from the ELS book, Chapters 2 and 7. Solutions to the
+exercises will be posted, see also under References for solutions posted
+by different authors.
+
+\begin{block}{Curse of dimensionality}
+
+Read pages 22-23 and then answer Exercise 2.3: Derive equation (2.24).
+
+Important take home messages:
+
+\begin{itemize}
+\tightlist
+\item
+  All sample points are close to an edge of the sample.
+\item
+  If data are uniformly distributed in an hypercube in \(p\) dimensions,
+  we need to cover \(r^{1/p}\) of the the range of each input variable
+  to capture a fraction \(r\) of the observations.
+\end{itemize}
+
+\end{block}
+
+\begin{block}{Expected training and test MSE for linear regression}
+
+Exercise 2.9.
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{block}{Look into the derivation for the bias and variance}
+
+for \(k\)NN in Equation 7.10 and OLS in Equation 7.11 on pages 222-223.
+
+\end{block}
+
+\begin{block}{Establish the average optimism in the training error}
+
+Exercise 7.4
+
+\end{block}
+
+\begin{block}{Relate the covariance to the trace of a linear smoother}
+
+Exercise 7.5
+
+\end{block}
+
+\begin{block}{Perform best subset linear regression and compute
+different error rates}
+
+Exercise 7.9
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{References}
+\protect\hypertarget{references}{}
+
+\begin{itemize}
+\item
+  ELS solutions to exercises:
+  \url{https://waxworksmath.com/Authors/G_M/Hastie/hastie.html}
+\item
+  ELS official errata:
+  \url{https://web.stanford.edu/~hastie/ElemStatLearn/errata2.html}
+\item
+  Andrew Ng Lecture notes on Learning theory
+  \url{https://sgfin.github.io/files/notes/CS229_Lecture_Notes.pdf}
+\item
+  R Markdown Cookbook:
+  \url{https://bookdown.org/yihui/rmarkdown-cookbook/}
+\item
+  R Markdown cheat sheet:
+  \textgreater{}\url{https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf}\textgreater{}
+\item
+  \url{https://en.wikipedia.org/wiki/Camel_case}
+\item
+  \url{https://en.wikipedia.org/wiki/Snake_case}
+\end{itemize}
+
+When relevant?
+\url{https://www.math.ntnu.no/emner/TMA4315/2017h/qq.html} *
+\url{https://machinelearningmastery.com/mcnemars-test-for-machine-learning/}
+
+\end{frame}
+
+\end{document}

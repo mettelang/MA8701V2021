@@ -1,0 +1,43 @@
+---
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+subtitle: 'Study technique'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  beamer_presentation:
+    slide_level: 1
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+---
+
+```{r setup, include=TRUE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(reticulate))
+#reticulate::use_python("/usr/bin/python3",required=TRUE)
+suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(magick))
+suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(amap))
+```
+
+# Organize thoughts and create neural hooks
+(From "A mind for numbers")
+
+Before you start to really read and write down and work with the equations and concepts "Prime your mental pump" by a picture walk through the chapter you will study, looking only at the graphics (pictures/graphs) and at the section headings, summaries and questions in the end of each chapter. This will help you organize your thoughts and create "neural hooks" to hang your thinking on.
+
+
+
+# References
+
+Barbara Oakley: "A mind for numbers – how to excel at math and science even if you funked algebra".
+
+Susan A. Ambrose, Michael W. Bridges, Michele DiPietro, Marsha C. Lovett, and Marie K. Norman (2010): "How Learning Works: Seven Research-Based Principles for Smart Teaching"
+

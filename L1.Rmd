@@ -4,12 +4,12 @@ author: "Mette Langaas IMF/NTNU"
 subtitle: 'L1: Introduction'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  beamer_presentation:
-    slide_level: 1
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
+  beamer_presentation:
+    slide_level: 1
   pdf_document:
     toc: yes
     toc_depth: 2
@@ -149,6 +149,12 @@ Articles on
 
 # Learning methods and activities
 
+Herbert A. Simon (Cognitive science, Nobel Laureate):
+_Learning results from what the student does and thinks
+and only from what the student does and thinks. The
+teacher can advance learning only by influencing what the
+student does to learn._
+
 * Lectures will be on 14 Mondays 9.15-12 in S21 (and zoom). We will not record the teaching because we will try to include student activities in groups (on tables or break-out rooms).
 
 * Exploring different study techniques (one or more each lecture).
@@ -206,12 +212,9 @@ snake: writing compound words where the elements are separated with one undersco
 
 ---
 
-# Part 0: Introduction
+# Introduction: Plan
 
-finally - we start on the fun stuff!
-
-## Plan 
-
+(finally - we start on the fun stuff!)
 
 * Notation
 * Statistical decision theoretic framework (partly new)
@@ -371,8 +374,8 @@ Proof: for example pages 8-11 of <https://getd.libs.uga.edu/pdfs/ma_james_c_2014
 
 * $X \in \Re^p$
 * $G \in {\cal G}=\{1,\ldots,K\}$
-* $\hat{G} \in {\cal G}=\{1,\ldots,K\}$
-* $L(G,\hat{G})$ is a $K\times K$ matrix where $K=\lvert G \rvert$, with elements $l_{jk}$ giving the price to pay to misclassify an observation with true class $g_j$ to class $g_k$. 
+* $\hat{G}(X) \in {\cal G}=\{1,\ldots,K\}$
+* $L(G,\hat{G}(X))$ is a $K\times K$ matrix where $K=\lvert G \rvert$, with elements $l_{jk}$ giving the price to pay to misclassify an observation with true class $g_j$ to class $g_k$. 
 * Elements on the diagonal of $L$ is 0, and off-diagonal elements are often $1$.
 
 We would like to find $\hat{G}$ to minimize the EPE:
@@ -491,7 +494,7 @@ See the exercises below to study the results for $k$NN and OLS.
 
 ## Studying $\text{Err}$ and the new $\text{Err}_{\cal T}$
 
-(ELS 7.2 and 7.4, and we are now back to a general loss function)
+(ELS 7.2 and 7.4, and we are now back to a general loss function - but first have regression in mind)
 
 If we now keep the training set fixed (we would do that in practice - since we usually only have one training set):
 
@@ -510,12 +513,15 @@ We want to estimate $\text{Err}_{\cal T}$, but we will soon see that it turns ou
 
 (also referred to as apparent error)
 
-The training error is the average loss over the training sample:
+For a regression problem: The training error is the average loss over the training sample:
 $$\overline{\text{err}}=\frac{1}{N} \sum_{i=1}^N L(y_i,\hat{f}(x_i))$$
 
 <!--Unfortuneately the training error is  not a good estimate of the test error. -->
 
-The following is Figure 7.1 from the ELS book. Explain what you see - in particular what is the red and blue lines and the bold lines. What can you conclude from the figure?
+The following is Figure 7.1 from the ELS book. 
+The text (page 220) also reads that "100 simulated training sets of size 50" and that "lasso produced sequence of fits".
+
+Explain what you see - in particular what is the red and blue lines and the bold lines. What can you conclude from the figure?
 
 ---
 
@@ -530,13 +536,62 @@ include_graphics("ELSfig71.png")
 
 ---
 
+### Conclusion 
+(from Figure 7.1)
+
+The training error $\overline{\text{err}}$ is not a good estimate for the $\text{Err}_{\cal T}$ nor the $\text{Err}$.
+
+If we are in a _data rich situation_ we "just" divide our data into three parts, and use 
+
+* one for training
+* one for validation (model selection)
+* one for testing (model assessment)
+
+A typical split might be 50-60% training and 20-25% validation and test, but this depends on the complexity of the model to be fitted and the signal-to-noise ratio in the data.
+
+The focus in Ch 7 of ELS is to present methods to be used in the situations where we _don´t have enough data_ to rely on the training-validation-testing split.
+
+---
+
+## Loss function and traning error for classification
+
+* $X \in \Re^p$
+* $G \in {\cal G}=\{1,\ldots,K\}$
+* $\hat{G}(X) \in {\cal G}=\{1,\ldots,K\}$
+
+0-1 loss with $ \hat{G}(X)=\text{argmax}_k \hat{p}_k(X)$
+$$L(G,\hat{G}(X))=I(G\neq \hat{G}(X))$$ 
+$-2$-loglikelihood loss (why $-2$?):
+$$ L(G,\hat{p}(X))=-2 \text{log} \hat{p}_G(X)$$
+---
+
+Test error (only replace $\hat{f}$ with $\hat{G}$):
+$$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{G}(X))^2\mid {\cal T}]$$
+$$ \text{Err}=\text{E}[L(Y,\hat{G}(X))^2\mid {\cal T}]=\text{E} [\text{Err}_{\cal T}]$$
+
+Training error (for $-2$loglikelihood loss)
+$$\overline{\text{err}}=-\frac{2}{N}\sum_{i=1}^N \text{log}\hat{p}_{g_i}(x_i)$$
+
+---
+
+## Optimism of the training error rate
+
+(again - focus is on regression)
+
+First, nothing new, but new notation $(X^0,Y^0)$ to specify a new test observation drawn from the joint distribution $F$:
+
+
+
+
+
+
 # Exercises
 
 The exercises are from the ELS book, Chapters 2 and 7. Solutions to the exercises will be posted, see also under References for solutions posted by different authors.
 
 ## Curse of dimensionality
 
-Read pages 22-23 and then answer Exercise 2.3: Derive equation (2.24).
+Read pages 22-23 and then answer Exercise 2.3 - which is to "Derive equation (2.24)."
 
 Important take home messages:
 
@@ -546,6 +601,8 @@ Important take home messages:
 ## Expected training and test MSE for linear regression
 
 Exercise 2.9.
+
+Important take home message: We have proven (for MLR) that the expected test MSE is always at least as large as the expected training MSE.
 
 ---
 
