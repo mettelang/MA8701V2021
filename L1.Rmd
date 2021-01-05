@@ -4,15 +4,17 @@ author: "Mette Langaas IMF/NTNU"
 subtitle: 'L1: Introduction'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
-  beamer_presentation:
-    slide_level: 1
   pdf_document:
     toc: yes
     toc_depth: 2
+    
 ---
 
 ```{r setup, include=TRUE,echo=FALSE}
@@ -28,38 +30,6 @@ suppressPackageStartupMessages(library(pheatmap))
 suppressPackageStartupMessages(library(amap))
 ```
 
-# Learning outcome
-
-**1. Knowledge**
-
-* Understand and explain the central theoretical aspects in statistical inference and learning. 
-* Understand and explain how to use methods from statistical inference and learning to perform a sound data analysis. 
-* Be able to evaluate strengths and weaknesses for the methods and choose between different methods in a given data analysis situation.
-
----
-
-**2. Skills**
-
-Be able to analyse a dataset using methods from statistical inference and learning in practice (using R or Python), and give a good presentation and discussion of the choices done and the results found.
-
-**3. Competence**
-
-* The students will be able to participate in scientific discussions, read research presented in statistical journals, and carry out research in statistics at high international level. 
-* They will be able to participate in applied projects, and analyse data using methods from statistical inference and learning.
-
----
-
-# Useful/required previous knowledge
-
-* TMA4267 Linear Statistical Methods, 
-* TMA4268 Statistical learning,
-* TMA4295 Statistical inference, 
-* TMA4300 Computer intensive statistical methods, 
-* TMA4315 Generalized linear models
-* Good understanding and experience with R, or with Python, for statistical data analysis.
-* Knowledge of RMarkdown for writing reports and presentations
-
----
 
 ```{r}
 #http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
@@ -147,6 +117,41 @@ Articles on
 
 ---
 
+# Useful/required previous knowledge
+
+* TMA4267 Linear Statistical Methods
+* TMA4268 Statistical learning
+* TMA4295 Statistical inference
+* TMA4300 Computer intensive statistical methods
+* TMA4315 Generalized linear models
+* Good understanding and experience with R, or with Python, for statistical data analysis.
+* Knowledge of RMarkdown for writing reports and presentations
+* Skills in group work - possibly using git
+
+---
+
+# Learning outcome
+
+**1. Knowledge**
+
+* Understand and explain the central theoretical aspects in statistical inference and learning. 
+* Understand and explain how to use methods from statistical inference and learning to perform a sound data analysis. 
+* Be able to evaluate strengths and weaknesses for the methods and choose between different methods in a given data analysis situation.
+
+---
+
+**2. Skills**
+
+Be able to analyse a dataset using methods from statistical inference and learning in practice (using R or Python), and give a good presentation and discussion of the choices done and the results found.
+
+**3. Competence**
+
+* The students will be able to participate in scientific discussions, read research presented in statistical journals, and carry out research in statistics at high international level. 
+* They will be able to participate in applied projects, and analyse data using methods from statistical inference and learning.
+
+
+---
+
 # Learning methods and activities
 
 Herbert A. Simon (Cognitive science, Nobel Laureate):
@@ -155,7 +160,7 @@ and only from what the student does and thinks. The
 teacher can advance learning only by influencing what the
 student does to learn._
 
-* Lectures will be on 14 Mondays 9.15-12 in S21 (and zoom). We will not record the teaching because we will try to include student activities in groups (on tables or break-out rooms).
+* Lectures will be on 14 Mondays 9.15-12 in S21 (and zoom). We will not record the lectures because we will try to include student activities in groups (on tables or break-out rooms).
 
 * Exploring different study techniques (one or more each lecture).
 
@@ -183,7 +188,7 @@ student does to learn._
 
 ---
 
-# Class activity: Cat or dog?
+# Class activity
 
 Aim: get to know each other - to improve on subsequent group work!
 
@@ -193,6 +198,7 @@ while (at least one student not presented)
    lecturer choose a few students to present their view 
    together with giving their name and study programme 
    (and say if they are looking for group members)
+   
 ```
 
 ---
@@ -292,7 +298,7 @@ are multiple linear regression (MLR) and $k$-nearest neighbour (kNN).
 
 For the two methods
 
-* Set up the formal definition for $f$
+* Set up the formal definition for $f$, and model assumptions made
 * What top results do you remember? Write them down.
 * What are challenges?
 * What changes need to be done to each of the two methods for classification?
@@ -321,7 +327,7 @@ First, regression:
 * $Y \in \Re$
 * $P(X,Y)$ joint distribution of covariates and respons
 
-Aim: find a function $f(X)$ for predicting $X$ from some inputs $X$.
+Aim: find a function $f(X)$ for predicting $Y$ from some inputs $X$.
 
 Ingredients: Loss function $L(Y,f(X))$ - for _penalizing errors in the prediction_.
 
@@ -350,15 +356,16 @@ In practice: need to estimate $f$.
 
 ### Linear regression
 
-$f(x)\approx x^T \beta$
+Conditionally (known from before): if we assume that $(X,Y) \sim N_{p+1}(\mu,\Sigma)$ then we have seen that $\text{E}(Y\mid X)$ is linear in $X$ and $\text{Cov}(Y \mid X)$ is independent of $X$. Then we know we get 
+$\hat{beta}=(X^TX)^{-1}X^T Y$ (with matrices) using OLS or MLE.
 
-Marginally: $\text{argmin}_{\beta} \text{E}[(Y-X^T\beta)^2]$ gives $\beta=\text{E}[X X^T]^{-1}\text{E}[XY]$
+But, also if we assume an approximate linear model: $f(x)\approx x^T \beta$
+
+Marginally: $\text{argmin}_{\beta} \text{E}[(Y-X^T\beta)^2]$ gives $\beta=\text{E}[X X^T]^{-1}\text{E}[XY]$ (now random vectors).
 
 We may replace expectations with averages in training data to estimate $\beta$.
 
 This is not conditional on $X$, but we have assumed a linear relationship.
-
-Conditionally (known from before): if we assume that $(X,Y) \sim N_{p+1}(\mu,\Sigma)$ then we have seen that $\text{E}(Y\mid X)$ is linear in $X$ and $\text{Cov}(Y \mid X)$ is independent of $X$.
 
 ---
 
@@ -559,7 +566,7 @@ The focus in Ch 7 of ELS is to present methods to be used in the situations wher
 * $G \in {\cal G}=\{1,\ldots,K\}$
 * $\hat{G}(X) \in {\cal G}=\{1,\ldots,K\}$
 
-0-1 loss with $ \hat{G}(X)=\text{argmax}_k \hat{p}_k(X)$
+0-1 loss with $\hat{G}(X)=\text{argmax}_k \hat{p}_k(X)$
 $$L(G,\hat{G}(X))=I(G\neq \hat{G}(X))$$ 
 $-2$-loglikelihood loss (why $-2$?):
 $$ L(G,\hat{p}(X))=-2 \text{log} \hat{p}_G(X)$$

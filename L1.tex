@@ -147,73 +147,6 @@
 \begin{document}
 \frame{\titlepage}
 
-\begin{frame}{Learning outcome}
-\protect\hypertarget{learning-outcome}{}
-
-\textbf{1. Knowledge}
-
-\begin{itemize}
-\tightlist
-\item
-  Understand and explain the central theoretical aspects in statistical
-  inference and learning.
-\item
-  Understand and explain how to use methods from statistical inference
-  and learning to perform a sound data analysis.
-\item
-  Be able to evaluate strengths and weaknesses for the methods and
-  choose between different methods in a given data analysis situation.
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}
-
-\textbf{2. Skills}
-
-Be able to analyse a dataset using methods from statistical inference
-and learning in practice (using R or Python), and give a good
-presentation and discussion of the choices done and the results found.
-
-\textbf{3. Competence}
-
-\begin{itemize}
-\tightlist
-\item
-  The students will be able to participate in scientific discussions,
-  read research presented in statistical journals, and carry out
-  research in statistics at high international level.
-\item
-  They will be able to participate in applied projects, and analyse data
-  using methods from statistical inference and learning.
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Useful/required previous knowledge}
-\protect\hypertarget{usefulrequired-previous-knowledge}{}
-
-\begin{itemize}
-\tightlist
-\item
-  TMA4267 Linear Statistical Methods,
-\item
-  TMA4268 Statistical learning,
-\item
-  TMA4295 Statistical inference,
-\item
-  TMA4300 Computer intensive statistical methods,
-\item
-  TMA4315 Generalized linear models
-\item
-  Good understanding and experience with R, or with Python, for
-  statistical data analysis.
-\item
-  Knowledge of RMarkdown for writing reports and presentations
-\end{itemize}
-
-\end{frame}
-
 \begin{frame}
 
 \includegraphics{./overviewv1.png}
@@ -359,6 +292,75 @@ Articles on
 
 \end{frame}
 
+\begin{frame}{Useful/required previous knowledge}
+\protect\hypertarget{usefulrequired-previous-knowledge}{}
+
+\begin{itemize}
+\tightlist
+\item
+  TMA4267 Linear Statistical Methods
+\item
+  TMA4268 Statistical learning
+\item
+  TMA4295 Statistical inference
+\item
+  TMA4300 Computer intensive statistical methods
+\item
+  TMA4315 Generalized linear models
+\item
+  Good understanding and experience with R, or with Python, for
+  statistical data analysis.
+\item
+  Knowledge of RMarkdown for writing reports and presentations
+\item
+  Skills in group work - possibly using git
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Learning outcome}
+\protect\hypertarget{learning-outcome}{}
+
+\textbf{1. Knowledge}
+
+\begin{itemize}
+\tightlist
+\item
+  Understand and explain the central theoretical aspects in statistical
+  inference and learning.
+\item
+  Understand and explain how to use methods from statistical inference
+  and learning to perform a sound data analysis.
+\item
+  Be able to evaluate strengths and weaknesses for the methods and
+  choose between different methods in a given data analysis situation.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\textbf{2. Skills}
+
+Be able to analyse a dataset using methods from statistical inference
+and learning in practice (using R or Python), and give a good
+presentation and discussion of the choices done and the results found.
+
+\textbf{3. Competence}
+
+\begin{itemize}
+\tightlist
+\item
+  The students will be able to participate in scientific discussions,
+  read research presented in statistical journals, and carry out
+  research in statistics at high international level.
+\item
+  They will be able to participate in applied projects, and analyse data
+  using methods from statistical inference and learning.
+\end{itemize}
+
+\end{frame}
+
 \begin{frame}{Learning methods and activities}
 \protect\hypertarget{learning-methods-and-activities}{}
 
@@ -370,7 +372,7 @@ influencing what the student does to learn.}
 \begin{itemize}
 \item
   Lectures will be on 14 Mondays 9.15-12 in S21 (and zoom). We will not
-  record the teaching because we will try to include student activities
+  record the lectures because we will try to include student activities
   in groups (on tables or break-out rooms).
 \item
   Exploring different study techniques (one or more each lecture).
@@ -418,8 +420,8 @@ influencing what the student does to learn.}
 
 \end{frame}
 
-\begin{frame}[fragile]{Class activity: Cat or dog?}
-\protect\hypertarget{class-activity-cat-or-dog}{}
+\begin{frame}[fragile]{Class activity}
+\protect\hypertarget{class-activity}{}
 
 Aim: get to know each other - to improve on subsequent group work!
 
@@ -1080,7 +1082,7 @@ training-validation-testing split.
   \(\hat{G}(X) \in {\cal G}=\{1,\ldots,K\}\)
 \end{itemize}
 
-0-1 loss with \$ \hat{G}(X)=\text{argmax}\_k \hat{p}\_k(X)\$
+0-1 loss with \(\hat{G}(X)=\text{argmax}_k \hat{p}_k(X)\)
 \[L(G,\hat{G}(X))=I(G\neq \hat{G}(X))\] \(-2\)-loglikelihood loss (why
 \(-2\)?): \[ L(G,\hat{p}(X))=-2 \text{log} \hat{p}_G(X)\] ---
 
@@ -1117,7 +1119,8 @@ by different authors.
 
 \begin{block}{Curse of dimensionality}
 
-Read pages 22-23 and then answer Exercise 2.3: Derive equation (2.24).
+Read pages 22-23 and then answer Exercise 2.3 - which is to ``Derive
+equation (2.24).''
 
 Important take home messages:
 
@@ -1136,6 +1139,9 @@ Important take home messages:
 \begin{block}{Expected training and test MSE for linear regression}
 
 Exercise 2.9.
+
+Important take home message: We have proven (for MLR) that the expected
+test MSE is always at least as large as the expected training MSE.
 
 \end{block}
 
