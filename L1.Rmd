@@ -3,15 +3,15 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+  ioslides_presentation: default
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  ioslides_presentation: default
-  pdf_document:
-    toc: yes
-    toc_depth: 2
   beamer_presentation:
     slide_level: 1
     keep_tex: yes
@@ -65,8 +65,6 @@ Sort out assumed background knowledge, and learn something new
 
 * Notation
 * Statistical decision theoretic framework (partly new)
-* Regression (what do we know)
-* Classification (ditto)
 * Model selection and model assessment - including bias-variance trade-off (mostly new)
 
 ---
@@ -163,7 +161,11 @@ and only from what the student does and thinks. The
 teacher can advance learning only by influencing what the
 student does to learn._
 
+---
+
 * Lectures will be on 14 Mondays 9.15-12 in S21 (and zoom). We will not record the lectures because we will try to include student activities in groups (on tables or break-out rooms).
+
+* Mette will have digital office hours on zoom (same link as for the lectures). Time will be decided in class with a poll.
 
 * Exploring different study techniques (one or more each lecture).
 
@@ -218,6 +220,12 @@ while (at least one student not presented)
 camel: writing compound words such that each word in the middle of the phrase begins with a capital letter, with no intervening spaces or punctuation. "camelCase" or "CamelCase".
 
 snake: writing compound words where the elements are separated with one underscore character (_) and no spaces, with each element's initial letter usually lower cased within the compound and the first letter either upper- or lower case as in "foo_bar"
+
+---
+
+```{r}
+include_graphics("./winterbreak.png")
+```
 
 ---
 
@@ -315,8 +323,8 @@ For the two methods
 
 (mostly what we learned in TMA4267, or ELS ch 3, except 3.2.3, 3.2.4, 3.4, 3.7, 3.8)
 
-* From TMA4268: <https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html> and in particular <https://www.math.ntnu.no/emner/TMA4268/2019v/3LinReg/3LinReg.html>
-* From TMA4315: <https://www.math.ntnu.no/emner/TMA4315/2018h/TMA4315overviewH2018.html> and in particular <https://www.math.ntnu.no/emner/TMA4315/2018h/2MLR.html>
+* From TMA4268: [Overview](https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html) and in particular [Module 3: Linear regression](https://www.math.ntnu.no/emner/TMA4268/2019v/3LinReg/3LinReg.html)
+* From TMA4315: [Overview](https://www.math.ntnu.no/emner/TMA4315/2018h/TMA4315overviewH2018.html) and in particular [Module 2: MLR](https://www.math.ntnu.no/emner/TMA4315/2018h/2MLR.html)
 
 For $k$NN see also Problem 1 of the [TMA4268 2018 exam](https://www.math.ntnu.no/emner/TMA4268/Exam/V2018e.pdf) with [solutions](https://www.math.ntnu.no/emner/TMA4268/Exam/e2018sol.pdf)
 
@@ -338,6 +346,9 @@ Aim: find a function $f(X)$ for predicting $Y$ from some inputs $X$.
 Ingredients: Loss function $L(Y,f(X))$ - for _penalizing errors in the prediction_.
 
 Criterion for choosing $f$: Expected prediction error (EPE)
+
+---
+
 $$ \text{EPE}(f)=\text{E}_{X,Y}[L(Y,f(X))]=\int_{x,y}L(y,f(x))p(x,y)dxdy$$
 Choose $f$ to minimize the $\text{EPE}(f)$.
 
@@ -345,6 +356,7 @@ Choose $f$ to minimize the $\text{EPE}(f)$.
 ---
 
 ## Squared error loss
+
 
 $$ \text{EPE}(f)=\text{E}_{X,Y}[L(Y,f(X))]=\text{E}_{X}\text{E}_{Y \mid X}[(Y-f(X))^2\mid X]$$
 
@@ -363,7 +375,9 @@ In practice: need to estimate $f$.
 ### Linear regression
 
 Conditionally (known from before): if we assume that $(X,Y) \sim N_{p+1}(\mu,\Sigma)$ then we have seen that $\text{E}(Y\mid X)$ is linear in $X$ and $\text{Cov}(Y \mid X)$ is independent of $X$. Then we know we get 
-$\hat{beta}=(X^TX)^{-1}X^T Y$ (with matrices) using OLS or MLE.
+$\hat{\beta}=(X^TX)^{-1}X^T Y$ (with matrices) using OLS or MLE.
+
+---
 
 But, also if we assume an approximate linear model: $f(x)\approx x^T \beta$
 
@@ -423,15 +437,18 @@ What do we know about classification? (TMA4268 and TMA4315 mainly, or ELS ch 4.1
 * Sampling vs diagnostic paradigm, parametric vs non-parametric methods
 * $k$NN, LDA, logistic and multinomial regression
 
+---
+
 **Resources**
 
 (mostly what we learned in TMA4267, or ELS ch 4.1-4.5, except 4.4.4)
 
-* From TMA4268: <https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html> and in particular <https://www.math.ntnu.no/emner/TMA4268/2019v/4Classif/4Classif.html> and <https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html#k-nearest_neighbour_classifier>
-* From TMA4315: <https://www.math.ntnu.no/emner/TMA4315/2018h/TMA4315overviewH2018.html> and in particular <https://www.math.ntnu.no/emner/TMA4315/2018h/3BinReg.html>
-and <https://www.math.ntnu.no/emner/TMA4315/2018h/6Categorical.html>.
+* From TMA4268: [Overview](https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html) and in particular [Module 4: Classification](https://www.math.ntnu.no/emner/TMA4268/2019v/4Classif/4Classif.html) and [Module 2: Statistical learning](https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html#k-nearest_neighbour_classifier)
+* From TMA4315: [Overview](https://www.math.ntnu.no/emner/TMA4315/2018h/TMA4315overviewH2018.html) and in particular [Module 3: Binary regression](https://www.math.ntnu.no/emner/TMA4315/2018h/3BinReg.html)
+and [Module 6: Categorical regression](https://www.math.ntnu.no/emner/TMA4315/2018h/6Categorical.html).
 
 ---
+
 
 # Model assessment and selection
 
@@ -489,6 +506,8 @@ If you need to refresh your memory of the bias-variance trade-off, you might als
 
 Also: [TMA4268](https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html) and in particular [Module 2](https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html)
 
+---
+
 The following is a derivation:
 
 \small
@@ -533,6 +552,8 @@ $$\overline{\text{err}}=\frac{1}{N} \sum_{i=1}^N L(y_i,\hat{f}(x_i))$$
 
 <!--Unfortuneately the training error is  not a good estimate of the test error. -->
 
+---
+
 ## Group discussion
 
 Look at Figure 7.1 (with figure caption) on 220 in the ELS book. 
@@ -571,7 +592,13 @@ If we are in a _data rich situation_ we "just" divide our data into three parts,
 
 A typical split might be 50-60% training and 20-25% validation and test, but this depends on the complexity of the model to be fitted and the signal-to-noise ratio in the data.
 
-The focus in Ch 7 of ELS is to present methods to be used in the situations where we _don´t have enough data_ to rely on the training-validation-testing split.
+The focus in Ch 7 of ELS is to present methods to be used in the situations where we _do not have enough data_ to rely on the training-validation-testing split.
+
+---
+
+```{r}
+include_graphics("./toiletpause.png")
+```
 
 ---
 
@@ -636,7 +663,7 @@ Observe that we now take the expected value over distribution of the response - 
 
 ### Optimism 
 
-is defined as the difference between the in-sample error and the training error:
+Optimism is defined as the difference between the in-sample error and the training error:
 
 $$ \text{op}=\text{Err}_{\text{in}}-\overline{\text{err}}$$
 
@@ -805,27 +832,27 @@ What to do when both is needed, is not covered in this chapter. Nested cross-val
 
 ### Formal set-up for model assessment
 
-The allocation of observation $\{1,\ldots,N\}$ to folds $\{1,\ldots,K\}$ is done using an indexing function $\kappa: \{1,\ldots,N\} \rightarrow \{1,\ldots,K\}$, that for each observation allocate the observation to one of $K$ folds.
+* The allocation of observation $\{1,\ldots,N\}$ to folds $\{1,\ldots,K\}$ is done using an indexing function $\kappa: \{1,\ldots,N\} \rightarrow \{1,\ldots,K\}$, that for each observation allocate the observation to one of $K$ folds.
 
-Further, $\hat{f}^{-k}(x)$ is the fitted function, computed on the observations except the $k$th fold (the observations from the $k$th fold is removed).
+* Further, $\hat{f}^{-k}(x)$ is the fitted function, computed on the observations except the $k$th fold (the observations from the $k$th fold is removed).
 
-The CV estimate of the expected prediction error $\text{Err}=\text{Err}=\text{E}_{\cal T} \text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]$ is then 
+* The CV estimate of the expected prediction error $\text{Err}=\text{Err}=\text{E}_{\cal T} \text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]$ is then 
 $$ \text{CV}(\hat{f})=\frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}^{-k(i)}(x_i))$$
 
 ---
 
 ### Formal set-up for model selection
 
-The indexing function $\kappa$ is unchanged, and for the fitting function we add a tuning parameter $\alpha$: $f(x,\alpha)$ such that $\hat{f}^{-k}(x,\alpha)$ is the fitted function using tuning parameter $\alpha$, with the $k$th fold removed from the model fitting.
+* The indexing function $\kappa$ is unchanged, and for the fitting function we add a tuning parameter $\alpha$: $f(x,\alpha)$ such that $\hat{f}^{-k}(x,\alpha)$ is the fitted function using tuning parameter $\alpha$, with the $k$th fold removed from the model fitting.
 
-The expected prediction error is estimated by 
+* The expected prediction error is estimated by 
 
 $$ \text{CV}(\hat{f},\alpha)=\frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}^{-k(i)}(x_i,\alpha))$$
 
-We find the best tuning parameter $\hat{\alpha}$ that minimize the $\text{CV}(\hat{f},\alpha)$. 
+* We find the best tuning parameter $\hat{\alpha}$ that minimize the $\text{CV}(\hat{f},\alpha)$. 
 Alternatively the _one-standard error rule_ can be used: choose the most parsimonious ("smallest") model whose error is no more than one standard error above the error of the best model.
 
-This best chosen model is then fit to all the data. (ELS page 242).
+* This best chosen model is then fit to all the data. (ELS page 242).
 
 ---
 
@@ -870,6 +897,8 @@ See learning material from TMA4268: [Module 5: Resampling](https://www.math.ntnu
 
 **Estimator for expected predicted error $\text{Err}$:**
 
+---
+
 $$\widehat{\text{Err}}_{\text{boot}}=\frac{1}{B}\frac{1}{N}\sum_{b=1}^B \sum_{i=1}^N L(y_i,\hat{f}^{*b}(x_i))$$
 
 ---
@@ -911,6 +940,8 @@ The ".632" estimator:
 
 $$\widehat{\text{Err}}^{(.632)}=0.368 \overline{\text{err}}+0.632 \widehat{\text{Err}}^{(1)}$$
 
+---
+
 According to ELS (page 251): the derivation of the .632 estimator is complex, and the estimator is expected to work well in situation where the data is not overfitted, but may break down in overfit situations. 
 
 According to CASI (page 323) the .632 rule is less variable than the leave-one-out CV. 
@@ -926,6 +957,7 @@ $$\hat{\gamma}=\frac{1}{N^2}\sum_{i=1}^{N}\sum_{i´=1}^N L(y_i,\hat{f}(x_{i´}))
 Further the _relative overfitting rate_ is defined to be
 
 $$ \hat{R}=\frac{\widehat{\text{Err}}^{(1)}-\overline{\text{err}}}{\hat{\gamma}-\overline{\text{err}}}$$
+
 ---
 
 Finally, the ".632+"-estimator is
@@ -983,7 +1015,7 @@ Exercise 7.9
 
 # Solutions to exercises
 
-Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. (The solutions given here are very similar to the UiO solutions, see link under References.)
+Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. (The solutions given here are very similar to the UiO STK-IN4300 solutions, see link under References.)
 
 (under construction, to be linked in)
 
@@ -992,16 +1024,17 @@ Please try yourself first, or take a small peek - and try some more - before ful
 
 # References 
 
+* [ELS official errata:](https://web.stanford.edu/~hastie/ElemStatLearn/errata2.html)
+
 * [ELS solutions to exercises](https://waxworksmath.com/Authors/G_M/Hastie/hastie.html)
-* ELS solutions from UiO <https://www.uio.no/studier/emner/matnat/math/STK-IN4300/h20/exercises.html>
+* [ELS solutions from UiO](https://www.uio.no/studier/emner/matnat/math/STK-IN4300/h20/exercises.html)
 
-* ELS official errata: <https://web.stanford.edu/~hastie/ElemStatLearn/errata2.html>
+* [Camel_case](https://en.wikipedia.org/wiki/Camel_case)
+* [Snake_case](https://en.wikipedia.org/wiki/Snake_case)
 
-* R Markdown Cookbook: <https://bookdown.org/yihui/rmarkdown-cookbook/>
-* R Markdown cheat sheet: >https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf>
+* [CASI Computer Age Statistical Inference, Efron and Hastie (2017). Chapter 12: Cross-Validation and $C_p$ Estimates of Prediction Error] (https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
+* [Burnham and Andersen (2002): Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach. Springer.  Chapter 7: Statistical Theory and Numerical Results] (https://link.springer.com/chapter/10.1007/978-0-387-22456-5_7)
 
-* <https://en.wikipedia.org/wiki/Camel_case>
-* <https://en.wikipedia.org/wiki/Snake_case>
+* [R Markdown Cookbook:](https://bookdown.org/yihui/rmarkdown-cookbook/)
+* [R Markdown cheat sheet:](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
 
-* (CASI) Computer Age Statistical Inference, Efron and Hastie (2017) Chapter 12: Cross-Valiation and $C_p$ Estimates of Prediction Error. <https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf>
-* Burnham and ANdersen (2002): Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach. Springer.  Chapter 7: Statistical Theory and Numerical Results <https://link.springer.com/chapter/10.1007/978-0-387-22456-5_7>
