@@ -1,5 +1,5 @@
-\frametitle{Class activity}
-\protect\hypertarget{class-activity}{}
+
+\begin{block}{Class activity}
 
 Aim: get to know each other - to improve on subsequent group work!
 
@@ -12,4 +12,6 @@ Aim: get to know each other - to improve on subsequent group work!
 \NormalTok{   (and say }\ControlFlowTok{if}\NormalTok{ they are looking }\ControlFlowTok{for}\NormalTok{ group members)}
 \end{Highlighting}
 \end{Shaded}
+
+\end{block}
 

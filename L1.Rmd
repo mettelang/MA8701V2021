@@ -1,20 +1,21 @@
 ---
 title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
-subtitle: 'L1: Introduction'
-date: '`r format(Sys.time(), "%d %B, %Y")`'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
+    toc_depth: 3
+  ioslides_presentation: default
   pdf_document:
     toc: yes
     toc_depth: 2
-    
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+subtitle: 'L1: Introduction'
 ---
 
 ```{r setup, include=TRUE,echo=FALSE}
@@ -101,7 +102,7 @@ Selected chapters in ELS (8.7, 8.8, 9.2, parts of 10, 15, 16) and several articl
 
 ## Part 4: XAI [2 weeks]
 
-Lectured by Kjersti Aas.
+Lectured by Kjersti Aas <https://www.nr.no/~kjersti/>.
 
 Articles on 
 
@@ -117,9 +118,9 @@ Articles on
 
 ---
 
-# Useful/required previous knowledge
+## Required previous knowledge
 
-* TMA4267 Linear Statistical Methods
+* TMA4267 Linear statistical methods
 * TMA4268 Statistical learning
 * TMA4295 Statistical inference
 * TMA4300 Computer intensive statistical methods
@@ -130,7 +131,9 @@ Articles on
 
 ---
 
-# Learning outcome
+# Learning 
+
+## Learning outcome
 
 **1. Knowledge**
 
@@ -152,7 +155,7 @@ Be able to analyse a dataset using methods from statistical inference and learni
 
 ---
 
-# Learning methods and activities
+## Learning methods and activities
 
 Herbert A. Simon (Cognitive science, Nobel Laureate):
 _Learning results from what the student does and thinks
@@ -180,7 +183,7 @@ student does to learn._
 
 ---
 
-# Course wiki
+## Course wiki
 
 <https://wiki.math.ntnu.no/ma8701/2021v/start>
 
@@ -188,7 +191,7 @@ student does to learn._
 
 ---
 
-# Class activity
+## Class activity
 
 Aim: get to know each other - to improve on subsequent group work!
 
@@ -218,9 +221,11 @@ snake: writing compound words where the elements are separated with one undersco
 
 ---
 
-# Introduction: Plan
+# Introduction
 
 (finally - we start on the fun stuff!)
+
+## Plan
 
 * Notation
 * Statistical decision theoretic framework (partly new)
@@ -236,7 +241,7 @@ and then cover new aspects for
 
 ---
 
-# Notation
+## Notation
 
 (mainly from ELS)
 
@@ -290,11 +295,10 @@ We will consider theoretical results for future test data, and also look at diff
 
 ---
 
-## Two core regression methods
+## Group discussion
 
+Two core regression methods
 are multiple linear regression (MLR) and $k$-nearest neighbour (kNN).
-
-**Group discussion:** 
 
 For the two methods
 
@@ -313,6 +317,8 @@ For the two methods
 
 * From TMA4268: <https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html> and in particular <https://www.math.ntnu.no/emner/TMA4268/2019v/3LinReg/3LinReg.html>
 * From TMA4315: <https://www.math.ntnu.no/emner/TMA4315/2018h/TMA4315overviewH2018.html> and in particular <https://www.math.ntnu.no/emner/TMA4315/2018h/2MLR.html>
+
+For $k$NN see also Problem 1 of the [TMA4268 2018 exam](https://www.math.ntnu.no/emner/TMA4268/Exam/V2018e.pdf) with [solutions](https://www.math.ntnu.no/emner/TMA4268/Exam/e2018sol.pdf)
 
 ---
 
@@ -395,10 +401,7 @@ $$=\text{E}_X \{ \sum_{k=1}^K L(g_k,\hat{G}(X))P(G=g_k \mid X=x) \} $$
 Also here it is sufficient to minimize the loss for each value of $x$ (pointwise)
 $$ \hat{G}=\text{argmin}_{g \in {\cal G}}\sum_{k=1}^K L(g_k,\hat{G}(X))P(G=g_k \mid X=x) $$
 
-In the special case of 0-1 loss (off-diagonal elements in $L$ equal to 1):
-
-$$ \hat{G}=\text{argmin}_{g \in {\cal G}}\sum_{k=1}^K L(g_k,\hat{G}(X))P(G=g_k \mid X=x)$$
-All $k$ except the correct class gives loss $1$ with probability $P(G=g_k \mid X=x)$, which is summed. This equals $1$ minus the conditional probability of the correct class $g$.
+In the special case of 0-1 loss (off-diagonal elements in $L$ equal to 1) then all $k$ except the correct class gives loss $1$ with probability $P(G=g_k \mid X=x)$, which is summed. This equals $1$ minus the conditional probability of the correct class $g$.
 
 ---
 
@@ -407,9 +410,13 @@ $$=\text{argmax}_{g \in {\cal G}}P(G=g \mid X=x)$$
 
 The _Bayes classifier_ classifies to the most probable class using the conditional distrbution $P(G \mid X)$. The class boundaries are class the _Bayes decision boundaries_ and the error rate is the _Bayes rate_.
 
+Note: can also achieve the same result with dummy variable coding for classes and squared error.
+
 ---
 
-## Classification (recap)
+## Group discussion
+
+What are the most important results from the "Statistical decision theoretic framework"?
 
 What do we know about classification? (TMA4268 and TMA4315 mainly, or ELS ch 4.1-4.5, except 4.4.4)
 
@@ -478,7 +485,11 @@ $$ \text{Err}(x_0)=\text{E}[(Y-\hat{f}(x_0))^2 \mid X=x_0]=\sigma_{\varepsilon}^
 
 ### Derivation
 
-From TMA4268: <https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html> and in particular <https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html>
+If you need to refresh your memory of the bias-variance trade-off, you might also look at the exam Problem 2 [TMA4268 2018 exam](https://www.math.ntnu.no/emner/TMA4268/Exam/V2018e.pdf) with [solutions](https://www.math.ntnu.no/emner/TMA4268/Exam/e2018sol.pdf)
+
+Also: [TMA4268](https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html) and in particular [Module 2](https://www.math.ntnu.no/emner/TMA4268/2019v/2StatLearn/2StatLearn.html)
+
+The following is a derivation:
 
 \small
 \begin{align*} \text{Err}(x_0)&=\text{E}[(Y-\hat{f}(x_0))^2 \mid X=x_0]\\
@@ -491,32 +502,29 @@ From TMA4268: <https://www.math.ntnu.no/emner/TMA4268/2019v/TMA4268overview.html
 \end{align*}
 \normalsize
 
----
-
 (For some applications also the training Xs are fixed.)
-
 See the exercises below to study the results for $k$NN and OLS.
 
 ---
 
-## Studying $\text{Err}$ and the new $\text{Err}_{\cal T}$
+## Expected prediction error 
 
 (ELS 7.2 and 7.4, and we are now back to a general loss function - but first have regression in mind)
 
 If we now keep the training set fixed (we would do that in practice - since we usually only have one training set):
 
-$$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{f}(X))^2\mid {\cal T}]$$
+$$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{f}(X))\mid {\cal T}]$$
 
 as before the expected value is with respect to $(X,Y)$, but the training set is fixed - so that this is the test set error is for this specific training set ${\cal T}$.
 
-Getting back to the unconditional version, we use 
-$$ \text{Err}=\text{E}[L(Y,\hat{f}(X))^2\mid {\cal T}]=\text{E} [\text{Err}_{\cal T}]$$
+Getting back to the unconditional version, we take expected value over ALL that is random - including the traning set 
+$$ \text{Err}=\text{E}[L(Y,\hat{f}(X))\mid {\cal T}]=\text{E}_{\cal T} [\text{Err}_{\cal T}]$$
 
 We want to estimate $\text{Err}_{\cal T}$, but we will soon see that it turns out that most methods estimate $\text{Err}$.
 
 ---
 
-## Training error
+### Training error
 
 (also referred to as apparent error)
 
@@ -525,10 +533,17 @@ $$\overline{\text{err}}=\frac{1}{N} \sum_{i=1}^N L(y_i,\hat{f}(x_i))$$
 
 <!--Unfortuneately the training error is  not a good estimate of the test error. -->
 
-The following is Figure 7.1 from the ELS book. 
-The text (page 220) also reads that "100 simulated training sets of size 50" and that "lasso produced sequence of fits".
+## Group discussion
 
-Explain what you see - in particular what is the red and blue lines and the bold lines. What can you conclude from the figure?
+Look at Figure 7.1 (with figure caption) on 220 in the ELS book. 
+The text reads that "100 simulated training sets of size 50" and that "lasso produced sequence of fits".
+
+Explain what you see - in particular what are the red and blue lines and the bold lines. What can you conclude from the figure?
+
+* Red lines
+* Bold red line
+* Blue lines
+* Bold blue line
 
 ---
 
@@ -560,7 +575,7 @@ The focus in Ch 7 of ELS is to present methods to be used in the situations wher
 
 ---
 
-## Loss function and traning error for classification
+### Loss function and training error for classification
 
 * $X \in \Re^p$
 * $G \in {\cal G}=\{1,\ldots,K\}$
@@ -570,12 +585,15 @@ The focus in Ch 7 of ELS is to present methods to be used in the situations wher
 $$L(G,\hat{G}(X))=I(G\neq \hat{G}(X))$$ 
 $-2$-loglikelihood loss (why $-2$?):
 $$ L(G,\hat{p}(X))=-2 \text{log} \hat{p}_G(X)$$
+
 ---
 
 Test error (only replace $\hat{f}$ with $\hat{G}$):
-$$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{G}(X))^2\mid {\cal T}]$$
-$$ \text{Err}=\text{E}[L(Y,\hat{G}(X))^2\mid {\cal T}]=\text{E} [\text{Err}_{\cal T}]$$
+$$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{G}(X))\mid {\cal T}]$$
+$$ \text{Err}=\text{E}[L(Y,\hat{G}(X))\mid {\cal T}]=\text{E} [\text{Err}_{\cal T}]$$
 
+Training error (for 0-1 loss)
+$$\overline{\text{err}}=\frac{1}{N}\sum_{i=1}^N I(g_i\neq \hat{g}(x_i))$$
 Training error (for $-2$loglikelihood loss)
 $$\overline{\text{err}}=-\frac{2}{N}\sum_{i=1}^N \text{log}\hat{p}_{g_i}(x_i)$$
 
@@ -585,12 +603,345 @@ $$\overline{\text{err}}=-\frac{2}{N}\sum_{i=1}^N \text{log}\hat{p}_{g_i}(x_i)$$
 
 (again - focus is on regression)
 
-First, nothing new, but new notation $(X^0,Y^0)$ to specify a new test observation drawn from the joint distribution $F$:
+First, nothing new, but new notation $(X^0,Y^0)$ to specify that a new test observation is drawn from the joint distribution $F$ (both over new $X$ and new $Y$):
+
+$$\text{Err}_{\cal T}=\text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]$$
+
+and then the averaging over the training set (both $X$s and $Y$s in the training set):
+$$\text{Err}=\text{E}_{\cal T} \text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]$$
+
+This is also called _extra-sample error_ (in contrast to what we now will define to be in-sample).
+
+---
+
+We saw before - from the ELS Figure 7.1, the training error $\overline{\text{err}}$ is (in general) less than (or equal to) the true test error, so not a good estimator for the test error.
+
+$$\overline{\text{err}}=\frac{1}{N} \sum_{i=1}^N L(y_i,\hat{f}(x_i))$$
+
+[In Exercise 2.9 we prove that the expected training error is smaller or equal the expected error of a testset - for MLR. Important to work on this exercise!]
+
+Part of this is due to where the $X$ values are "placed". The test input vectors need not be "in the same positions" as in the training $X$ values (when the mean is taken over the full distribution of $X$). 
+
+To eliminate this "confusing fact", calculations can be made be assuming the $X$-values in the training data are kept fixed - and this is called the _in-sample error_. (We did the same in TMA4267 using the Fahrmeir et al book, Chapter 3.4.)
+
+---
+
+### In-sample error
+
+$$\text{Err}_{\text{in}}=\frac{1}{N}\sum_{i=1}^N \text{E}_{Y^0}[L(Y_i^0,\hat{f}(x_i))\mid {\cal T}]$$
+
+Observe that we now take the expected value over distribution of the response - but that the (new) responses are found at the original training points. The training predictor positions $x_i$, $i=1,\ldots, N$ are fixed. In addition the responses in the training data are also kept fixed, so the only random quantity here is the new responses at the fixed predictors.
+
+---
+
+### Optimism 
+
+is defined as the difference between the in-sample error and the training error:
+
+$$ \text{op}=\text{Err}_{\text{in}}-\overline{\text{err}}$$
+
+### Average optimism
+
+is defined as the expected value of the optimism, where the expectation is taken over the distribution of the training responses - denoted ${\bf y}$ (training predictors still kept fixed):
+
+$$ \omega=\text{E}_{\bf y}(op)=\text{E}_{\bf y}(\text{Err}_{\text{in}})-\text{E}_{\bf y}(\overline{\text{err}})$$
+
+Observe that if we write ${\cal T}$ then the expectation is taken over the distribution of both the predictors and responses in the training set, and we here write ${\bf y}$ for taking the distribution only over the reponses in the training set (not the predictors in the training set). 
+
+So: we will focus on "modelling" $\omega$, "instead of" $\text{Err}$.
+
+---
+
+### Covariance result
+
+For squared error (see ELS exercise 7.4), 0-1 loss, and "other loss functions" it can be shown
+
+$$ \omega=\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)$$
+Interpretation: 
+
+* how much the training error _underestimates_ the true error depends on how strongly the observed response $y_i$ affects its own prediction $\hat{y}_i$.
+* the _harder_ we fit the data the greater the covariance - which increases the expected (averaged) optimism.
+
+---
+
+### Expected in-sample prediction error
+
+$$ \text{E}_{\bf y}(\text{Err}_{\text{in}})=\text{E}_{\bf y}(\overline{\text{err}})+\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)$$
+This is the starting point for several methods to "penalize" fitting complex models!
+
+---
+
+### Result for $\omega$
+
+Additive error model and squared loss: $Y=f(X)+\varepsilon$, with $\hat{y}_i$ obtained by a linear fit with $d$ inputs (or basis functions)
+$$\omega=2 \frac{d}{N}\sigma_{\varepsilon}^2$$
+
+Proof? We look at a generalization in ELS exercise 7.5.
+
+Observe that the optimism increases with $d$ and decreases with $N$.
+
+Comment: versions of the formula hold approximately for other error models than linear with squared loss (ELS mention binary data and entropy loss), but not in general for 0-1 loss (page 231, bottom, with reference to Efron 1986 - consult the ELS book).
+
+---
+
+### Three ways to perform model selection
+
+* Estimate of expected in-sample prediction error (ELS Ch 7.5-7.6): We may develop the average optimism for a class of models that are linear in the parameters (Mallows Cp, AIC, BIC, ...) - and compare models of different complexity using $\text{E}_{\bf y}(\text{Err}_{\text{in}})$. Remark: in-sample error is not of interest, but used to choose between models effectively.
+
+* Estimate $\text{Err}$ (ELS Ch 7.10-7.11): We may instead use resampling methods (cross-validation and bootstrapping) to estimate $\text{Err}$ directly (and use that for model selection and assessment).
+
+* In the data rich approach: we have so much data that we use a separate validation set for model selection (and a separate test set for model assessment). That is not the focus of ELS Ch 7.
+
+---
+
+## Estimates of (expected) in-sample prediction error
+
+We have the following result:
+
+$$ \text{E}_{\bf y}(\text{Err}_{\text{in}})=\text{E}_{\bf y}(\overline{\text{err}})+\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)$$
+where now
+$$ \omega=\frac{2}{N} \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)$$
+We now want to get an estimate of the average optimism, to get an estimate of the in-sample prediction error:
+
+$$ \widehat{\text{Err}_{\text{in}}}=\overline{\text{err}}+\hat{\omega}$$
+
+Comment: observe that $\overline{\text{err}}$ is now an estimate of $\text{E}_{\bf y}(\overline{\text{err}})$ and even though we write $\widehat{\text{Err}_{\text{in}}}$ we are aiming to estimate $\text{E}_{\bf y}(\text{Err}_{\text{in}})$. Focus now is on $\hat{\omega}$!
+
+---
+
+### $C_p$ statistics
+
+for squared error loss (follows directly from the $\omega$-result for additive error model)
+
+$$C_p=\overline{\text{err}}+2\frac{d}{N}\hat{\sigma}_{\varepsilon}^2$$
+where $\hat{\sigma}_{\varepsilon}^2$ is estimated from a "low-bias model" (in MLR we use a "full model").
+
+(This method is presented both in TMA4267 and TMA4268, see also exam question [Problem 3 in TMA4267 in 2015](https://www.math.ntnu.no/emner/TMA4267/2017v/Exam/eV2015.pdf) and [solutions](https://www.math.ntnu.no/emner/TMA4267/2017v/Exam/lV2015.pdf).)
+
+---
+
+### Akaike information criterion (AIC)
+
+Based on different asymptotic ($N \rightarrow \infty$) relationship for log-likelihood loss functions
+
+$$ -2 \text{E}[\log P_{\hat{\theta}}(Y)]\approx - \frac{2}{N} \text{E}[\text{loglik}]+2 \frac{d}{N} $$
+
+* $P_{\hat{\theta}}(Y)]$: family of density for $Y$ where the true density is included
+* $\hat{\theta}$: MLE of $\theta$
+* $\text{loglik}]$: maximized log-likelihood $\sum_{i=1}^N \log P_{\hat{\theta}}(y_i)$
+
+---
+
+**Logistic regression with binomial loglikelihood**
+
+$$ \text{AIC}=- \frac{2}{N} \text{loglik}+2 \frac{d}{N}$$
+**Multiple linear regression** if variance $\sigma_{\varepsilon}^2=\hat{\sigma}_{\varepsilon}^2$ assumed known then AIC is equivalent to $C_p$.
+
+For nonlinear or similar models then $d$ is replaced by some measure of model complexity.
+
+---
+
+**AIC as function of tuning parameter**
+(back to squared error loss)
+
+We have a set of models $f_{\alpha}(x)$ indexed by some tuning parameter $\alpha$.
+
+$$\text{AIC}(\alpha)=\overline{\text{err}}(\alpha)+2 \frac{d(\alpha)}{N}\hat{\sigma}_{\varepsilon}^2$$
+
+* $\overline{\text{err}}(\alpha)$: training error
+* $d(\alpha)$ number of parameters
+* $\hat{\sigma}_{\varepsilon}^2$ estimated variance of large model
+
+The model complexity $\alpha$ is chosen to minimize $\text{AIC}(\alpha)$.
+
+This is not true if the models are chosen adaptively (for example basis functions) this formula underestimates the optimism - and we may regard this as the _effective number of parameters_ is larger than $d$.
+
+---
+
+### The effective number of parameters
+
+The number of parameters $d$ can be generalized into an _effective number of parameters_. We will look at linear fitting method:
+
+$$ \hat{\bf y}={\bf Sy}$$
+where ${\bf S}$ as a $n \times n$ matrix depending on covariates $x_i$ but not responses $y_i$.
+
+* MLR ${\bf H}={\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T$
+* cubic smoothing splines
+* ridge regression
+
+The effective number of parameters is
+
+$$\text{df}({\bf S})=\text{trace}({\bf S})$$
+Remember that the trace of a square matrix is the sum of the diagonal elements, and trace is often denoted tr.
+
+---
+
+What is the trace (tr) for MLR? 
+
+$\text{tr}({\bf H})=\text{tr}({\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T)=\text{tr}(({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf X})=\text{tr}({\bf I})_{p+1}=(p+1)$ if intercept model with $p$ covariates.
+
+---
+
+**Additive error model and squared loss:** $Y=f(X)+\varepsilon$ with $\text{Var}(\varepsilon)=\sigma_{\varepsilon}^2$ then 
+$$ \sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)=\text{trace}({\bf S})\sigma_{\varepsilon}^2$$
+leading to a generalization
+$$\text{df}(\hat{{\bf y}})=\frac{\sum_{i=1}^N \text{Cov}(\hat{y}_i,y_i)}{\sigma_{\varepsilon}^2}$$
+See exercise 7.5 to prove this.
+
+We return to this formula when we look at neural networks with quadratic penalization (weigth decay, ridge regularization) in Part 3. 
+
+---
+
+## Cross-validation (CV)
+(ELS Ch 7.10, 7.12 - most should be known from TMA4268)
+
+The aim is to estimate $\text{Err}_{\cal T}$, but from simulation analyses (ELS Ch 7.12) it turns out that cross-validation estimates $\text{Err}$ "the best".
+
+The starting point for the method is that we only have one training set - and try to use that for either model selection or model assessment (not both). 
+
+What to do when both is needed, is not covered in this chapter. Nested cross-validations aka two-layers of cross-validation is one possibility. Another is to set aside data for a test set for model assessment, but use the training set in cross-validation for model selection. 
+
+---
+
+### Formal set-up for model assessment
+
+The allocation of observation $\{1,\ldots,N\}$ to folds $\{1,\ldots,K\}$ is done using an indexing function $\kappa: \{1,\ldots,N\} \rightarrow \{1,\ldots,K\}$, that for each observation allocate the observation to one of $K$ folds.
+
+Further, $\hat{f}^{-k}(x)$ is the fitted function, computed on the observations except the $k$th fold (the observations from the $k$th fold is removed).
+
+The CV estimate of the expected prediction error $\text{Err}=\text{Err}=\text{E}_{\cal T} \text{E}_{X^0,Y^0}[L(Y^0,\hat{f}(X^0))\mid {\cal T}]$ is then 
+$$ \text{CV}(\hat{f})=\frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}^{-k(i)}(x_i))$$
+
+---
+
+### Formal set-up for model selection
+
+The indexing function $\kappa$ is unchanged, and for the fitting function we add a tuning parameter $\alpha$: $f(x,\alpha)$ such that $\hat{f}^{-k}(x,\alpha)$ is the fitted function using tuning parameter $\alpha$, with the $k$th fold removed from the model fitting.
+
+The expected prediction error is estimated by 
+
+$$ \text{CV}(\hat{f},\alpha)=\frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}^{-k(i)}(x_i,\alpha))$$
+
+We find the best tuning parameter $\hat{\alpha}$ that minimize the $\text{CV}(\hat{f},\alpha)$. 
+Alternatively the _one-standard error rule_ can be used: choose the most parsimonious ("smallest") model whose error is no more than one standard error above the error of the best model.
+
+This best chosen model is then fit to all the data. (ELS page 242).
+
+---
+
+### Choice of $K$
+
+* Popular choices are 5 and 10 based on observations in simulation studies- and arguments similar to a bias-variance trace off ($K=1$ has lowes bias)
+* $K=N$ is called _leave-one-out_ cross-validation LOOCV, and gives the lowest bias for estimating the $\text{Err}$.
+
+---
+
+### Generalized cross-validation (GCV)
+
+For LOOCV with squared loss and linear fitting. Remember 
+$$ \hat{\bf y}={\bf Sy}$$
+For many fitting methods (including MLR) 
+
+$$ \frac{1}{N}\sum_{i=1}^N [y_i-\hat{f}^{-i}(x_i)]^2=\frac{1}{N}\sum_{i=1}^N [\frac{y_i-\hat{f}(x_i)}{1-S_{ii}}]^2$$
+where $S_{ii}$ is the $i$th diagonal element of ${\bf S}$. This leads to the GCV approximation:
+
+$$ \text{GCV}(\hat{f})=\frac{1}{N}\sum_{i=1}^N [\frac{y_i-\hat{f}(x_i)}{1-\text{tr}({\bf S})/N}]^2$$
+where we recognise the effective number of parameters $\text{trace}({\bf S})$. In some settings the $\text{trace}({\bf S})$ is computed more easily than the individual elements $S_{ii}$.
+
+---
+
+### The wrong and the right way to do cross-validation
+
+In short: make sure that all part of the model fit process is "inside" the CV.
+
+See learning material from TMA4268: [Module 5: Resampling](https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#the_right_and_the_wrong_way_to_do_cross-validation), and I also recommend to work on [Problem 3](https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#problem_3:_selection_bias_and_the_%E2%80%9Cwrong_way_to_do_cv%E2%80%9D) with [solutions]()
+
+---
+
+## Bootstrap methods
+(ELS Ch 7.11 - bootstrapping is known from TMA4268 and TMA4300, but not the special case of estimating $\text{Err}$).
+[Bootstrap in TMA4268](https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#the_bootstrap)
+
+**Notation:** ${\bf Z}=(z_1,\ldots,z_N)$ is the training set with $z_i=(x_i,y_i)$.
+
+**Aim:** Of interest is some quantity calculated from the data ${\bf Z}$, denoted $S({\bf Z})$. We will have focus on the expected prediction error. 
+
+**Resampling:** We draw with replacement from ${\bf Z}$ a total of $N$ observastions into ${\bf Z}^{*b}$. We repeat this $B$ times.
+
+**Estimator for expected predicted error $\text{Err}$:**
+
+$$\widehat{\text{Err}}_{\text{boot}}=\frac{1}{B}\frac{1}{N}\sum_{b=1}^B \sum_{i=1}^N L(y_i,\hat{f}^{*b}(x_i))$$
+
+---
+
+However - $\widehat{\text{Err}}_{\text{boot}}$ is not a good estimator: bootstrap datasets are acting as training data and the original data as a test sample - and the two samples have observations in common.
+
+This overlap can make predictions too good. Remeber, in CV we have no overlap.
+
+**Q:** What is the probability that observation $i$ is included in bootstrap sample $b$?
+
+---
+
+The problem is given in TMA4268 Module 5 as [Problem 1](https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#recexboot)
+with (handwritten) [solutions](https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample-sol.pdf).
 
 
+The answer is $1-(1-\frac{1}{N})^N\approx 1-e^{-1}=0.632$.
 
+Why is this relevant?
 
+What if we try to change the bootstrap $\text{Err}$ estimator - so that we for each observation $i$ only keep predictions from bootstrap samples this observation is not present? Then we would mimick the CV-estimator.
 
+---
+
+The _leave-one-out_ bootstrap estimate:
+
+$$\widehat{\text{Err}}^{(1)}=\frac{1}{N} \sum_{i=1}^N \frac{1}{\lvert C^{-i} \rvert} \sum_{b \in C^{-i}} L(y_i,\hat{f}^{*b}(x_i))$$
+where $C^{-i}$ are the indices in the bootstrap sample $b$ that do not contain observation $i$, and $\lvert C^{-i} \rvert$ is the number of samples. ($B$ must be large enough that we do not get any $C^{-i}$s that are empty, or leave out these zero sete in the formula.)
+
+Comment: this is also called out-of-bootstrap, and is closely connected to the popular out-of-bag estimate for random forests.
+
+---
+
+There is an addition fix to make the estimate even better.
+
+Since the average number of distinct observations in each bootstrap sample is approximately $0.632 N$ - and the bootstrap sample behaves like a traning set - this gives a socalled traning-set-size bias (similar to C with $K=2$), meaning that the leave-one-out bootstrap estimator will be _biased upwards_. This can be fixed by weighing together the leave-one-out boostrap estimator with the training error.
+
+The ".632" estimator:
+
+$$\widehat{\text{Err}}^{(.632)}=0.368 \overline{\text{err}}+0.632 \widehat{\text{Err}}^{(1)}$$
+
+According to ELS (page 251): the derivation of the .632 estimator is complex, and the estimator is expected to work well in situation where the data is not overfitted, but may break down in overfit situations. 
+
+According to CASI (page 323) the .632 rule is less variable than the leave-one-out CV. 
+
+Example of this on page 251-252: two equal size classes where predictors independent of class, classification with $1$NN gives $\overline{\text{err}}=0$, $\widehat{\text{Err}}^{(1)}=0.5$ and thus 
+$\widehat{\text{Err}}^{(.632)}=0.632\cdot 0.5=0.316$, where here the true error rate is $0.5$.
+
+---
+
+There is an improved version of the estimator - taking into account the amount of overfitting, leading to an adjustment to the weight $w=0.632$ (and $1-w=0.368$) dependent on a socalled _no-information error rate_=$\gamma$=the error rate of the prediction rule when predictors and class labels are independent.
+
+$$\hat{\gamma}=\frac{1}{N^2}\sum_{i=1}^{N}\sum_{i´=1}^N L(y_i,\hat{f}(x_{i´}))$$
+Further the _relative overfitting rate_ is defined to be
+
+$$ \hat{R}=\frac{\widehat{\text{Err}}^{(1)}-\overline{\text{err}}}{\hat{\gamma}-\overline{\text{err}}}$$
+---
+
+Finally, the ".632+"-estimator is
+
+$$\widehat{\text{Err}}^{(.632+)}=(1-\hat{w}) \overline{\text{err}}+ \hat{w} \widehat{\text{Err}}^{(1)}$$
+where $\hat{w}=\frac{0.632}{1-0.368 \hat{R}}$.
+
+For details on this approach consult ELS page 252-253.
+
+---
+
+# Conclusions: Model selection and assessment
+
+* in a perfect world we would be rich on data and can divide available data into sets for training, validation and testing
+* cool covariance-result on expected optimism for training error related to in-sample prediction error (the covariance) - that is used for finding model selection criteria (but not for model assessment)
+* estimating expected prediction (test) error for a particular training set is not easy in general (if we only have this one training set), but cross-validation and bootstrapping may provide reasonable estimates of the expected test error $\text{Err}$.
 
 # Exercises
 
@@ -614,6 +965,7 @@ Important take home message: We have proven (for MLR) that the expected test MSE
 ---
 
 ## Look into the derivation for the bias and variance
+(no solutions posted)
 
 for $k$NN in Equation 7.10 and OLS in Equation 7.11 on pages 222-223.
 
@@ -629,19 +981,27 @@ Exercise 7.5
 
 Exercise 7.9
 
-# References
+# Solutions to exercises
 
-* ELS solutions to exercises: <https://waxworksmath.com/Authors/G_M/Hastie/hastie.html>
+Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. (The solutions given here are very similar to the UiO solutions, see link under References.)
+
+(under construction, to be linked in)
+
+* 2.3, 2.9, 7.4, 7.5
+* 7.9
+
+# References 
+
+* [ELS solutions to exercises](https://waxworksmath.com/Authors/G_M/Hastie/hastie.html)
+* ELS solutions from UiO <https://www.uio.no/studier/emner/matnat/math/STK-IN4300/h20/exercises.html>
+
 * ELS official errata: <https://web.stanford.edu/~hastie/ElemStatLearn/errata2.html>
-* Andrew Ng Lecture notes on Learning theory <https://sgfin.github.io/files/notes/CS229_Lecture_Notes.pdf>
+
 * R Markdown Cookbook: <https://bookdown.org/yihui/rmarkdown-cookbook/>
 * R Markdown cheat sheet: >https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf>
 
 * <https://en.wikipedia.org/wiki/Camel_case>
 * <https://en.wikipedia.org/wiki/Snake_case>
 
-
-
-When relevant? <https://www.math.ntnu.no/emner/TMA4315/2017h/qq.html>
-* <https://machinelearningmastery.com/mcnemars-test-for-machine-learning/>
-
+* (CASI) Computer Age Statistical Inference, Efron and Hastie (2017) Chapter 12: Cross-Valiation and $C_p$ Estimates of Prediction Error. <https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf>
+* Burnham and ANdersen (2002): Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach. Springer.  Chapter 7: Statistical Theory and Numerical Results <https://link.springer.com/chapter/10.1007/978-0-387-22456-5_7>
