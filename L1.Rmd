@@ -3,18 +3,18 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: 2
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   ioslides_presentation: default
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
 subtitle: 'L1: Introduction'
 ---
 
@@ -64,8 +64,8 @@ but, since the book is from 2008 this means that for many topic we need (to be u
 Sort out assumed background knowledge, and learn something new
 
 * Notation
-* Statistical decision theoretic framework (partly new)
-* Model selection and model assessment - including bias-variance trade-off (mostly new)
+* Statistical decision theoretic framework (partly new) ELS 2.4
+* Model selection and model assessment - including bias-variance trade-off (mostly new) ELS 7
 
 ---
 
@@ -77,8 +77,6 @@ or "Regularized linear and generalized linear models".
 * Hastie, Tibshirani, Wainwright (HTW): "Statistical Learning with Sparsity: The Lasso and Generalizations". Selected chapters.
 * Post-selective inference (articles)
 * An introduction to analysing text
-
-Includes one data analysis project with short report.
 
 ---
 
@@ -223,12 +221,6 @@ snake: writing compound words where the elements are separated with one undersco
 
 ---
 
-```{r}
-include_graphics("./winterbreak.png")
-```
-
----
-
 # Introduction
 
 (finally - we start on the fun stuff!)
@@ -293,6 +285,8 @@ where $L$ is a loss function (to be defined next) and $f(X)$ some function to pr
 A set of size $N$ of independent pairs $(x_i,y_i)$ is called the _training set_ and often denoted ${\cal T}$.
 
 The training data is used to estimate the unknown function $f$.
+
+### Test data
 
 Test data is in general thought of as future data, and plays an important role in both 
 
@@ -537,7 +531,7 @@ $$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{f}(X))\mid {\cal T}]$$
 as before the expected value is with respect to $(X,Y)$, but the training set is fixed - so that this is the test set error is for this specific training set ${\cal T}$.
 
 Getting back to the unconditional version, we take expected value over ALL that is random - including the traning set 
-$$ \text{Err}=\text{E}[L(Y,\hat{f}(X))\mid {\cal T}]=\text{E}_{\cal T} [\text{Err}_{\cal T}]$$
+$$ \text{Err}=\text{E}(\text{E}[L(Y,\hat{f}(X))\mid {\cal T}])=\text{E}_{\cal T} [\text{Err}_{\cal T}]$$
 
 We want to estimate $\text{Err}_{\cal T}$, but we will soon see that it turns out that most methods estimate $\text{Err}$.
 
@@ -594,11 +588,6 @@ A typical split might be 50-60% training and 20-25% validation and test, but thi
 
 The focus in Ch 7 of ELS is to present methods to be used in the situations where we _do not have enough data_ to rely on the training-validation-testing split.
 
----
-
-```{r}
-include_graphics("./toiletpause.png")
-```
 
 ---
 
@@ -617,7 +606,7 @@ $$ L(G,\hat{p}(X))=-2 \text{log} \hat{p}_G(X)$$
 
 Test error (only replace $\hat{f}$ with $\hat{G}$):
 $$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{G}(X))\mid {\cal T}]$$
-$$ \text{Err}=\text{E}[L(Y,\hat{G}(X))\mid {\cal T}]=\text{E} [\text{Err}_{\cal T}]$$
+$$ \text{Err}=\text{E}[\text{E}[L(Y,\hat{G}(X))\mid {\cal T}]]=\text{E} [\text{Err}_{\cal T}]$$
 
 Training error (for 0-1 loss)
 $$\overline{\text{err}}=\frac{1}{N}\sum_{i=1}^N I(g_i\neq \hat{g}(x_i))$$
@@ -753,11 +742,9 @@ Based on different asymptotic ($N \rightarrow \infty$) relationship for log-like
 
 $$ -2 \text{E}[\log P_{\hat{\theta}}(Y)]\approx - \frac{2}{N} \text{E}[\text{loglik}]+2 \frac{d}{N} $$
 
-* $P_{\hat{\theta}}(Y)]$: family of density for $Y$ where the true density is included
+* $P_{\hat{\theta}}(Y)$: family of density for $Y$ where the true density is included
 * $\hat{\theta}$: MLE of $\theta$
-* $\text{loglik}]$: maximized log-likelihood $\sum_{i=1}^N \log P_{\hat{\theta}}(y_i)$
-
----
+* $\text{loglik}$: maximized log-likelihood $\sum_{i=1}^N \log P_{\hat{\theta}}(y_i)$
 
 **Logistic regression with binomial loglikelihood**
 
@@ -800,8 +787,6 @@ The effective number of parameters is
 
 $$\text{df}({\bf S})=\text{trace}({\bf S})$$
 Remember that the trace of a square matrix is the sum of the diagonal elements, and trace is often denoted tr.
-
----
 
 What is the trace (tr) for MLR? 
 
@@ -858,7 +843,7 @@ Alternatively the _one-standard error rule_ can be used: choose the most parsimo
 
 ### Choice of $K$
 
-* Popular choices are 5 and 10 based on observations in simulation studies- and arguments similar to a bias-variance trace off ($K=1$ has lowes bias)
+* Popular choices are 5 and 10 based on observations in simulation studies- and arguments similar to a bias-variance trace off.
 * $K=N$ is called _leave-one-out_ cross-validation LOOCV, and gives the lowest bias for estimating the $\text{Err}$.
 
 ---
@@ -886,8 +871,7 @@ See learning material from TMA4268: [Module 5: Resampling](https://www.math.ntnu
 ---
 
 ## Bootstrap methods
-(ELS Ch 7.11 - bootstrapping is known from TMA4268 and TMA4300, but not the special case of estimating $\text{Err}$).
-[Bootstrap in TMA4268](https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#the_bootstrap)
+(ELS Ch 7.11 - bootstrapping is known from TMA4268 and TMA4300, but not the special case of estimating $\text{Err}$). [Bootstrap in TMA4268: Module 5](https://www.math.ntnu.no/emner/TMA4268/2019v/5Resample/5Resample.html#the_bootstrap)
 
 **Notation:** ${\bf Z}=(z_1,\ldots,z_N)$ is the training set with $z_i=(x_i,y_i)$.
 
@@ -896,8 +880,6 @@ See learning material from TMA4268: [Module 5: Resampling](https://www.math.ntnu
 **Resampling:** We draw with replacement from ${\bf Z}$ a total of $N$ observastions into ${\bf Z}^{*b}$. We repeat this $B$ times.
 
 **Estimator for expected predicted error $\text{Err}$:**
-
----
 
 $$\widehat{\text{Err}}_{\text{boot}}=\frac{1}{B}\frac{1}{N}\sum_{b=1}^B \sum_{i=1}^N L(y_i,\hat{f}^{*b}(x_i))$$
 
@@ -1013,14 +995,19 @@ Exercise 7.5
 
 Exercise 7.9
 
+You may use R or python for the analyses.
+
 # Solutions to exercises
 
 Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. (The solutions given here are very similar to the UiO STK-IN4300 solutions, see link under References.)
 
-(under construction, to be linked in)
+(under construction, links not working 11.01 - but will work asap)
 
-* 2.3, 2.9, 7.4, 7.5
-* 7.9
+* [2.3](https://github.com/mettelang/MA8701V2021/blob/main/ELSe23.pdf)
+* [2.9](https://github.com/mettelang/MA8701V2021/blob/main/ELSe29.pdf) 
+* [7.4](https://github.com/mettelang/MA8701V2021/blob/main/ELSe74.pdf) 
+* [7.5](https://github.com/mettelang/MA8701V2021/blob/main/ELSe75.pdf) 
+* [7.9](https://github.com/mettelang/MA8701V2021/blob/main/ELSe79.html)
 
 # References 
 
