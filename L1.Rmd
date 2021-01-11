@@ -3,18 +3,18 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  ioslides_presentation: default
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
-  pdf_document:
-    toc: yes
-    toc_depth: 2
 subtitle: 'L1: Introduction'
 ---
 
@@ -1022,8 +1022,8 @@ All except solution to 7.9 ready (11.01.2021 - we talk about bootstrapping next 
 * [Camel_case](https://en.wikipedia.org/wiki/Camel_case)
 * [Snake_case](https://en.wikipedia.org/wiki/Snake_case)
 
-* [CASI Computer Age Statistical Inference, Efron and Hastie (2017). Chapter 12: Cross-Validation and $C_p$ Estimates of Prediction Error] (https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
-* [Burnham and Andersen (2002): Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach. Springer.  Chapter 7: Statistical Theory and Numerical Results] (https://link.springer.com/chapter/10.1007/978-0-387-22456-5_7)
+* [CASI Computer Age Statistical Inference, Efron and Hastie (2017). Chapter 12: Cross-Validation and $C_p$ Estimates of Prediction Error](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
+* [Burnham and Andersen (2002): Model Selection and Multimodel Inference: A Practical Information-Theoretic Approach. Springer.  Chapter 7: Statistical Theory and Numerical Results](https://link.springer.com/chapter/10.1007/978-0-387-22456-5_7)
 
 * [R Markdown Cookbook:](https://bookdown.org/yihui/rmarkdown-cookbook/)
 * [R Markdown cheat sheet:](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)

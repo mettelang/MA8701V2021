@@ -1,0 +1,64 @@
+\contentsline {section}{Course topics}{3}{section*.2}% 
+\contentsline {subsection}{Introduction {[}this part, one week{]}}{3}{section*.3}% 
+\contentsline {subsection}{Part 1: Shrinkage {[}3 weeks{]}}{3}{section*.4}% 
+\contentsline {subsection}{Part 2: Ensembles {[}4 (5) weeks{]}}{3}{section*.5}% 
+\contentsline {subsection}{Part 3: Neural nets {[}(2) 3 weeks{]}}{4}{section*.6}% 
+\contentsline {subsection}{Part 4: XAI {[}2 weeks{]}}{4}{section*.7}% 
+\contentsline {subsection}{Closing {[}1 week{]}}{4}{section*.8}% 
+\contentsline {subsection}{Required previous knowledge}{4}{section*.9}% 
+\contentsline {section}{Learning}{4}{section*.10}% 
+\contentsline {subsection}{Learning outcome}{4}{section*.11}% 
+\contentsline {subsection}{Learning methods and activities}{5}{section*.12}% 
+\contentsline {subsection}{Course wiki}{5}{section*.13}% 
+\contentsline {subsection}{Class activity}{5}{section*.14}% 
+\contentsline {section}{Introduction}{6}{section*.15}% 
+\contentsline {subsection}{Plan}{6}{section*.16}% 
+\contentsline {subsection}{Notation}{6}{section*.17}% 
+\contentsline {subsection}{Training set}{7}{section*.18}% 
+\contentsline {subsubsection}{Test data}{7}{section*.19}% 
+\contentsline {subsection}{Group discussion}{7}{section*.20}% 
+\contentsline {subsubsection}{Regression and MLR}{8}{section*.21}% 
+\contentsline {section}{Statistical decision theoretic framework}{8}{section*.22}% 
+\contentsline {subsection}{Squared error loss}{8}{section*.23}% 
+\contentsline {subsubsection}{Linear regression}{9}{section*.24}% 
+\contentsline {subsection}{Absolute loss}{9}{section*.25}% 
+\contentsline {subsection}{Classification loss}{9}{section*.26}% 
+\contentsline {subsection}{Group discussion}{10}{section*.27}% 
+\contentsline {section}{Model assessment and selection}{10}{section*.28}% 
+\contentsline {subsection}{Plan}{10}{section*.29}% 
+\contentsline {subsection}{The bias-variance trade-off}{10}{section*.30}% 
+\contentsline {subsubsection}{Derivation}{11}{section*.31}% 
+\contentsline {subsection}{Expected prediction error}{11}{section*.32}% 
+\contentsline {subsubsection}{Training error}{12}{section*.33}% 
+\contentsline {subsection}{Group discussion}{12}{section*.34}% 
+\contentsline {subsubsection}{Conclusion}{13}{section*.35}% 
+\contentsline {subsubsection}{Loss function and training error for classification}{14}{section*.36}% 
+\contentsline {subsection}{Optimism of the training error rate}{14}{section*.37}% 
+\contentsline {subsubsection}{In-sample error}{15}{section*.38}% 
+\contentsline {subsubsection}{Optimism}{15}{section*.39}% 
+\contentsline {subsubsection}{Average optimism}{15}{section*.40}% 
+\contentsline {subsubsection}{Covariance result}{15}{section*.41}% 
+\contentsline {subsubsection}{Expected in-sample prediction error}{16}{section*.42}% 
+\contentsline {subsubsection}{Result for \(\omega \)}{16}{section*.43}% 
+\contentsline {subsubsection}{Three ways to perform model selection}{16}{section*.44}% 
+\contentsline {subsection}{Estimates of (expected) in-sample prediction error}{16}{section*.45}% 
+\contentsline {subsubsection}{\(C_p\) statistics}{17}{section*.46}% 
+\contentsline {subsubsection}{Akaike information criterion (AIC)}{17}{section*.47}% 
+\contentsline {subsubsection}{The effective number of parameters}{17}{section*.48}% 
+\contentsline {subsection}{Cross-validation (CV)}{18}{section*.49}% 
+\contentsline {subsubsection}{Formal set-up for model assessment}{18}{section*.50}% 
+\contentsline {subsubsection}{Formal set-up for model selection}{19}{section*.51}% 
+\contentsline {subsubsection}{Choice of \(K\)}{19}{section*.52}% 
+\contentsline {subsubsection}{Generalized cross-validation (GCV)}{19}{section*.53}% 
+\contentsline {subsubsection}{The wrong and the right way to do cross-validation}{19}{section*.54}% 
+\contentsline {subsection}{Bootstrap methods}{20}{section*.55}% 
+\contentsline {section}{Conclusions: Model selection and assessment}{21}{section*.56}% 
+\contentsline {section}{Exercises}{21}{section*.57}% 
+\contentsline {subsection}{Curse of dimensionality}{22}{section*.58}% 
+\contentsline {subsection}{Expected training and test MSE for linear regression}{22}{section*.59}% 
+\contentsline {subsection}{Look into the derivation for the bias and variance}{22}{section*.60}% 
+\contentsline {subsection}{Establish the average optimism in the training error}{22}{section*.61}% 
+\contentsline {subsection}{Relate the covariance to the trace of a linear smoother}{22}{section*.62}% 
+\contentsline {subsection}{Perform best subset linear regression and compute different error rates}{22}{section*.63}% 
+\contentsline {section}{Solutions to exercises}{22}{section*.64}% 
+\contentsline {section}{References}{23}{section*.65}% 
