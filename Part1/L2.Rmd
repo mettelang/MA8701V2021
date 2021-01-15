@@ -3,14 +3,14 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   pdf_document:
     toc: yes
     toc_depth: 3
@@ -949,7 +949,7 @@ Please try yourself first, or take a small peek - and try some more - before ful
 * [Gauss-Markov theorem 3.3a](https://github.com/mettelang/MA8701V2021/blob/main/Part1/ELSe33a.pdf)
 * [Variance of ridge compared to LS: page 11-12 on note by Wessel N. van Wieringen ](https://arxiv.org/pdf/1509.09169.pdf)
 
-* [Ridge regression](https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2exRR1.html)
+* [Ridge regression](http://htmlpreview.github.com/?https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2exRR1.html)
 
 
 # Resources
