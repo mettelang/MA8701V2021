@@ -1,0 +1,287 @@
+---
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+subtitle: 'L3: Shrinkage - lasso algorithms and shrinkage for GLMs'
+---
+
+```{r setup, include=TRUE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(reticulate))
+#reticulate::use_python("/usr/bin/python3",required=TRUE)
+suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(magick))
+suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(amap))
+```
+
+
+# Plan
+
+* L2: ELS 3.2, 3.4.1, 3.4.2, 3.4.3, HTW Ch2 + some from 5? maybe text?
+* L3: ELS 4.4.4, HTW Ch 3-4+5, how to analyse text
+* L4: Post selection inference (HTW 6 or Berk et al article or other articles)
+
+# Shrinkage 
+
+## Literature L3
+
+* [ELS] The Elements of Statistical Learning: Data Mining, Inference, and Prediction, Second Edition (Springer Series in Statistics, 2009) by Trevor Hastie, Robert Tibshirani, and Jerome Friedman. [Ebook](https://web.stanford.edu/~hastie/Papers/ESLII.pdf). Chapter 4.4.4.
+
+* [HTW] Hastie, Tibshirani, Wainwrigh: "Statistical Learning with Sparsity: The Lasso and Generalizations". CRC press. [Ebook](https://trevorhastie.github.io/). Chapter 2.4, 3.1-3.?, 4.1-4.3,4.5-
+
+Some figures are taken from An Introduction to Statistical Learning, with applications in R (Springer, 2013) with permission from the authors: G. James, D. Witten, T. Hastie and R. Tibshirani.
+
+---
+
+## What is in a name?
+
+This part of the course could have been called:
+
+* "Regularized linear and generalized linear models"
+* "Penalized maximum likelihood estimation"
+* and also "Sparse models",
+
+but it is called "Shrinkage". 
+
+Focus is on generalized linear models, but we will also consider shrinkage in the next parts of this course (then for "more complex" method).
+
+**Question:** in linear models (linear regression, generalized linear regression) we mainly work with methods where parameter estimates are unbiased - but might have high variance and not give very good prediction performance. Can we use penalization (shrinkage) to produce parameter estimates with some bias but less variance, so that the prediction performance is improved?
+
+---
+
+We will look at different ways of penalization (which produces shrunken estimators) - mainly what is called ridge and lasso methods.
+
+Ridge is not a sparse method, but lasso is. In sparse statistical models a _small number of covariates_ play an important role. 
+
+HTW (page 2): _Bet on sparsity principle:
+Use a procedure that does well in sparse problems, since no procedure
+does well in dense problems._
+
+Shrinkage (penalization, regularization) methods are especially suitable in situations where we have multi-collinearity and/or more covariates than observations $N<<p$. Two examples are 
+
+* in medicine with genetic data, where the number of patient samples is less than the number of genetic markers studied,
+* in analysis of text (more to come in L3)
+
+---
+
+# Linear models
+(ELS 3.2, HTW Ch 2.1)
+
+We will only consider linear models in L2, and move to generalized linear models in L3.
+
+## Set-up
+
+Random response $Y$ and $p$-dimensional (random) covariates $X$.
+
+Training data: $N$ (independent) observations: $(y_i,x_i)$, where $x_i$ is a column vector with $p$ covariates (features).
+
+---
+
+## Linear regression model
+(ELS 3.2)
+
+Additive noise model
+$$ Y=f(X)+\varepsilon$$
+with $\text{E}(\varepsilon)=0$ and $\text{Var}(\varepsilon)=\sigma^2$.
+
+With squared loss, we remember that the optimal $f(X)=\text{E}(Y \mid X)$.
+
+Linear regression model - we assumes that
+$$f(X)=\beta_0+\sum_{j=1}^p X_{j}\beta_j $$
+is linear in $X$, or that is a good approximation.
+
+The unknown parameters are the regression coefficients $\beta_0,\ldots,\beta_p$ and the error variance $\sigma^2_{\varepsilon}$.
+
+From TMA4267 we know that if $(X,Y)$ is jointly multivariate normal, then the conditional distribution of $Y\mid X$ has mean that is linear in $X$ and variance that is independent of $X$. Brush-up: See classnotes [page 8](https://www.math.ntnu.no/emner/TMA4267/2017v/TMA4267V2017Part2.pdf).
+
+---
+
+```{r,fig.cap="Figure from An Introduction to Statistical Learning, with applications in R (Springer, 2013) with permission from the authors: G. James, D. Witten, T. Hastie and R. Tibshirani.",out.width="50%"}
+#http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
+# options in r chunk settings
+# out.width="100%"
+# dpi=72
+
+# ny figur? office hours + mer om shrinkage + optimism Cov(yhat_i,y_i)
+include_graphics("./ILS34.png")
+```
+---
+
+Observe the extra $\frac{1}{2N}$ factor, which is just for ease of interpretation of a future shrinkage parameter to be included (to make that shrinkage parameter comparable across different sample sizes). The factor does not influence the solution of the minimization of the squared-error loss we consider now.
+
+
+## Subgradients in convex analysis
+
+https://wiki.math.ntnu.no/_media/tma4180/2015v/convex.pdf
+https://web.stanford.edu/class/ee364b/lectures/subgradients_notes.pdf
+https://web.stanford.edu/class/ee364b/lectures.html
+
+Subgradients
+https://www.youtube.com/watch?v=Bga0Hk2pyzQ
+
+
+# Bike rental data
+(TMA4268 exam 2019)
+
+We will look at a data set of daily counts of bike rentals in a bike sharing system in Washington DC in the first two years of operation, matched with data on climate, season and type of day. 
+
+* `y`:  daily count of number of bike rentals (our response)
+* `year`: (0: 2011, 1: 2012)
+* `season`: factor with four levels (1: spring, 2: summer, 3: autumn, 4: winter)
+* `holiday`: (0: not holiday, 1: holiday)
+* `notworkday`: (0: neighter weekend or holiday, 1: weekend or holiday)
+* `weather`: factor with three levels (1: clear to partly cloudy, 2: mist and/or clouds, 3: snow, rain, thunderstorm)
+* `temp`: normalized temperature in Celsius
+* `wind`: normalized wind speed
+
+More information at <http://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset> and also look at the article linking and preprocessing the data: Fanaee, Hadi and Gama (2013), Event labeling combining ensemble detectors and background knowledge, in _Progress in Artificial Intelligence_, <http://dx.doi.org/10.1007/s13748-013-0040-3>.
+
+(P.S bike sharing data from Trondheim should be available - search for it!)
+
+---
+
+The data was divided randomly into a training set of size 500 and a test set of size 231.
+The training data is presented in the pairs-plot below.
+
+```{r,eval=TRUE,echo=TRUE}
+day=read.csv("./day.csv")
+bike=data.frame(y=day$cnt,season=factor(day$season),year=day$yr,holiday=day$holiday,notworkday=abs(1-day$workingday),weather=factor(day$weathersit),temp=day$temp,wind=day$windspeed)
+set.seed(4268)
+n=dim(bike)[1]
+idtrain=sample(1:n,500,replace=FALSE)
+train=bike[idtrain,]
+test=bike[-idtrain,]
+```
+
+---
+
+```{r,eval=TRUE,echo=TRUE}
+tmptrain=data.frame(y=day$cnt,season=factor(day$season),year=factor(day$yr),holiday=factor(day$holiday),notworkday=factor(abs(1-day$workingday)),weather=factor(day$weathersit),temp=day$temp,wind=day$windspeed)[idtrain,]
+ggpairs(tmptrain)
+```
+
+---
+
+A multiple linear regression was fitted to the data, with linear effects of all covariates, and in addition also a quadratic and cubic effect of temperature (found after studying splines fitted to temperature). Dummy variable coding (treatment contrast) was used for the factors, with the lowest level (season=1 and weather=1) as the reference category.
+
+---
+
+```{r,eval=TRUE,echo=TRUE}
+fitlm=lm(y~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind,data=train)
+# I(temp^2) just means temp^2, but in a model formula this extra I() is needed
+summary(fitlm)
+ggplot(fitlm, aes(.fitted, .stdresid)) + geom_point(pch = 21) + geom_hline(yintercept = 0, 
+    linetype = "dashed") + geom_smooth(se = FALSE, col = "red", size = 0.5, 
+    method = "loess") + labs(x = "Fitted values", y = "Standardized residuals", 
+    title = "Fitted values vs standardized residuals", subtitle = deparse(fitlm$call))
+ggplot(fitlm, aes(sample = .stdresid)) + stat_qq(pch = 19) + geom_abline(intercept = 0, 
+    slope = 1, linetype = "dotted") + labs(x = "Theoretical quantiles", 
+    y = "Standardized residuals", title = "Normal Q-Q", subtitle = deparse(fitlm$call))
+library(nortest)
+ad.test(rstudent(fitlm))
+```
+
+```{r,eval=TRUE,echo=TRUE}
+trainerrorlm=mean((predict(fitlm)-train$y)^2)
+predlm = predict(fitlm, newdata=test)
+testerrorlm=mean((predlm-test$y)^2)
+c(trainerrorlm,testerrorlm)
+```
+
+```{r}
+best=bestglm(Xy=bike, IC="AIC")
+print(best)
+#best2=bestglm(Xy=bike, IC="LOOCV")
+#print(best2)
+best3=bestglm(Xy=bike, IC="BIC")
+print(best3)
+```
+
+## Bike data continued
+
+Now, we fit a ridge regression to the bike data, with the same covariates as for the full LS model. Explain what you see. Would you prefer the LS or ridge solution?
+
+
+```{r ridge,eval=TRUE,warning=FALSE,message=FALSE,echo=TRUE}
+# set up model matrix, not include the intercept term because glmnet doesn't want that
+model = formula(~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind)
+mm = model.matrix(model,data=train)[,-1]
+set.seed(4268) #for reproducibility
+cvfitridge = cv.glmnet(mm,train$y,alpha=0,standardize=TRUE,nfolds=10)
+plot(cvfitridge)
+print(cvfitridge$lambda.1se)
+
+# also plot how coeffients change with (log)lambda
+fitridgegrid=glmnet(mm,train$y,lambda=cvfitridge$lambda,alpha=0,standardize=TRUE)
+plot(fitridgegrid,xvar="lambda")
+abline(v=log(cvfitridge$lambda.1se))
+
+# look at final model
+fitridge=glmnet(mm,train$y,lambda=cvfitridge$lambda.1se,alpha=0,standardize=TRUE)
+coef(fitridge)
+```
+
+```{r,echo=TRUE,eval=TRUE}
+# mse on training and test set
+trainerrorridge=mean((predict(fitridge,newx=mm)-train$y)^2)
+predridge = predict(fitridge, newx=model.matrix(model,data=test)[,-1])
+testerrorridge=mean((predridge-test$y)^2)
+c(trainerrorridge,testerrorridge)
+```
+
+```{r,eval=TRUE,echo=FALSE}
+fitlm=lm(y~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind,data=train)
+trainerrorlm=mean((predict(fitlm)-train$y)^2)
+predlm = predict(fitlm, newdata=test)
+testerrorlm=mean((predlm-test$y)^2)
+```
+
+```{r,eval=TRUE,echo=TRUE}
+# estimated regression coefficients 
+# for least squares (lm) and ridge regression (glmnet)
+res=cbind(fitlm$coefficients,coef(fitridge))
+colnames(res)=c("lm","ridge")
+res
+# and remembering the errors for lm and ridge
+c(trainerrorlm,testerrorlm)
+c(trainerrorridge,testerrorridge)
+```
+
+## Bike data continued
+
+```{r lasso,eval=TRUE, echo=TRUE}
+library(glmnet)
+mm = model.matrix(~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind,data=train)[,-1]
+set.seed(4268)
+cvfitlasso = cv.glmnet(mm,train$y,alpha=1,standardize=TRUE)
+plot(cvfitlasso)
+print(cvfitlasso$lambda.1se)
+fitlassogrid=glmnet(mm,train$y,lambda=cvfitlasso$lambda,alpha=1,standardize=TRUE)
+plot(fitlassogrid,xvar="lambda")
+abline(v=log(cvfitlasso$lambda.1se))
+fitlasso=glmnet(mm,train$y,lambda=cvfitlasso$lambda.1se,alpha=1,standardize=TRUE)
+coef(fitlasso)
+trainerrorlasso=mean((predict(fitlasso,newx=mm)-train$y)^2)
+predlasso = predict(fitlasso, newx=model.matrix(model,data=test)[,-1])
+testerrorlasso=mean((predlasso-test$y)^2)
+testerrorlasso
+c(trainerrorlm,testerrorlm)
+c(trainerrorlasso,testerrorlasso)
+```

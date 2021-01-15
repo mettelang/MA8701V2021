@@ -1,0 +1,38 @@
+\frametitle{Software}
+\protect\hypertarget{software}{}
+
+\includegraphics{logo.png}
+
+We will use the \texttt{glmnet} implementation for R:
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://cran.r-project.org/web/packages/glmnet/index.html}{R
+  glmnet on CRAN} with
+  \href{http://www.stanford.edu/~hastie/glmnet}{resources}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \href{https://glmnet.stanford.edu/articles/glmnet.html}{Getting
+    started}
+  \item
+    \href{https://glmnet.stanford.edu/articles/glmnetFamily.html}{GLM
+    with glmnet}
+  \end{itemize}
+\end{itemize}
+
+For Python there are different options.
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://web.stanford.edu/~hastie/glmnet_python/}{Python glmnet}
+  is recommended by Hastie et al.
+\item
+  \href{https://scikit-learn.org/stable/modules/linear_model.html\#ridge-regression-and-classification}{scikit-learn}
+  (seems to mostly be for regression? is there lasso for classification
+  here?)
+\end{itemize}
+

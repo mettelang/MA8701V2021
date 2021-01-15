@@ -1,0 +1,134 @@
+---
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+subtitle: 'L2: Solutions to Exercise on Ridge Regression'
+---
+
+```{r setup, include=TRUE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+```
+
+# Ridge regression exercise
+
+This problem is taken, with permission from Wessel van Wieringen,  from a course in
+High-dimensional data analysis at Vrije University, Amsterdam, The Netherlands.
+
+## a)
+
+First calculate $\mathbf{X}^T \mathbf{X}$ and $\mathbf{X}^T \mathbf{Y}$. These are given by:
+\begin{eqnarray*}
+\mathbf{X}^T \mathbf{X} \, = \, \left( \begin{array}{cc}
+8 & 0
+\\
+0 & 16
+\end{array}
+\right)
+& \qquad &
+\mathbf{X}^T \mathbf{Y} \, = \, \left( \begin{array}{c}
+320
+\\
+35
+\end{array}
+\right).
+\end{eqnarray*}
+To penalize only the slope parameter add:
+\begin{eqnarray*}
+\lambda & = &
+\left( \begin{array}{cc}
+0 & 0
+\\
+0 & \lambda
+\end{array}
+\right)
+\end{eqnarray*}
+to $\mathbf{X}^T \mathbf{X}$ in the normal equations. This leads to following ridge estimate:
+\begin{eqnarray*}
+\hat{\beta}_{ridge} & = & (\mathbf{X}^T \mathbf{X} + \lambda)^{-1} \mathbf{X}^T \mathbf{Y}
+\\
+& = &
+\left( \begin{array}{cc}
+8 & 0
+\\
+0 & 16 + \lambda
+\end{array}
+\right)^{-1} \left( \begin{array}{c}
+320
+\\
+35
+\end{array}
+\right)
+\\
+& = &
+\left( \begin{array}{cc}
+1/8 & 0
+\\
+0 & 1/(16 + \lambda)
+\end{array}
+\right) \left( \begin{array}{c}
+320
+\\
+35
+\end{array}
+\right)
+\\
+& = &  \left( \begin{array}{c}
+40
+\\
+35/(16+\lambda)
+\end{array}
+\right).
+\end{eqnarray*}
+Choosing $\lambda=40$ yields the reported estimates.
+
+
+## b)
+A projection matrix $\mathbf{Q}$ would satisfy $\mathbf{Q} = \mathbf{Q}^2$. Verify:
+\begin{eqnarray*}
+\mathbf{Q}^2 & = & \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} \mathbf{X}^{\mathrm{T}} \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} \mathbf{X}^{\mathrm{T}}
+\\
+& = & \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} ( \mathbf{X}^{\mathrm{T}} \mathbf{X} + \lambda \mathbf{I}_{p}) (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} \mathbf{X}^{\mathrm{T}}
+\\
+& & - \lambda \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1}  (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1}  \mathbf{X}^{\mathrm{T}}
+\\
+& = &  \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} \mathbf{X}^{\mathrm{T}}
+- \lambda \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-2}  \mathbf{X}^{\mathrm{T}}
+\\
+& = &  \mathbf{Q} - \lambda \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-2}  \mathbf{X}^{\mathrm{T}}
+\\
+& \not= & \mathbf{Q}.
+\end{eqnarray*}
+Hence, $\mathbf{Q}$ is not a projection matrix.
+
+## c)
+The ridge fit is given by $\hat{\mathbf{Y}}(\lambda) =  \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} \mathbf{X}^\mathrm{T} \mathbf{Y} = \mathbf{Q} \mathbf{Y}$ and the associated residuals by: $\hat{\varepsilon}(\lambda) =  \mathbf{Y} - \mathbf{X} (\mathbf{X}^\mathrm{T} \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} \mathbf{X}^\mathrm{T} \mathbf{Y} =
+[\mathbf{I}_{p} - \mathbf{Q}] \mathbf{Y}$. Would the residual and the
+fit be orthogonal, their inner product becomes zero: $\langle \hat{\mathbf{Y}}(\lambda), \hat{\varepsilon}(\lambda) \rangle = 0$. Verify:
+\begin{eqnarray*}
+\langle \hat{\mathbf{Y}}(\lambda), \hat{\varepsilon}(\lambda) \rangle & = &
+[\hat{\mathbf{Y}}(\lambda)]^{\mathrm{T}} \hat{\varepsilon}(\lambda)
+\\
+& = & [\mathbf{Q} \mathbf{Y}]^{\mathrm{T}} [\mathbf{I}_{p} - \mathbf{Q}] \mathbf{Y}
+\\
+& = & \mathbf{Y}^{\mathrm{T}} \mathbf{Q}^{\mathrm{T}} (\mathbf{I}_{p} - \mathbf{Q}) \mathbf{Y}
+\\
+& = & \mathbf{Y}^{\mathrm{T}} ( \mathbf{Q}^{\mathrm{T}}  - \mathbf{Q}^{\mathrm{T}} \mathbf{Q} ) \mathbf{Y}
+\\
+& = & \mathbf{Y}^{\mathrm{T}} ( \mathbf{Q} - \mathbf{Q}^2 ) \mathbf{Y},
+\end{eqnarray*}
+where we have used the symmetry of $\mathbf{Q}$. Invoke the result of b) to conclude.
+

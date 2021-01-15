@@ -3,18 +3,18 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: 2
-  ioslides_presentation: default
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
 subtitle: 'L1: Introduction'
 ---
 
@@ -765,6 +765,7 @@ This is not true if the models are chosen adaptively (for example basis function
 ---
 
 ### The effective number of parameters
+(ELS 7.6)
 
 The number of parameters $d$ can be generalized into an _effective number of parameters_. We will look at linear fitting method:
 
@@ -1019,4 +1020,6 @@ All except solution to 7.9 ready (11.01.2021 - we talk about bootstrapping next 
 
 * [R Markdown Cookbook:](https://bookdown.org/yihui/rmarkdown-cookbook/)
 * [R Markdown cheat sheet:](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+
+
 
