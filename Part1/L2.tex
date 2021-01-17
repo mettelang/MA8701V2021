@@ -156,7 +156,7 @@
 \begin{frame}{Shrinkage}
 \protect\hypertarget{shrinkage}{}
 
-\begin{block}{Literature L2}
+\begin{block}{Literature lecture 2 (L2)}
 
 \begin{itemize}
 \item
@@ -215,9 +215,9 @@ method).
 \textbf{Question:} in linear models (linear regression, generalized
 linear regression) we mainly work with methods where parameter estimates
 are unbiased - but might have high variance and not give very good
-prediction performance. Can we use penalization (shrinkage) to produce
-parameter estimates with some bias but less variance, so that the
-prediction performance is improved?
+prediction performance overall. Can we use penalization (shrinkage) to
+produce parameter estimates with some bias but less variance, so that
+the prediction performance is improved?
 
 \end{block}
 
@@ -374,7 +374,7 @@ The assumptions for the classical linear model is:
 \item
   \(\text{E}(\bf{\varepsilon})=\bf{0}\).
 \item
-  \(\text{Cov}(\bf{\varepsilon})=\text{E}(\bf{\varepsilon}\bf{\varepsilon}^T)=\sigma^2\bf{I}\).
+  \(\text{Cov}(\varepsilon)=\text{E}(\varepsilon \varepsilon^T)=\sigma^2\bf{I}\).
 \item
   The design matrix has full rank, \(\text{rank}({\bf X})=(p+1)\).
 \end{enumerate}
@@ -418,7 +418,7 @@ The squared error loss to be minimized can be written
 Differensiation with respect to the unknown parameter vector, and
 equating to zero leads to the \emph{normal equations}.
 
-\[ {\bf X}^T{\bf X}{\beta}= {\bf X}^T {\bf Y}\] Yielding
+\[ {\bf X}^T{\bf X}{\beta}= {\bf X}^T {\bf Y}\] To give
 \[ \hat{\beta}_{\text LS}=({\bf X}^T{\bf X})^{-1} {\bf X}^T {\bf Y}\]
 
 \end{frame}
@@ -472,6 +472,12 @@ Q: why is a linear combination of interest? What about a prediction of
 the response at covariate \(x_0\)? It would be \(f(x_0)=x_0^T \beta\), a
 linear combination of the \(\beta\) elements.
 
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
 If we assume that the linear model is correct, then \(\hat{\theta}\) is
 an unbiased estimator of \(\theta\), because
 \(\text{E}(a^T \hat{\beta})=a^T \text{E}(\hat{\beta})=a^T\beta=\theta\).
@@ -481,8 +487,6 @@ According to the Gauss-Markov theorem: if we have another estimator
 must have a larger variance than the LS-estimator:
 
 \[\text{Var}(\hat{\theta})=\text{Var}(a^T \hat{\beta})\le \text{Var}(c^T{\bf Y})=\text{Var}(\tilde{\theta})\]
-
-\end{block}
 
 \end{frame}
 
@@ -507,19 +511,27 @@ column vector) is unbiased (in each element).
 But, what does it mean to compare the variance (covariance matrix) of
 two estimators of dimension \(p \times 1\)?
 
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
 In statistics a ``common'' strategy is to consider all possible linear
 combinations of the elements of the parameter vector, and check that the
 variance of estimator \(\hat{\beta}\) is smaller (or equal to) the
 variance of another estimator \(\tilde{\beta}\).
 
+\end{frame}
+
+\begin{frame}
+
 This is achieved by looking at the difference between the covariance
 matrices \(\text{Cov}(\tilde{\beta})-\text{Cov}(\hat{\beta})\). If the
-difference is a positve semi-definite matrix, then every linear
+difference is a positive semi-definite matrix, then every linear
 combination of \(\hat{\beta}\) will have a variance that is smaller or
 equal to the variance of the corresponding linear combination for
 \(\tilde{\beta}\).
-
-\end{block}
 
 \end{frame}
 
@@ -537,9 +549,15 @@ and \(\text{Var}(c^T\tilde{\beta})=c^T \text{Cov}(\tilde{\beta})c\).
 We then consider
 \[\text{Var}(c^T\tilde{\beta})- \text{Var}(c^T\hat{\beta})=c^T(\text{Cov}(\tilde{\beta})-\text{Cov}(\hat{\beta}))c\]
 
-If \(\text{Cov}(\tilde{\beta})-\text{Cov}(\hat{\beta})\) is positve
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+
+If \(\text{Cov}(\tilde{\beta})-\text{Cov}(\hat{\beta})\) is positive
 semi-definite then the variance difference will be equal or greater than
-0 - by the definition of a positve semi-definite matrix.
+0 - by the definition of a positive semi-definite matrix.
 
 This is also referred to as: The variance of \(\tilde{\beta}\) exceeds
 \emph{in a positive definite ordering sense} that of \(\hat{\beta}\),
@@ -547,8 +565,6 @@ and written
 \(\text{Var}(\tilde{\beta}) \succeq \text{Var}(\hat{\beta})\). (Remark:
 here both \(\text{Var}\) and \(\text{Cov}\) is used as notation for the
 variance-covariance matrix.)
-
-\end{block}
 
 \end{frame}
 
@@ -584,6 +600,10 @@ to get a lower MSE we can´t do that with an unbiased estimator!
 
 This is a bit unusual to many of us, since we from our first course in
 statistics have been told about the glory of unbiased estimators!
+
+\end{frame}
+
+\begin{frame}
 
 But, if we shrink some of the regression coefficients towards 0, or set
 them equal to 0, then we get a \emph{biased estimate} for the regression
@@ -641,9 +661,10 @@ centroide of the data to the origin, where we do not need an intercept
 to capture the best linear regression hyperplane.
 
 When both covariates and responses are centred the LS estimate for the
-intercept \(\beta_0\) will be \(\hat{\beta}_0=0\). If interpretation is
-to be done for uncentered data we may calculate the estimated
-\(\beta_0\) for uncentered data from the estimated regression
+intercept \(\beta_0\) will be \(\hat{\beta}_0=0\).
+
+If interpretation is to be done for uncentred data we may calculate the
+estimated \(\beta_0\) for uncentered data from the estimated regression
 coefficients and the mean of the original covariates and respons.
 
 When covariates and responses are centred HTW remove \(\beta_0\) from
@@ -653,18 +674,23 @@ the regression model for the shrinkage methods. We will also do that.
 
 \end{frame}
 
-\begin{frame}
-
-\textbf{Group discussion:} Why is the LS estimate \(\hat{\beta}_0=0\)
-for centred covariates and centred response in the multiple linear
-regression model?
-
-AND: explain what is done in the analysis of the Gasoline data directly
-below.
-
-\end{frame}
-
 \begin{frame}[fragile]
+
+\textbf{Group discussion:}
+
+\begin{enumerate}
+[1)]
+\item
+  Why is the LS estimate \(\hat{\beta}_0=0\) for centred covariates and
+  centred response in the multiple linear regression model?
+\item
+  Explain what is done in the analysis of the Gasoline data directly
+  below.
+\end{enumerate}
+
+\begin{block}{Choose yourself if you want to focus 1 or 2.}
+
+\end{block}
 
 \begin{block}{Gasoline data}
 
@@ -684,13 +710,13 @@ based on initial conditions of the tank and the dispensed gasoline:
 \begin{itemize}
 \tightlist
 \item
-  \(x_1\): \texttt{TankTemp} tank temperature (F)
+  \texttt{TankTemp} tank temperature (F)
 \item
-  \(x_2\): \texttt{GasTemp} gasoline temperature (F)
+  \texttt{GasTemp} gasoline temperature (F)
 \item
-  \(x_3\): \texttt{TankPres} vapor pressure in tank (psi)
+  \texttt{TankPres} vapor pressure in tank (psi)
 \item
-  \(x_4\): \texttt{GasPres} vapor pressure of gasoline (psi)
+  \texttt{GasPres} vapor pressure of gasoline (psi)
 \end{itemize}
 
 The data set is called \texttt{sniffer.dat}.
@@ -980,7 +1006,7 @@ to \(\sum_{j=1}^p \beta_j^2 \le t\). The solution is called
 
 \begin{block}{Penalty version}
 
-\[ \hat{\beta}_{\text{ridge}}= \sum_{i=1}^N (y_i-\beta_0-\sum_{j=1}^p x_{ij}\beta_j )^2 + \lambda \sum_{j=1}^p \beta_j^2\]
+\[ \hat{\beta}_{\text{ridge}}= \text{argmin}_{\beta}[\sum_{i=1}^N (y_i-\beta_0-\sum_{j=1}^p x_{ij}\beta_j )^2 + \lambda \sum_{j=1}^p \beta_j^2]\]
 where \(\lambda \le 0\) is a complexity (regularization, penalty)
 parameter controlling the amount of shrinkage.
 
@@ -1045,19 +1071,14 @@ When ridge regression was introduced in statistics in the 1970s this
 (avoiding non-singuarlity) was the motivation.
 
 When \(N<p\) then the design matrix will have rank less than the number
-of covariates, and the LS estimate does not exist. The case when two or
-more covariates are perfectly linearly dependent is called
-\emph{super-collinearity} (accoring to WNvN).
+of covariates, and the LS estimate does not exist.
+
+The case when two or more covariates are perfectly linearly dependent is
+called \emph{super-collinearity} (accoring to WNvN).
 
 \end{frame}
 
 \begin{frame}
-
-\begin{block}{Orthogonal covariates}
-
-We study the special case with orthogonal covariates for LS and ridge.
-
-\end{block}
 
 \end{frame}
 
@@ -1067,12 +1088,21 @@ We study the special case with orthogonal covariates for LS and ridge.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{fit.ridge=}\KeywordTok{glmnet}\NormalTok{(x,y,}\DataTypeTok{alpha=}\DecValTok{0}\NormalTok{)}
+\NormalTok{start=}\KeywordTok{glmnet}\NormalTok{(}\DataTypeTok{x=}\NormalTok{x,}\DataTypeTok{y=}\NormalTok{y,}\DataTypeTok{alpha=}\DecValTok{0}\NormalTok{)}
+\NormalTok{autolambda=start}\OperatorTok{$}\NormalTok{lambda }\CommentTok{# automatic choice of lambda had smallest lambda 0.96 - but I added more small values to also be able to see that LS-solution is for lambda=0}
+\NormalTok{newlambda=}\KeywordTok{c}\NormalTok{(autolambda,}\FloatTok{0.5}\NormalTok{,}\FloatTok{0.3}\NormalTok{,}\FloatTok{0.2}\NormalTok{,}\FloatTok{0.1}\NormalTok{)}
+\NormalTok{fit.ridge=}\KeywordTok{glmnet}\NormalTok{(x,y,}\DataTypeTok{alpha=}\DecValTok{0}\NormalTok{,}\DataTypeTok{lambda=}\NormalTok{newlambda)}
 \KeywordTok{plot}\NormalTok{(fit.ridge,}\DataTypeTok{xvar=}\StringTok{"lambda"}\NormalTok{,}\DataTypeTok{label=}\OtherTok{TRUE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{L2_files/figure-beamer/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#plot(fit.ridge,xvar="norm",label=TRUE)}
+\end{Highlighting}
+\end{Shaded}
 
 \end{block}
 
@@ -1113,13 +1143,13 @@ Explain what you see!
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cv.ridge=}\KeywordTok{cv.glmnet}\NormalTok{(x,y,}\DataTypeTok{alpha=}\DecValTok{0}\NormalTok{)}
+\NormalTok{cv.ridge=}\KeywordTok{cv.glmnet}\NormalTok{(x,y,}\DataTypeTok{alpha=}\DecValTok{0}\NormalTok{,}\DataTypeTok{lambda=}\NormalTok{newlambda)}
 \KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"The lamda giving the smallest CV error"}\NormalTok{,cv.ridge}\OperatorTok{$}\NormalTok{lambda.min))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## [1] "The lamda giving the smallest CV error 0.849661496148545"
+## [1] "The lamda giving the smallest CV error 0.1"
 \end{verbatim}
 
 \begin{Shaded}
@@ -1129,7 +1159,7 @@ Explain what you see!
 \end{Shaded}
 
 \begin{verbatim}
-## [1] "The 1sd err method lambda 3.76452845129976"
+## [1] "The 1sd err method lambda 3.43009811945866"
 \end{verbatim}
 
 \begin{Shaded}
@@ -1159,11 +1189,11 @@ Explain what you see!
 \begin{verbatim}
 ## 5 x 1 sparse Matrix of class "dgCMatrix"
 ##                        1
-## (Intercept) 2.040791e-16
-## TankTemp    1.060017e+00
-## GasTemp     3.111680e+00
-## TankPres    1.645594e+00
-## GasPres     2.425640e+00
+## (Intercept) 2.180054e-16
+## TankTemp    1.010525e+00
+## GasTemp     3.193569e+00
+## TankPres    1.639813e+00
+## GasPres     2.477606e+00
 \end{verbatim}
 
 \begin{Shaded}
@@ -1253,7 +1283,7 @@ Same resources as above.
 For the normal linear model
 
 \[\hat{\beta}(\lambda)_{\text{ridge}} \sim N \{ (\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_{p})^{-1} \mathbf{X}^T \mathbf{X} \, \beta,\]
-\[\sigma^2 ( \mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_{p} )^{-1}  \mathbf{X}^T \mathbf{X} [ ( \mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_{p} )^{-1} ]^T \}.
+\[\sigma^2 ( \mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_{p} )^{-1}  \mathbf{X}^T \mathbf{X} ( \mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_{p} )^{-1}  \}.
 \]
 
 \end{block}
@@ -1492,7 +1522,7 @@ to \(\sum_{j=1}^p \lvert \beta_j\rvert \le t\). The solution is called
 
 \begin{block}{Penalty version}
 
-\[ \hat{\beta}_{\text{ridge}}= \sum_{i=1}^N (y_i-\beta_0-\sum_{j=1}^p x_{ij}\beta_j )^2 + \lambda \sum_{j=1}^p \lvert \beta_j\rvert \]
+\[ \hat{\beta}_{\text{lasso}}= \text{argmin}_{\beta} [\sum_{i=1}^N (y_i-\beta_0-\sum_{j=1}^p x_{ij}\beta_j )^2 + \lambda \sum_{j=1}^p \lvert \beta_j\rvert ] \]
 again, \(\lambda \le 0\) is a complexity (regularization, penalty)
 parameter controlling the amount of shrinkage.
 
@@ -1615,22 +1645,17 @@ This case - explicit solution! New word: soft thresholding".
 \begin{block}{Gasoline continued}
 
 \includegraphics{L2_files/figure-beamer/unnamed-chunk-13-1.pdf}
-
-\begin{verbatim}
-## [1] 42
-\end{verbatim}
-
 \includegraphics{L2_files/figure-beamer/unnamed-chunk-13-2.pdf}
 \includegraphics{L2_files/figure-beamer/unnamed-chunk-13-3.pdf}
 
 \begin{verbatim}
 ## 5 x 1 sparse Matrix of class "dgCMatrix"
 ##                        1
-## (Intercept) 1.043539e-15
+## (Intercept) 1.028493e-15
 ## TankTemp    .           
-## GasTemp     3.660973e+00
+## GasTemp     3.594950e+00
 ## TankPres    .           
-## GasPres     4.342993e+00
+## GasPres     4.278981e+00
 \end{verbatim}
 
 \end{block}

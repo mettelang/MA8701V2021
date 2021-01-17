@@ -3,15 +3,15 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "Lectured: January 11, 2021"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
-  ioslides_presentation: default
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   pdf_document:
     toc: yes
     toc_depth: 2
@@ -522,7 +522,7 @@ $$ \text{Err}_{\cal T}=\text{E}[L(Y,\hat{f}(X))\mid {\cal T}]$$
 
 as before the expected value is with respect to $(X,Y)$, but the training set is fixed - so that this is the test set error is for this specific training set ${\cal T}$.
 
-Getting back to the unconditional version, we take expected value over ALL that is random - including the traning set 
+Getting back to the unconditional version, we take expected value over ALL that is random - including the training set 
 $$ \text{Err}=\text{E}(\text{E}[L(Y,\hat{f}(X))\mid {\cal T}])=\text{E}_{\cal T} [\text{Err}_{\cal T}]$$
 
 We want to estimate $\text{Err}_{\cal T}$, but we will soon see that it turns out that most methods estimate $\text{Err}$.
@@ -901,7 +901,7 @@ What if we try to change the bootstrap $\text{Err}$ estimator - so that we for e
 The _leave-one-out_ bootstrap estimate:
 
 $$\widehat{\text{Err}}^{(1)}=\frac{1}{N} \sum_{i=1}^N \frac{1}{\lvert C^{-i} \rvert} \sum_{b \in C^{-i}} L(y_i,\hat{f}^{*b}(x_i))$$
-where $C^{-i}$ are the indices in the bootstrap sample $b$ that do not contain observation $i$, and $\lvert C^{-i} \rvert$ is the number of samples. ($B$ must be large enough that we do not get any $C^{-i}$s that are empty, or leave out these zero sete in the formula.)
+where $C^{-i}$ are the indices in the bootstrap sample $b$ that do not contain observation $i$, and $\lvert C^{-i} \rvert$ is the number of samples. ($B$ must be large enough that we do not get any $C^{-i}$s that are empty, or leave out these zero sets in the formula.)
 
 Comment: this is also called out-of-bootstrap, and is closely connected to the popular out-of-bag estimate for random forests.
 
@@ -909,7 +909,7 @@ Comment: this is also called out-of-bootstrap, and is closely connected to the p
 
 There is an addition fix to make the estimate even better.
 
-Since the average number of distinct observations in each bootstrap sample is approximately $0.632 N$ - and the bootstrap sample behaves like a traning set - this gives a socalled traning-set-size bias (similar to C with $K=2$), meaning that the leave-one-out bootstrap estimator will be _biased upwards_. This can be fixed by weighing together the leave-one-out boostrap estimator with the training error.
+Since the average number of distinct observations in each bootstrap sample is approximately $0.632 N$ - and the bootstrap sample behaves like a training set - this gives a socalled training-set-size bias (similar to C with $K=2$), meaning that the leave-one-out bootstrap estimator will be _biased upwards_. This can be fixed by weighing together the leave-one-out boostrap estimator with the training error.
 
 The ".632" estimator:
 
