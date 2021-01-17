@@ -1,17 +1,17 @@
 ---
 title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "Lectured: January 11, 2021"
 output:
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  ioslides_presentation: default
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  ioslides_presentation: default
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
   pdf_document:
     toc: yes
     toc_depth: 2
@@ -30,7 +30,7 @@ knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE
 # out.width="100%"
 # dpi=72
 
-include_graphics("./overviewv1.png")
+include_graphics("./overviewv2.png")
 ```
 
 ---
@@ -946,6 +946,10 @@ For details on this approach consult ELS page 252-253.
 
 # Conclusions: Model selection and assessment
 
+**Group discussion:** Construct a "mind map"/"overview sheet"/"concept map" for the Model assessement and selection topic.
+
+---
+
 * in a perfect world we would be rich on data and can divide available data into sets for training, validation and testing
 * cool covariance-result on expected optimism for training error related to in-sample prediction error (the covariance) - that is used for finding model selection criteria (but not for model assessment)
 * estimating expected prediction (test) error for a particular training set is not easy in general (if we only have this one training set), but cross-validation and bootstrapping may provide reasonable estimates of the expected test error $\text{Err}$.
@@ -997,7 +1001,7 @@ You may use R or python for the analyses.
 
 Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. (The solutions given here are very similar to the UiO STK-IN4300 solutions, see link under References.)
 
-All except solution to 7.9 ready (11.01.2021 - we talk about bootstrapping next week)
+All except solution to 7.9 available.
 
 * [2.3](https://github.com/mettelang/MA8701V2021/blob/main/ELSe23.pdf)
 * [2.9](https://github.com/mettelang/MA8701V2021/blob/main/ELSe29.pdf) 
