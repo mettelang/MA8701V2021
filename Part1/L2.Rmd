@@ -3,14 +3,14 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   pdf_document:
     toc: yes
     toc_depth: 3
@@ -944,9 +944,17 @@ Find the ridge regression solution for the data below for a general
 value of $\lambda$ and for the simple linear regression model $Y = \beta_0 +
 \beta_1 X + \varepsilon$ (only apply the ridge penalty to the slope
 parameter, not to the intercept). Show that when $\lambda$ is chosen
-as 40, the ridge solution fit is $\hat{Y} = 40 + 1.75 X$. 
+as 4, the ridge solution fit is $\hat{Y} = 40 + 1.75 X$. 
 
 Data: $\mathbf{X}^T = (X_1, X_2, \ldots, X_{8})^T = (-2, -1, -1, -1, 0, 1, 2, 2)^T$, and $\mathbf{Y}^T = (Y_1, Y_2, \ldots, Y_{8})^T = (35, 40, 36, 38, 40, 43, 45, 43)^T$.
+
+```{r,echo=FALSE,eval=FALSE}
+X=cbind(rep(1,8),c(-2,-1,-1,-1,0,1,2,2))
+t(X)%*%X
+Y=matrix(c(35,40,36,38,40,43,45,43),ncol=1)
+t(X)%*%Y
+```
+
 
 ### b)
 The coefficients $\beta$ of a linear regression model, $\mathbf{Y} = \mathbf{X} \beta + \varepsilon$, are estimated by $\hat{\beta} = (\mathbf{X}^\mathrm{T} \mathbf{X})^{-1} \mathbf{X}^\mathrm{T} \mathbf{Y}$. The associated fitted values then given by $\hat{\mathbf{Y}}

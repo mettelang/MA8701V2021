@@ -93,7 +93,7 @@ to $\mathbf{X}^T \mathbf{X}$ in the normal equations. This leads to following ri
 \end{array}
 \right).
 \end{eqnarray*}
-Choosing $\lambda=40$ yields the reported estimates.
+Choosing $\lambda=4$ yields the reported estimates.
 
 
 ## b)

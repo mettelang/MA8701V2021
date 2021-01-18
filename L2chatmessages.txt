@@ -1,0 +1,27 @@
+Good morning - we start at 9.15, and will have 15 minute breaks at 10.00 and 11.00. 
+
+I will pause for questions underway. You may also use the chat. I might not see the "raise hand" icon, so safer to write in chat or unmute yourself!
+
+learning resources for this lecture are available as html or slides (to write on)
+
+http://htmlpreview.github.com/?https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2.html
+https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2inclass.pdf
+
+---
+
+Project 1 - suggestions
+https://s.ntnu.no/MA8701V2021Proj1
+
+Article presentation - suggestions
+https://s.ntnu.no/MA8701V2021Art
+
+---
+
+RStudio::global - conference from 5pm on Thursday 21.01 to 5pm Friday 22.01
+Sign up https://rstudio.com/conference/
+Programme https://global.rstudio.com/student/catalog
+
+Northern Lights Deep Learning Workshop 2021
+Tromsø ("North Pole") 18-20 January
+https://www.nldl.org/program
+

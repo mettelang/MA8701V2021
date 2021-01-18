@@ -50,6 +50,30 @@ Some figures are taken from An Introduction to Statistical Learning, with applic
 
 ---
 
+## The concept map
+
+is drawn as a network structure and depicts suggested relationships between concepts, and is used by designers, engineers, writers, ... to organize and structure knowledge.
+
+* Can be used as a tool to help students (and teachers) structure information.
+* Can be related to a topic or a larger part of the course.
+* Can be drawn with prior knowledge, then with what is learned, and maybe in the end of the course after being able to connect to other course parts.
+
+---
+
+Elements of a concept map
+
+* Nodes: The concepts
+* Links: How are the concepts connected
+* Description on links: relationships such as causes, requires, contributes to, sums to, ...
+
+Further reading: <http://cmap.ihmc.us/Publications/researchpapers/TheoryUnderlyingConceptMaps.pdf>
+
+---
+
+![Example concept map](./cmapexImperial.jpg)
+
+---
+
 ## What is in a name?
 
 This part of the course could have been called:
