@@ -834,8 +834,23 @@ We may solve this problem in $(\hat{\beta},\hat{s})$, instead of the penalty ver
 
 ### Orthogonal covarates
 
-This case - explicit solution! New word: soft thresholding".
+This case - explicit solution! New word: soft thresholding". See notes added to class-slides for the solution. 
+[L2inclassAfterclass.pdf](https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2inclassAfterclass.pdf)
 
+```{r,eval=F,echo=F}
+a=1
+x=seq(-10,10,length=100)
+y=(x-a)^2-a^2
+plot(x,y,type="l")
+abline(h=-a^2)
+abline(v=a)
+a=-1
+x=seq(-10,10,length=100)
+y=(x-a)^2-a^2
+plot(x,y,type="l")
+abline(h=-a^2)
+abline(v=a)
+```
 
 
 ---
