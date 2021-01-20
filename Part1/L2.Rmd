@@ -985,6 +985,11 @@ Hint: a projection matrix is idempotent (commonly used in TMA4267).
 ### c)
 Show that the ridge fit $\hat{\mathbf{Y}}(\lambda)$ is not orthogonal to the associated ridge residuals $\hat{\varepsilon}(\lambda)$  (for any $\lambda > 0$).
 
+## Lasso estimator for orthogonal covariates
+(started on in class - but added separately here, is also found as part of ELS Ex 3.16)
+
+Derive the lasso estimator for $\beta$ in the case where the covariates are othogonal (and centred and scaled, and response centered so we have no $\beta_0$).
+
 # Solutions to exercises
 
 Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. 
@@ -994,6 +999,7 @@ Please try yourself first, or take a small peek - and try some more - before ful
 
 * [Ridge regression](http://htmlpreview.github.com/?https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2exRR1.html)
 
+* [Lasso regression with ortonormal covariates](https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2lassoorth.pdf)
 
 # Resources
 
