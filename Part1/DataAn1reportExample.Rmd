@@ -1,0 +1,323 @@
+---
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+subtitle: 'Example Data Analysis Report Project 1'
+---
+
+```{r setup, include=TRUE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(reticulate))
+#reticulate::use_python("/usr/bin/python3",required=TRUE)
+suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(xtable))
+suppressPackageStartupMessages(library(magick))
+suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(GGally))
+suppressPackageStartupMessages(library(bestglm))
+suppressPackageStartupMessages(library(glmnet))
+suppressPackageStartupMessages(library(nortest))
+suppressPackageStartupMessages(library(tidyverse))
+```
+
+# Preface
+
+These are my suggestions for what the Data Analysis Project 1 report could look like. I am worried that you spend too much work on the report. The main aim is to get hands on experience with the topics of Part 1. I would not expect that you spend many days of working on the report. 
+
+If a group hands in a report which get a fail grade, they will get feedback and will be able to resubmit the report.
+
+# Introduction
+
+_Here you describe what is the aim of the analysis._
+
+The aim of the analysis is to find an interpretable model for estimating the level of prostate antigen PSA from 8 clinical measurements. 
+Data are available from 97 males who were about to receive ratical prostatectomy. 
+
+I will use the standard data set on prostate cancer used in the ELS book - to show what a minimal solution could be.
+
+## Data
+_Write 
+
+* a few words on the data set to be used and on
+* preprocessing of the data. Hopefully that is not very much, mainly maybe centering of reponse (if regression) and standardize the covariates._
+
+The data is presented in ELS page Example 2, pages 3-4, and downloaded from <http://statweb.stanford.edu/~tibs/ElemStatLearn.1stEd/> with information in the file `prostate.info` and data in `prostate.data`.
+
+Response:
+
+* the log of PSA (lpsa) 
+
+Covariates:
+
+* log cancer volume (lcavol)[continuous]
+* log prostate weight (lweight)[continuous]
+* age in years (age)[continuous]
+* log of benign prostatic hyperplasia amount (lbph)[continuous] 
+* seminal vesicle invasion(svi) [binary: 0, 1]
+* log of capsular penetration (lcp)[continuous] 
+* Gleason score (gleason) [ordinal: 6,7,8,8]
+* percent of Gleason scores 4 or 5 (pgg45)[continuous]
+
+# Plan for statistical analyses
+
+_Write down what your plan is._
+
+The data contains a column with information for use as traning and test data, with 67 observations for training and 30 for testing. 
+The test data will be set aside for evaluation?
+
+For model selection cross-validation will be used. Since interpretation is the prime interest and the data set is very small, we will not set aside a test set, and will therefore not have focus on comparing goodness of fit across different models. 
+
+We will start by presenting pairs plots of the response and covariates, together with summary statistics. 
+
+This is a regression problem.
+
+1) As a baseline model we will fit a linear regression model to the data, with least squares. Firdt no variable selection will be performed, but the fitted model with be presented with confidence intervals and Wald $p$-values for regression coefficients. The the goodness of the model may be evaluated by the proportion of variability explained on the training data. 
+
+<!-- 2) Then best subset regression will be performed with AIC as model selection criterion. Bootstrapping will be used to give confidence intervals for the regression parameters after model selection. $B=1000$ boostrap samples will be used. -->
+
+2) The second model to investigate is the ridge regression. 10-fold cross-validation will be used for model selection. The same strategy as for best subset selection will be used for model selection and regression coefficient presentation.
+
+
+4) The third model is the lasso regression. The same strategy as for the best subset selection will be used for model selection and regression coefficient presentation.
+
+The boostrapping will be performed with a loop jointly across all three analyses, after each of the analyses are presented.
+
+# Statistical analyses
+
+## Reading data
+
+```{r,eval=TRUE}
+# data downloaded to current directory
+ds=read.csv("./prostate.data",sep="\t")
+dim(ds)
+colnames(ds)
+head(ds)
+train=ds[ds$train==TRUE,2:10]
+test=ds[ds$train==FALSE,2:10]
+```
+
+
+## Decriptive statistics
+
+```{r,eval=FALSE}
+# data downloaded to current directory
+plottrain=train
+plottrain$svi=as.factor(train$svi)
+plottrain$gleason=as.factor(train$gleason)
+ggpairs(data=plottrain)
+```
+
+
+```{r,results="asis"}
+#NB will not work if NA for some
+
+restr=rbind(apply(train,2,min),
+      apply(train,2,median),
+      apply(train,2,mean),
+      apply(train,2,max),
+      apply(train,2,sd))
+rownames(restr)=c("min","median","mean","max","sd")     
+print(xtable(restr,caption="Traning data, sample size 67"),type="html")
+reste=rbind(apply(test,2,min),
+      apply(test,2,median),
+      apply(test,2,mean),
+      apply(test,2,max),
+      apply(test,2,sd))
+rownames(reste)=c("min","median","mean","max","sd")     
+print(xtable(reste,caption="Test data, sample size 30"),type="html")
+```
+
+Center reponses and standardize all covariates - will not use as factors but numeric for the two ordinal and binary covariates.
+
+```{r}
+trmeans=apply(train,2,mean)
+trsds=apply(train,2,sd)
+strainx=scale(train[,1:8])
+strainy=train[,9]-trmeans[9]
+stestx=scale(test[,1:8],center=trmeans[-9],scale=trmeans[-9])
+strainy=train[,9]-trmeans[9]
+```
+
+## Least squares model fit
+
+_Add comments to what you do and what you find._
+
+```{r}
+strain=data.frame(cbind(strainy,strainx))
+colnames(strain)[1]="lcavol"
+#full=lm(lcavol~lweight+age+lbph+svi+lcp+as.factor(gleason)+pgg45,data=strain)
+full=lm(lcavol~lweight+age+lbph+svi+lcp+gleason+pgg45,data=strain)
+summary(full)
+confint(full)
+ggplot(full, aes(.fitted, .stdresid)) + geom_point(pch = 21) + geom_hline(yintercept = 0, 
+    linetype = "dashed") + geom_smooth(se = FALSE, col = "red", size = 0.5, 
+    method = "loess") + labs(x = "Fitted values", y = "Standardized residuals", 
+    title = "Fitted values vs standardized residuals", subtitle = deparse(full$call))
+ggplot(full, aes(sample = .stdresid)) + stat_qq(pch = 19) + geom_abline(intercept = 0, 
+    slope = 1, linetype = "dotted") + labs(x = "Theoretical quantiles", 
+    y = "Standardized residuals", title = "Normal Q-Q", subtitle = deparse(full$call))
+ad.test(rstudent(full))
+```
+## Best subset regression
+
+_Add comments to what you do and what you find._
+
+```{r,echo=TRUE}
+bests <- regsubsets(strainx,strainy)
+sumbests <- summary(bests)
+print(sumbests)
+which.min(sumbests$cp) 
+```
+
+Model after best subset selection.
+
+```{r,echo=TRUE}
+red <- lm(lcavol~lweight+age+lbph+svi+lcp+pgg45,data=strain)
+summary(red)
+confint(red)
+```
+
+## Ridge regression
+
+_Add comments to what you do and what you find._
+
+```{r,echo=TRUE}
+ridgefit=glmnet(x=strainx,y=strainy,alpha=0)
+plot(ridgefit,xvar="lambda",label=TRUE)
+
+cv.ridge=cv.glmnet(x=strainx,y=strainy,alpha=0)
+print(paste("The lamda giving the smallest CV error",cv.ridge$lambda.min))
+print(paste("The 1sd err method lambda",cv.ridge$lambda.1se))
+
+plot(cv.ridge)
+
+# use 1sd error rule default
+plot(ridgefit,xvar="lambda",label=TRUE);
+abline(v=log(cv.ridge$lambda.1se));
+```
+
+
+## Lasso regression
+
+_Add comments to what you do and what you find._
+
+```{r}
+# Now we fit a lasso model; for this we use the default `alpha=1`
+fit.lasso=glmnet(x=strainx,y=strainy)#,lambda=newlambda)
+plot(fit.lasso,xvar="lambda",label=TRUE)
+
+cv.lasso=cv.glmnet(x=strainx,y=strainy)
+#which.min(cv.lasso$cvm)
+
+plot(cv.lasso)
+plot(fit.lasso,xvar="lambda",label=TRUE);
+abline(v=log(cv.lasso$lambda.1se))
+
+coef(cv.lasso)
+```
+
+# Inference for the model selection procedures
+
+**under construction**
+
+We now turn to bootstrapping for running an outer loop to get confidence intervals for regression parameters for the methods where model selection is used.
+
+Should the lambda grid be the same for the loop or different for each in loop? HTW outside, else inside?
+
+```{r}
+insideloop=function(ids)
+{
+  this=train[ids,] # the new training data with indecies
+# standarize and center
+  sx=scale(this[,1:8])
+  sy=this[,9]-mean(this[,9])
+#ridge
+  cv.ridge=cv.glmnet(x=sx,y=sy,alpha=0)
+  bridge=coef(cv.ridge)
+#lasso
+  cv.lasso=cv.glmnet(x=sx,y=sy,alpha=1)
+  blasso=coef(cv.lasso)
+
+  return(list(bridge=bridge,blasso=blasso))
+}
+
+set.seed(8701) 
+B=1000
+n=67
+p=8+1
+bridgemat=matrix(ncol=p,nrow=B)
+blassomat=matrix(ncol=p,nrow=B)
+
+for (b in 1:B)
+{
+  ids=sample(1:n,replace=TRUE)
+  res=insideloop(ids)
+  bridgemat[b,]=as.vector(res$bridge)
+  blassomat[b,]=as.vector(res$blasso)
+}
+colnames(bridgemat)=colnames(blassomat)=c("Intercept",colnames(train)[-9])
+```
+
+
+```{r}
+bridgeds=reshape2::melt(bridgemat,variable.name="variable",value.name="value")
+bridgepp=ggplot(bridgeds,aes(x=Var2,y=value))+geom_boxplot()
+bridgepp
+
+blassods=reshape2::melt(blassomat,
+         variable.name ="variable",value.name="value")
+plasso=ggplot(blassods,aes(x=Var2,y=value))+geom_boxplot()
+plasso
+
+lasso0perc=apply(abs(blassomat)<.Machine$double.eps,2,mean)
+
+quant95=function(x) return(quantile(x,probs=c(0.025,0.5,0.975)))
+bridgeCI=apply(bridgemat,2,quant95)
+blassoCI=apply(blassomat,2,quant95)
+bridgeCI
+blassoCI
+
+cbind(t(bridgeCI),t(blassoCI))
+```
+
+# Discussion 
+
+## Strenghts 
+
+## Weaknesses
+
+Try out gleason as factor? How about standardization of the factor?
+
+# References
+
+```{r,eval=FALSE}
+citation()
+citation("glmnet")
+````
+
+* R Core Team (2020). R: A language and environment for statistical
+  computing. R Foundation for Statistical Computing, Vienna, Austria.
+  <https://www.R-project.org/>.
+  
+* Jerome Friedman, Trevor Hastie, Robert Tibshirani (2010).
+  Regularization Paths for Generalized Linear Models via Coordinate
+  Descent. Journal of Statistical Software, 33(1), 1-22. URL
+  <http://www.jstatsoft.org/v33/i01/>.
+
+
+
+

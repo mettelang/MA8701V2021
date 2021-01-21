@@ -995,7 +995,7 @@ Derive the lasso estimator for $\beta$ in the case where the covariates are otho
 Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. 
 
 * [Gauss-Markov theorem 3.3a](https://github.com/mettelang/MA8701V2021/blob/main/Part1/ELSe33a.pdf)
-* [Variance of ridge compared to LS: page 11-12 on note by Wessel N. van Wieringen ](https://arxiv.org/pdf/1509.09169.pdf)
+* [Variance of ridge compared to LS: page 11-12 on note by Wessel N. van Wieringen ](https://arxiv.org/pdf/1509.09169.pdf) and [Mettes notes](https://github.com/mettelang/MA8701V2021/blob/main/Part1/LSvsRR.pdf) 
 
 * [Ridge regression](http://htmlpreview.github.com/?https://github.com/mettelang/MA8701V2021/blob/main/Part1/L2exRR1.html)
 
