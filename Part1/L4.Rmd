@@ -1,0 +1,149 @@
+---
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+subtitle: 'L3: Shrinkage - algorithm, variants, GLM, text'
+---
+
+```{r setup, include=TRUE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(reticulate))
+#reticulate::use_python("/usr/bin/python3",required=TRUE)
+suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(magick))
+suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(amap))
+```
+
+# Shrinkage - algorithms, lasso varians, logistic regression and text analysis
+
+## Literature L3
+
+* [ELS] The Elements of Statistical Learning: Data Mining, Inference, and Prediction, Second Edition (Springer Series in Statistics, 2009) by Trevor Hastie, Robert Tibshirani, and Jerome Friedman. [Ebook](https://web.stanford.edu/~hastie/Papers/ESLII.pdf). Chapter 4.4.1-4.4.4.
+
+* [HTW] Hastie, Tibshirani, Wainwrigh: "Statistical Learning with Sparsity: The Lasso and Generalizations". CRC press. [Ebook](https://trevorhastie.github.io/). Chapter 2.4, 3.1-3.2,3.7 4.1-4.3,4.5-4.6 (but only from a practical view for ch 4)
+
+Some figures are taken from An Introduction to Statistical Learning, with applications in R (Springer, 2013) with permission from the authors: G. James, D. Witten, T. Hastie and R. Tibshirani.
+
+---
+
+# Lasso
+
+What do we know from L2?
+
+
+---
+
+## Computations of the lasso solutions
+(HTW 2.4)
+
+Focus is on the Coordinate descent algorithm, where soft thresholding plays an important role. 
+
+See slides from guest lecturer Benjamin Dunn.
+
+---
+
+## Generalizations of the lasso penalty
+(HTW 4.1-4.3, 4.5-4.6: NB only from a practical point of view)
+
+See slides from guest lecturer Benjamin Dunn.
+
+The main goal of this part is to know about these special versions of the lasso, and to see which practical data situation these can be smart to use. Maybe one of these is suitable for Data analysis project 1?
+
+Theoretic properties and algorithmic details are not on the reading list. 
+
+---
+
+**Group activity:**
+
+(in class you choose one variant to work with)
+
+For the lasso variants 
+
+* the elastic net [HTW 4.2]
+* the group lasso [HTW 4.3]
+* the fused lasso [HTW 4.5]
+* the bridge regression [ELS equation 3.53, page 72]
+
+write down 
+
+* which variation on the classic lasso penalty is used (write down the penalty part of the minimization problem)
+* make a drawing of the penalty (comparable to the sphere for ridge and the diamond for lasso)
+* in which practical data analysis situation is this variation used (e.g. when many correlated variables are present, when the covariates have a natural group structure, ...)
+* anything else you found interesting?
+
+---
+
+# Logistic regression
+(HTW 3.1, 3.2)
+
+## Set-up
+
+# Analysing text
+(article)
+
+---
+
+## Kaggle avito data example
+
+# Computational details for the glmnet implementation
+(HTW 3.7)
+
+glmnet is the implementation in R of the elastic net from  HTW-book, and the package is maintained by Trevor Hastie.
+
+The package fits generalized linear models using penalized maximum likelihood of elastic net type (lasso and ridge are special cases).
+
+## Software links
+
+* [R  glmnet on CRAN](https://cran.r-project.org/web/packages/glmnet/index.html)
+with [resources](http://www.stanford.edu/~hastie/glmnet).
+   + [Getting started](https://glmnet.stanford.edu/articles/glmnet.html)
+   + [GLM with glmnet](https://glmnet.stanford.edu/articles/glmnetFamily.html)
+
+For Python there are different options. 
+
+* [Python glmnet](https://web.stanford.edu/~hastie/glmnet_python/) is recommended by Hastie et al.
+* [scikit-learn](https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression-and-classification) (seems to mostly be for regression? is there lasso for classification here?)
+
+---
+
+## 
+
+## Lasso variants
+
+Other lasso variants have their own R packages:
+
+* The group lasso <https://cran.r-project.org/web/packages/grplasso/grplasso.pdf>
+* The fused lasso <https://cran.r-project.org/web/packages/genlasso/genlasso.pdf>
+
+---
+
+# Exercises
+
+# Solutions to exercises
+
+Please try yourself first, or take a small peek - and try some more - before fully reading the solutions. Report errors or improvements to <Mette.Langaas@ntnu.no>. 
+
+* [](https://github.com/mettelang/MA8701V2021/blob/main/Part1/)
+
+* [](http://htmlpreview.github.com/?https://github.com/mettelang/MA8701V2021/blob/main/Part1/)
+
+
+# Resources
+

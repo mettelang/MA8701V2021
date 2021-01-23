@@ -158,9 +158,9 @@ _Add comments to what you do and what you find._
 
 ```{r}
 strain=data.frame(cbind(strainy,strainx))
-colnames(strain)[1]="lcavol"
+colnames(strain)[1]="lpsa"
 #full=lm(lcavol~lweight+age+lbph+svi+lcp+as.factor(gleason)+pgg45,data=strain)
-full=lm(lcavol~lweight+age+lbph+svi+lcp+gleason+pgg45,data=strain)
+full=lm(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45,data=strain)
 summary(full)
 confint(full)
 ggplot(full, aes(.fitted, .stdresid)) + geom_point(pch = 21) + geom_hline(yintercept = 0, 
@@ -172,24 +172,25 @@ ggplot(full, aes(sample = .stdresid)) + stat_qq(pch = 19) + geom_abline(intercep
     y = "Standardized residuals", title = "Normal Q-Q", subtitle = deparse(full$call))
 ad.test(rstudent(full))
 ```
-## Best subset regression
 
-_Add comments to what you do and what you find._
+<!-- ## Best subset regression -->
 
-```{r,echo=TRUE}
-bests <- regsubsets(strainx,strainy)
-sumbests <- summary(bests)
-print(sumbests)
-which.min(sumbests$cp) 
-```
+<!-- _Add comments to what you do and what you find._ -->
 
-Model after best subset selection.
+<!-- ```{r,echo=TRUE} -->
+<!-- bests <- regsubsets(strainx,strainy) -->
+<!-- sumbests <- summary(bests) -->
+<!-- print(sumbests) -->
+<!-- which.min(sumbests$cp)  -->
+<!-- ``` -->
 
-```{r,echo=TRUE}
-red <- lm(lcavol~lweight+age+lbph+svi+lcp+pgg45,data=strain)
-summary(red)
-confint(red)
-```
+<!-- Model after best subset selection. -->
+
+<!-- ```{r,echo=TRUE} -->
+<!-- red <- lm(lpsa~lcavol+lweight+age+lbph+svi+lcp+pgg45,data=strain) -->
+<!-- summary(red) -->
+<!-- confint(red) -->
+<!-- ``` -->
 
 ## Ridge regression
 
@@ -256,7 +257,7 @@ insideloop=function(ids)
 }
 
 set.seed(8701) 
-B=1000
+B=100
 n=67
 p=8+1
 bridgemat=matrix(ncol=p,nrow=B)

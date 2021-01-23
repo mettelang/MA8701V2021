@@ -3,19 +3,18 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  ioslides_presentation: default
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
   pdf_document:
     toc: yes
     toc_depth: 2
-subtitle: 'L3: Shrinkage - lasso algorithms and shrinkage for GLMs'
+subtitle: 'L3: Shrinkage - algorithm, variants, GLM'
 ---
 
 ```{r setup, include=TRUE,echo=FALSE}
@@ -29,283 +28,575 @@ suppressPackageStartupMessages(library(cowplot))
 suppressPackageStartupMessages(library(magick))
 suppressPackageStartupMessages(library(pheatmap))
 suppressPackageStartupMessages(library(amap))
+suppressPackageStartupMessages(library(kableExtra))
+whichformat="html"
+suppressPackageStartupMessages(library(GGally))
+suppressPackageStartupMessages(library(corrplot))
+suppressPackageStartupMessages(library(glmnet))
 ```
 
-
-# Plan
-
-* L2: ELS 3.2, 3.4.1, 3.4.2, 3.4.3, HTW Ch2 + some from 5? maybe text?
-* L3: ELS 4.4.4, HTW Ch 3-4+5, how to analyse text
-* L4: Post selection inference (HTW 6 or Berk et al article or other articles)
-
-# Shrinkage 
+# Shrinkage - second act
 
 ## Literature L3
 
-* [ELS] The Elements of Statistical Learning: Data Mining, Inference, and Prediction, Second Edition (Springer Series in Statistics, 2009) by Trevor Hastie, Robert Tibshirani, and Jerome Friedman. [Ebook](https://web.stanford.edu/~hastie/Papers/ESLII.pdf). Chapter 4.4.4.
+* [ELS] The Elements of Statistical Learning: Data Mining, Inference, and Prediction, Second Edition (Springer Series in Statistics, 2009) by Trevor Hastie, Robert Tibshirani, and Jerome Friedman. [Ebook](https://web.stanford.edu/~hastie/Papers/ESLII.pdf). Chapter 4.4.1-4.4.3 (4.4.4 is covered in 3.2 of HTW).
 
-* [HTW] Hastie, Tibshirani, Wainwrigh: "Statistical Learning with Sparsity: The Lasso and Generalizations". CRC press. [Ebook](https://trevorhastie.github.io/). Chapter 2.4, 3.1-3.?, 4.1-4.3,4.5-
+* [HTW] Hastie, Tibshirani, Wainwrigh: "Statistical Learning with Sparsity: The Lasso and Generalizations". CRC press. [Ebook](https://trevorhastie.github.io/). Chapter 2.4 (understanding from 5.4 will be presented - but not on reading list), 3.1-3.2,3.7 4.1-4.3,4.5-4.6 (but only from a practical view for ch 4)
 
-Some figures are taken from An Introduction to Statistical Learning, with applications in R (Springer, 2013) with permission from the authors: G. James, D. Witten, T. Hastie and R. Tibshirani.
-
----
-
-## The concept map
-
-is drawn as a network structure and depicts suggested relationships between concepts, and is used by designers, engineers, writers, ... to organize and structure knowledge.
-
-* Can be used as a tool to help students (and teachers) structure information.
-* Can be related to a topic or a larger part of the course.
-* Can be drawn with prior knowledge, then with what is learned, and maybe in the end of the course after being able to connect to other course parts.
+<!-- Some figures are taken from An Introduction to Statistical Learning, with applications in R (Springer, 2013) with permission from the authors: G. James, D. Witten, T. Hastie and R. Tibshirani. -->
 
 ---
 
-Elements of a concept map
+# Lasso
 
-* Nodes: The concepts
-* Links: How are the concepts connected
-* Description on links: relationships such as causes, requires, contributes to, sums to, ...
+What do we know from L2? 
 
-Further reading: <http://cmap.ihmc.us/Publications/researchpapers/TheoryUnderlyingConceptMaps.pdf>
+We forgot to say that 
 
----
+* the acronym is _Least Absolute Shrinkage and Selection Operator_, and that the 
+* lasso was invented by Robert Tibshirani and published in an article in [JRSSB in 1996](https://www.jstor.org/stable/2346178?seq=1)
 
-![Example concept map](./cmapexImperial.jpg)
-
----
-
-## What is in a name?
-
-This part of the course could have been called:
-
-* "Regularized linear and generalized linear models"
-* "Penalized maximum likelihood estimation"
-* and also "Sparse models",
-
-but it is called "Shrinkage". 
-
-Focus is on generalized linear models, but we will also consider shrinkage in the next parts of this course (then for "more complex" method).
-
-**Question:** in linear models (linear regression, generalized linear regression) we mainly work with methods where parameter estimates are unbiased - but might have high variance and not give very good prediction performance. Can we use penalization (shrinkage) to produce parameter estimates with some bias but less variance, so that the prediction performance is improved?
+We still work on the linear regression case - with continuous response. 
 
 ---
 
-We will look at different ways of penalization (which produces shrunken estimators) - mainly what is called ridge and lasso methods.
+## Computations of the lasso solutions
+(HTW 2.4)
 
-Ridge is not a sparse method, but lasso is. In sparse statistical models a _small number of covariates_ play an important role. 
+* Focus is on the Coordinate descent algorithm, where 
+* soft thresholding plays an important role. 
+* Also mention the concept of subgradients (from HTW 5.4 - not on the reading list).
 
-HTW (page 2): _Bet on sparsity principle:
-Use a procedure that does well in sparse problems, since no procedure
-does well in dense problems._
+See [slides from guest lecturer Benjamin Dunn](slides link)
 
-Shrinkage (penalization, regularization) methods are especially suitable in situations where we have multi-collinearity and/or more covariates than observations $N<<p$. Two examples are 
+___
 
-* in medicine with genetic data, where the number of patient samples is less than the number of genetic markers studied,
-* in analysis of text (more to come in L3)
+**Group discussion:**
 
----
-
-# Linear models
-(ELS 3.2, HTW Ch 2.1)
-
-We will only consider linear models in L2, and move to generalized linear models in L3.
-
-## Set-up
-
-Random response $Y$ and $p$-dimensional (random) covariates $X$.
-
-Training data: $N$ (independent) observations: $(y_i,x_i)$, where $x_i$ is a column vector with $p$ covariates (features).
+Write down in pseudo code the steps of the cyclic coordinate descent algorithm. 
 
 ---
 
-## Linear regression model
-(ELS 3.2)
+---
 
-Additive noise model
-$$ Y=f(X)+\varepsilon$$
-with $\text{E}(\varepsilon)=0$ and $\text{Var}(\varepsilon)=\sigma^2$.
+## Coordinate descent
 
-With squared loss, we remember that the optimal $f(X)=\text{E}(Y \mid X)$.
+(Result HTW page 110): Additive function to minimize:
+$$ f(\beta)=g(\beta)+\sum_{j=1}^p h_j(\beta_j)$$
 
-Linear regression model - we assumes that
-$$f(X)=\beta_0+\sum_{j=1}^p X_{j}\beta_j $$
-is linear in $X$, or that is a good approximation.
-
-The unknown parameters are the regression coefficients $\beta_0,\ldots,\beta_p$ and the error variance $\sigma^2_{\varepsilon}$.
-
-From TMA4267 we know that if $(X,Y)$ is jointly multivariate normal, then the conditional distribution of $Y\mid X$ has mean that is linear in $X$ and variance that is independent of $X$. Brush-up: See classnotes [page 8](https://www.math.ntnu.no/emner/TMA4267/2017v/TMA4267V2017Part2.pdf).
+$g$ differentiable and convex, $h$ univariate and convex.
+It is found that the coordinate descent algorithm is _guaranteed to converge_ to the global minimizer. 
 
 ---
 
-```{r,fig.cap="Figure from An Introduction to Statistical Learning, with applications in R (Springer, 2013) with permission from the authors: G. James, D. Witten, T. Hastie and R. Tibshirani.",out.width="50%"}
-#http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
-# options in r chunk settings
-# out.width="100%"
-# dpi=72
+## Generalizations of the lasso penalty
+(HTW 4.1-4.3, 4.5-4.6: NB only from a practical point of view)
 
-# ny figur? office hours + mer om shrinkage + optimism Cov(yhat_i,y_i)
-include_graphics("./ILS34.png")
-```
----
+See [slides from guest lecturer Benjamin Dunn](slides link)
 
-Observe the extra $\frac{1}{2N}$ factor, which is just for ease of interpretation of a future shrinkage parameter to be included (to make that shrinkage parameter comparable across different sample sizes). The factor does not influence the solution of the minimization of the squared-error loss we consider now.
+The main goal of this part is to 
 
+* know about these special versions of the lasso, and 
+* to see which practical data situation these can be smart to use. 
 
-## Subgradients in convex analysis
+Maybe one of these is suitable for Data analysis project 1?
 
-https://wiki.math.ntnu.no/_media/tma4180/2015v/convex.pdf
-https://web.stanford.edu/class/ee364b/lectures/subgradients_notes.pdf
-https://web.stanford.edu/class/ee364b/lectures.html
-
-Subgradients
-https://www.youtube.com/watch?v=Bga0Hk2pyzQ
-
-
-# Bike rental data
-(TMA4268 exam 2019)
-
-We will look at a data set of daily counts of bike rentals in a bike sharing system in Washington DC in the first two years of operation, matched with data on climate, season and type of day. 
-
-* `y`:  daily count of number of bike rentals (our response)
-* `year`: (0: 2011, 1: 2012)
-* `season`: factor with four levels (1: spring, 2: summer, 3: autumn, 4: winter)
-* `holiday`: (0: not holiday, 1: holiday)
-* `notworkday`: (0: neighter weekend or holiday, 1: weekend or holiday)
-* `weather`: factor with three levels (1: clear to partly cloudy, 2: mist and/or clouds, 3: snow, rain, thunderstorm)
-* `temp`: normalized temperature in Celsius
-* `wind`: normalized wind speed
-
-More information at <http://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset> and also look at the article linking and preprocessing the data: Fanaee, Hadi and Gama (2013), Event labeling combining ensemble detectors and background knowledge, in _Progress in Artificial Intelligence_, <http://dx.doi.org/10.1007/s13748-013-0040-3>.
-
-(P.S bike sharing data from Trondheim should be available - search for it!)
+Theoretical properties and algorithmic details are not on the reading list. 
 
 ---
 
-The data was divided randomly into a training set of size 500 and a test set of size 231.
-The training data is presented in the pairs-plot below.
+**Group activity:**
 
-```{r,eval=TRUE,echo=TRUE}
-day=read.csv("./day.csv")
-bike=data.frame(y=day$cnt,season=factor(day$season),year=day$yr,holiday=day$holiday,notworkday=abs(1-day$workingday),weather=factor(day$weathersit),temp=day$temp,wind=day$windspeed)
-set.seed(4268)
-n=dim(bike)[1]
-idtrain=sample(1:n,500,replace=FALSE)
-train=bike[idtrain,]
-test=bike[-idtrain,]
-```
+(choose one variant to work with)
 
----
+For the lasso variants 
 
-```{r,eval=TRUE,echo=TRUE}
-tmptrain=data.frame(y=day$cnt,season=factor(day$season),year=factor(day$yr),holiday=factor(day$holiday),notworkday=factor(abs(1-day$workingday)),weather=factor(day$weathersit),temp=day$temp,wind=day$windspeed)[idtrain,]
-ggpairs(tmptrain)
-```
+* the elastic net [HTW 4.2]
+* the group lasso [HTW 4.3]
+* the fused lasso [HTW 4.5]
+<!-- * the bridge regression [ELS equation 3.53, page 72] -->
+
+write down 
+
+* which variation on the classic lasso penalty is used (write down the penalty part of the minimization problem)
+* make a drawing of the penalty (comparable to the sphere for ridge and the diamond for lasso)
+* in which practical data analysis situation is this variation used (e.g. when many correlated variables are present, when the covariates have a natural group structure, ...)
+* anything else you found interesting?
 
 ---
 
-A multiple linear regression was fitted to the data, with linear effects of all covariates, and in addition also a quadratic and cubic effect of temperature (found after studying splines fitted to temperature). Dummy variable coding (treatment contrast) was used for the factors, with the lowest level (season=1 and weather=1) as the reference category.
+---
+
+# Generalized linear models
+(HTW 3.1, 3.2, and TMA4315 GLM background)
+
+## The model
+The GLM model has three ingredients: 
+
+1) Random component
+2) Systematic component
+3) Link function
+
+We look into that for the normal and binomial distribution - to get multiple linear regression and logistic regression.
+
+* [Write in class](classnotelink)
+* Poll on standardization and centering.
 
 ---
 
-```{r,eval=TRUE,echo=TRUE}
-fitlm=lm(y~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind,data=train)
-# I(temp^2) just means temp^2, but in a model formula this extra I() is needed
-summary(fitlm)
-ggplot(fitlm, aes(.fitted, .stdresid)) + geom_point(pch = 21) + geom_hline(yintercept = 0, 
-    linetype = "dashed") + geom_smooth(se = FALSE, col = "red", size = 0.5, 
-    method = "loess") + labs(x = "Fitted values", y = "Standardized residuals", 
-    title = "Fitted values vs standardized residuals", subtitle = deparse(fitlm$call))
-ggplot(fitlm, aes(sample = .stdresid)) + stat_qq(pch = 19) + geom_abline(intercept = 0, 
-    slope = 1, linetype = "dotted") + labs(x = "Theoretical quantiles", 
-    y = "Standardized residuals", title = "Normal Q-Q", subtitle = deparse(fitlm$call))
-library(nortest)
-ad.test(rstudent(fitlm))
-```
+---
 
-```{r,eval=TRUE,echo=TRUE}
-trainerrorlm=mean((predict(fitlm)-train$y)^2)
-predlm = predict(fitlm, newdata=test)
-testerrorlm=mean((predlm-test$y)^2)
-c(trainerrorlm,testerrorlm)
-```
+## Explaining $\beta$ in logistic regression
+
+* The ratio $\frac{P(Y_i=1)}{P(Y_i=0)}=\frac{\pi_i}{1-\pi_1}$ is called the _odds_. 
+
+* If $\pi_i=\frac{1}{2}$ then the odds is $1$, and if $\pi_i=\frac{1}{4}$ then the odds is $\frac{1}{3}$. We may make a table for probability vs. odds in R:
 
 ```{r}
-best=bestglm(Xy=bike, IC="AIC")
-print(best)
-#best2=bestglm(Xy=bike, IC="LOOCV")
-#print(best2)
-best3=bestglm(Xy=bike, IC="BIC")
-print(best3)
+pivec=seq(0.1,0.9,0.1)
+odds=pivec/(1-pivec)
+kable(t(data.frame(pivec,odds)),digits=c(2,2))%>%
+  kable_styling()
 ```
 
-## Bike data continued
+* Odds may be seen to be a better scale than probability to represent chance, and is used in betting. In addition, odds are unbounded above. 
 
-Now, we fit a ridge regression to the bike data, with the same covariates as for the full LS model. Explain what you see. Would you prefer the LS or ridge solution?
+---
 
+We look at the link function (inverse of the response function). Let us assume that our linear predictor has $k$ covariates present
 
-```{r ridge,eval=TRUE,warning=FALSE,message=FALSE,echo=TRUE}
-# set up model matrix, not include the intercept term because glmnet doesn't want that
-model = formula(~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind)
-mm = model.matrix(model,data=train)[,-1]
-set.seed(4268) #for reproducibility
-cvfitridge = cv.glmnet(mm,train$y,alpha=0,standardize=TRUE,nfolds=10)
-plot(cvfitridge)
-print(cvfitridge$lambda.1se)
+\begin{align*}
+\eta_i&= \beta_0+\beta_1 x_{i1}+\beta_2 x_{i2}+\cdots + \beta_k x_{ik}\\
+\pi_i&= \frac{\exp(\eta_i)}{1+\exp(\eta_i)}\\
+\eta_i&=\ln(\frac{\pi_i}{1-\pi_i})\\
+\ln(\frac{\pi_i}{1-\pi_i})&=\beta_0+\beta_1 x_{i1}+\beta_2 x_{i2}+\cdots + \beta_k x_{ik}\\
+\frac{\pi_i}{1-\pi_i}=&\frac{P(Y_i=1)}{P(Y_i=0)}=\exp(\beta_0)\cdot \exp(\beta_1 x_{i1})\cdots\exp(\beta_k x_{ik})
+\end{align*}
 
-# also plot how coeffients change with (log)lambda
-fitridgegrid=glmnet(mm,train$y,lambda=cvfitridge$lambda,alpha=0,standardize=TRUE)
-plot(fitridgegrid,xvar="lambda")
-abline(v=log(cvfitridge$lambda.1se))
+We have a _multiplicative model_ for the odds. 
 
-# look at final model
-fitridge=glmnet(mm,train$y,lambda=cvfitridge$lambda.1se,alpha=0,standardize=TRUE)
-coef(fitridge)
+---
+
+**So, what if we increase $x_{1i}$ to $x_{1i}+1$?**
+
+If the covariate $x_{1i}$ increases by one unit (while all other covariates are kept fixed) then the odds is multiplied by $\exp(\beta_1)$:
+
+\begin{align*}
+\frac{P(Y_i=1\mid x_{i1}+1)}{P(Y_i=0)\mid x_{i1}+1)}&=\exp(\beta_0)\cdot \exp(\beta_1 (x_{i1}+1))\cdots\exp(\beta_k x_{ik})\\
+&=\exp(\beta_0)\cdot \exp(\beta_1 x_{i1})\exp(\beta_1)\cdots\exp(\beta_k x_{ik})\\
+&=\frac{P(Y_i=1\mid x_{i1})}{P(Y_i=0\mid x_{i1})}\cdot \exp(\beta_1)\\
+\end{align*}
+
+This means that if $x_{i1}$ increases by $1$ then: if $\beta_1<0$ we get a decrease in the odds, if $\beta_1=0$ no change, and if $\beta_1>0$ we have an increase.
+In the logit model $\exp(\beta_1)$ is easier to interpret than $\beta_1$.
+
+---
+
+The response function as a function of the covariate $x$ and not of $\eta$. Solid lines: $\beta_0=0$ and $\beta_1$ is $0.8$ (blue), $1$ (red) and $2$ (orange), and dashed lines with $\beta_0=1$.
+
+```{r}
+ggplot(data.frame(x=c(-6,5)), aes(x))+
+  xlab(expression(x))+ 
+  ylab(expression(mu))+
+    stat_function(fun=function(x) exp(x)/(1+exp(x)), geom="line", colour="red")+
+    stat_function(fun=function(x) exp(2*x)/(1+exp(2*x)), geom="line", colour="orange")+
+          stat_function(fun=function(x) exp(0.8*x)/(1+exp(0.8*x)), geom="line", colour="blue")+
+    stat_function(fun=function(x) exp(1+x)/(1+exp(1+x)), geom="line", colour="red",linetype="dashed")+
+    stat_function(fun=function(x) exp(1+2*x)/(1+exp(1+2*x)), geom="line", colour="orange",linetype="dashed")+
+          stat_function(fun=function(x) exp(1+0.8*x)/(1+exp(1+0.8*x)), geom="line", colour="blue",linetype="dashed")+
+  scale_colour_manual("0+k x",values = c("red", "orange","blue"),labels=c("1","2","0.8"))
 ```
 
-```{r,echo=TRUE,eval=TRUE}
-# mse on training and test set
-trainerrorridge=mean((predict(fitridge,newx=mm)-train$y)^2)
-predridge = predict(fitridge, newx=model.matrix(model,data=test)[,-1])
-testerrorridge=mean((predridge-test$y)^2)
-c(trainerrorridge,testerrorridge)
+---
+
+## Parameter estimation
+
+* Maximum likelihood estimation = maximize the likelihood of the data $\cal L(\beta_0,\beta; {\bf y}, {\bf X})$.
+
+* For penalized method we instead minimize the negative loglikelihood scaled with $\frac{1}{N}$.
+
+* The ridge and lasso penalty is added to the scaled negative loglikelihood.
+
+* We write this out for the normal and binomial distribution.
+
+* [Write in class](classnotelink)
+
+---
+
+---
+
+## Algorithms
+
+* The likelihood for the GLM is differentiable, and the ridge and lasso objective functions are convex - and can be solved with socalled "standard convex optimization methods". 
+* But, by popular demand also special algorithms are available - building on the cyclic coordinate descent.
+
+To understand the (ridge and) lasso logistic regression we first look at the _iteratively reweighted least squares_ (IRLS) - as a result of the Newton Raphson method.
+
+---
+
+
+
+---
+
+### Lasso logistic regression fitting algoritm
+(HTW page 116)
+
+```{r,echo=TRUE,eval=FALSE}
+OUTER LOOP: start with lambdamax and decrement
+
+      MIDDLE LOOP (with warm start) 
+         
+         compute quadratic approximation Q(beta0,beta) 
+         for current beta-estimates
+         
+         
+         
+              INNER LOOP: cyclic coordinate descent
+              to minimize Q added the lasso penalty
+              
+```            
+
+---         
+
+### Criteria for choosing $\lambda$
+
+We use cross-validation to choose $\lambda$.
+
+For regression we choose $\lambda$ by minimizing the (mean) squared error.
+
+For (ridge and) lasso logistic regression we may choose:
+
+* misclassification error rate on the validation set 
+* ROC-AUC
+* binomial deviance
+
+---
+
+### Confusion matrix, sensitivity, specificity 
+(from TMA4268)
+
+In a two class problem - assume the classes are labelled "-" (non disease,0) and "+" (disease,1). In a population setting we define the following event and associated number of observations.
+
+|  |Predicted -|Predicted + |Total|
+|:-------|:--------------|:---------------|:----------|
+|True - | True Negative TN  | False Positive FP | N|
+|True +|False Negative FN|True Positive TP|P|
+|Total|N*|P*| |
+
+(N in this context not to be confused with our sample size...)
+
+---
+
+**Sensitivity** (recall) is the proportion of correctly classified positive observations: $\frac{\# \text{True Positive}}{\# \text{Condition Positive}}=\frac{\text{TP}}{\text{P}}$. 
+
+**Specificity** is the proportion of correctly classified negative observations: $\frac{\# \text{True Negative}}{\# \text{Condition Negative}}=\frac{\text{TN}}{\text{N}}$.
+
+We would like that a classification rule have both a high sensitivity and a high specificity.
+
+---
+
+Other useful quantities:
+
+| Name | Definition | Synonoms |
+|:-----------------|:---------|:-----------------|
+|False positive rate | FP/N| Type I error, 1-specificity|
+|True positive rate|TP/P|1-Type II error, power, sensitivity, recall|
+|Positive predictive value (PPV) |TP/P*|Precision, 1-false discovery proportion|
+|Negative predictive value (NPV)| TN/N*| |
+
+Where the PPV can be used together with the sensitivity to make a precision-recall curve more suitable for low case rates.
+
+---
+
+### ROC curves 
+(also from TMA4268)
+
+The receiver operating characteristics (ROC) curve gives a graphical display of the sensitivity against specificity, as the threshold value (cut-off on probability of success or disease) is moved over the range of all possible values. 
+An ideal classifier will give a ROC curve which hugs the top left corner, while a straight line represents a classifier with a random guess of the outcome. 
+
+---
+
+### ROC-AUC 
+
+* The **ROC-AUC** score is the area under the ROC curve. It ranges between the values 0 and 1, where a higher value indicates a better classifier. 
+<!-- An AUC score equal to 1 would imply that all observations are correctly classified.  -->
+* The AUC score is useful for comparing the performance of different classifiers, as all possible threshold values are taken into account.
+* The ROC-AUC is closely connected to the robust U statistics.
+* If the prevalence (case proportion) is very low (0.01ish), the ROC-AUC may be misleading, and the PR-AUC is more commonly used.
+
+---
+
+### Deviance
+
+The _deviance_ is based on the likelihood ratio test statistic. 
+
+The derivation assumes that data can be grouped into covariate patterns, with $G$ groups (else interval solutions are used in practice).
+
+**Saturated model:**
+If we were to provide a perfect fit to our data then we would estimate $\pi_j$ by the observed frequency for the group, $\hat{y}_j=y_j$.
+
+**Candidate model:** the model with the current choice of $\lambda$.
+
+$$D_{\lambda}=2(l(\text{saturated model})-l(\text{candidate model}_{\lambda}))$$
+The **null deviance** is replacing the candidate model with a model where $\hat{y}_i=\frac{1}{N}\sum_{i=1}^N y_i$ (the case proportion).
+
+---
+
+# Example: South African heart disease
+(ELS 4.4.2)
+
+**Group discussion:** Comment on what is done and the results. Where are the CIs and $p$-values for the ridge and lasso version?
+
+---
+
+## Data set
+
+The data is presented in ELS Section 4.4.2, and downloaded from <http://statweb.stanford.edu/~tibs/ElemStatLearn.1stEd/> with information in the file `SAheat.info` and data in `SAheart.data`.
+
+* This is a retrospective sample of males in a heart-disease high-risk region in South Africa. 
+*It consists of 462 observations on the 10 variables. All subjects are male in the age range 15-64. 
+* There are 160 cases (individuals who have suffered from a conorary heart disease) and 302 controls (individuals who have not suffered from a conorary heart disease).    
+* The overall prevalence in the region was 5.1%.
+
+The response value (`chd`) and covariates
+
+* `chd` : conorary heart disease \{yes, no\} coded by the numbers \{1, 0\}
+* `sbp` : systolic blood pressure  
+* `tobacco` : cumulative tobacco (kg)  
+* `ldl` : low density lipoprotein cholesterol
+* `adiposity` : a numeric vector
+* `famhist` : family history of heart disease. Categorical variable with two levels: \{Absent, Present\}.
+* `typea` : type-A behavior
+* `obesity` : a numerical value
+* `alcohol` : current alcohol consumption
+* `age` : age at onset
+
+_The goal is to identify important risk factors._ 
+
+---
+
+## Data description
+
+We start by loading and looking at the data:
+
+```{r,echo=TRUE}
+ds=read.csv("./SAheart.data",sep=",")[,-1]
+ds$chd=as.factor(ds$chd)
+ds$famhist=as.factor(ds$famhist)
+dim(ds)
+colnames(ds)
+head(ds)
+
+# to be easier to compare with lasso and ridge, we standardize the xs
+xs=model.matrix(chd~.,data=ds)[,-1] # to take care of categorical variables, but not include the intercept column
+xss=scale(xs)
+ys=as.numeric(ds[,10])-1 # not factor, must be numeric else errors...
+head(xss)
+table(ys)
+
+dss=data.frame(ys,xss)
+colnames(dss)[1]="chd"
 ```
 
-```{r,eval=TRUE,echo=FALSE}
-fitlm=lm(y~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind,data=train)
-trainerrorlm=mean((predict(fitlm)-train$y)^2)
-predlm = predict(fitlm, newdata=test)
-testerrorlm=mean((predlm-test$y)^2)
+The coloring is done according to the response variable, where green represents a case $Y=1$ and red represents a control $Y=0$.
+
+```{r, warning=FALSE, message=FALSE}
+ggpairs(ds, ggplot2::aes(color=chd), #upper="blank",  
+        lower = list(continuous = wrap("points", alpha = 0.3, size=0.2)))
+corrplot(cor(xss),type="upper")
+```
+**Q:** Comment on the correlation between covariates, and what that may lead to?
+
+---
+
+## Logistic regression
+
+We now fit a (multiple) logistic regression model using the `glm` function and the full data set. In order to fit a logistic model, the `family` argument must be set equal to `="binomial"`. The `summary` function prints out the estimates of the coefficients, their standard errors and z-values. As for a linear regression model, the significant coefficients are indicated by stars where the significant codes are included in the `R` printout.
+
+```{r,echo=TRUE}
+glm_heart = glm(chd~.,data=dss, family="binomial")
+summary(glm_heart)
+exp(coef(glm_heart))
 ```
 
-```{r,eval=TRUE,echo=TRUE}
-# estimated regression coefficients 
-# for least squares (lm) and ridge regression (glmnet)
-res=cbind(fitlm$coefficients,coef(fitridge))
-colnames(res)=c("lm","ridge")
-res
-# and remembering the errors for lm and ridge
-c(trainerrorlm,testerrorlm)
-c(trainerrorridge,testerrorridge)
+A very surprising result here is that `sbp` and `obesity` are NOT significant and `obesity` has negative sign. This is a result of the correlation between covariates. In separate models with only `sbp` or only `obesity` each is positive and significant. 
+
+**Q:** How would you interpret the estimated coefficient for `tobacco`?
+
+---
+
+## Ridge logistic regression
+
+```{r,echo=TRUE}
+ridgefit=glmnet(x=xss,y=ys,alpha=0,standardize=FALSE) # already standardized
+plot(ridgefit,xvar="lambda",label=TRUE)
+
+cv.ridge=cv.glmnet(x=xss,y=ys,alpha=0)
+print(paste("The lamda giving the smallest CV error",cv.ridge$lambda.min))
+print(paste("The 1sd err method lambda",cv.ridge$lambda.1se))
+
+plot(cv.ridge)
+
+# use 1sd error rule default
+plot(ridgefit,xvar="lambda",label=TRUE);
+abline(v=log(cv.ridge$lambda.1se));
+
+print(cbind(coef(ridgefit,s=cv.ridge$lambda.1se),coef(glm_heart)))
+# now possible to compare since the glm was also on standardized variables
 ```
 
-## Bike data continued
+---
 
-```{r lasso,eval=TRUE, echo=TRUE}
-library(glmnet)
-mm = model.matrix(~season+year+holiday+notworkday+weather+temp+I(temp^2)+I(temp^3)+wind,data=train)[,-1]
-set.seed(4268)
-cvfitlasso = cv.glmnet(mm,train$y,alpha=1,standardize=TRUE)
-plot(cvfitlasso)
-print(cvfitlasso$lambda.1se)
-fitlassogrid=glmnet(mm,train$y,lambda=cvfitlasso$lambda,alpha=1,standardize=TRUE)
-plot(fitlassogrid,xvar="lambda")
-abline(v=log(cvfitlasso$lambda.1se))
-fitlasso=glmnet(mm,train$y,lambda=cvfitlasso$lambda.1se,alpha=1,standardize=TRUE)
-coef(fitlasso)
-trainerrorlasso=mean((predict(fitlasso,newx=mm)-train$y)^2)
-predlasso = predict(fitlasso, newx=model.matrix(model,data=test)[,-1])
-testerrorlasso=mean((predlasso-test$y)^2)
-testerrorlasso
-c(trainerrorlm,testerrorlm)
-c(trainerrorlasso,testerrorlasso)
+## Lasso logistic regression
+
+Numbering in plots is order of covariates, so:
+
+
+```{r,echo=TRUE}
+cbind(1:9,colnames(xss))
+
+lassofit=glmnet(x=xss,y=ys,alpha=1,standardize=FALSE) # already standardized
+plot(lassofit,xvar="lambda",label=TRUE)
+
+cv.lasso=cv.glmnet(x=xss,y=ys,alpha=1)
+print(paste("The lamda giving the smallest CV error",cv.lasso$lambda.min))
+print(paste("The 1sd err method lambda",cv.lasso$lambda.1se))
+
+plot(cv.lasso)
+
+# use 1sd error rule default
+plot(lassofit,xvar="lambda",label=TRUE);
+abline(v=log(cv.lasso$lambda.1se));
+
+resmat=cbind(coef(lassofit,s=cv.lasso$lambda.1se),coef(ridgefit,s=cv.ridge$lambda.1se),coef(glm_heart))
+colnames(resmat)=c("lasso logistic","ridge logistic","logistic")
+print(resmat)
 ```
+
+# Computational details for the glmnet implementation
+(HTW 3.7)
+
+`glmnet` is the implementation in R of the elastic net from  HTW-book, and the package is maintained by Trevor Hastie.
+
+The package fits generalized linear models using penalized maximum likelihood of elastic net type (lasso and ridge are special cases).
+
+The logistic lasso is fitted using a quadratic approximation for the
+negative log-likelihood in a "proximal-Newton iterative approach".
+
+## Software links
+
+* [R  glmnet on CRAN](https://cran.r-project.org/web/packages/glmnet/index.html)
+with [resources](http://www.stanford.edu/~hastie/glmnet).
+   + [Getting started](https://glmnet.stanford.edu/articles/glmnet.html)
+   + [GLM with glmnet](https://glmnet.stanford.edu/articles/glmnetFamily.html)
+
+For Python there are different options. 
+
+* [Python glmnet](https://web.stanford.edu/~hastie/glmnet_python/) is recommended by Hastie et al.
+* [scikit-learn](https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression-and-classification) (seems to mostly be for regression? is there lasso for classification here?)
+
+---
+
+## glmnet inputs
+
+```{r,eval=FALSE,echo=TRUE}
+glmnet(x, y, 
+ family = c("gaussian", "binomial", "poisson", "multinomial","cox", "mgaussian"),
+ weights = NULL, offset = NULL, alpha = 1, nlambda = 100, 
+ lambda.min.ratio = ifelse(nobs < nvars, 0.01, 1e-04),
+ lambda = NULL, standardize = TRUE, intercept = TRUE,
+ thresh = 1e-07, dfmax = nvars + 1, 
+ pmax = min(dfmax * 2 + 20, nvars), 
+ exclude = NULL, penalty.factor = rep(1, nvars),
+ lower.limits = -Inf, upper.limits = Inf, maxit = 1e+05,
+ type.gaussian = ifelse(nvars < 500, "covariance", "naive"),
+ type.logistic = c("Newton", "modified.Newton"),
+ standardize.response = FALSE, 
+ type.multinomial = c("ungrouped","grouped"), 
+ relax = FALSE, trace.it = 0, ...)
+```
+
+---
+
+## cv.glmnet inputs
+
+```{r,eval=FALSE,echo=TRUE}
+cv.glmnet(x, y, weights = NULL, offset = NULL, lambda = NULL,
+  type.measure = c("default", "mse", "deviance", "class", "auc", "mae","C"),
+  nfolds = 10, foldid = NULL, 
+  alignment = c("lambda", "fraction"), grouped = TRUE, 
+  keep = FALSE, parallel = FALSE,
+  gamma = c(0, 0.25, 0.5, 0.75, 1), relax = FALSE, trace.it = 0, ...)
+```
+
+type.measure defaults to deviance (accoring to help(cv.glmnet)). The last is for Cox models.
+
+---
+
+### Family
+
+we have only covered `gaussian` (the default) and `binomial`.
+
+Each family has implemented the deviance measure. Poisson regression and Cox proportional hazard (survival analysis) is also implemented in glmnet.
+
+---
+
+### Penalties
+
+The elastic net is implemented, with three possible adjustment parameters.
+
+$$ \text{minimize}_{\beta_0,\beta} \{ -\frac{1}{N} l(y;\beta_0,\beta)+\lambda \sum_{j=1}^p
+\gamma_j ((1-\alpha)\beta_j^2+\alpha \lvert \beta_j \rvert)\}$$
+
+* $\lambda$: the penalty, default a grid of 100 values is chosen, to cover the lasso path on the log scale.
+* $\alpha$: elastic net parameter $\in [0,1]$. This is usually manually selected by a grid search over 3-5 values. Default is $\alpha=1$ (lasso), and with $\alpha=0$ we get ridge.
+* $\gamma_j$: penalty modifier for each covariate to be able to always include ($\gamma_j==0$), or exclude ($\gamma_j=\text{Inf}$), or give individual penalty modifications. Default $\lambda_j=1$.
+
+---
+
+For the $\lambda$ penalty the maximal value is for
+
+* linear regression: $\lambda_{\text max}=\text{max}_j \lvert \hat{\beta}_{LS,j} \rvert$ (standardized coefficients) or, should there also be a factor 1/N?
+* logistic regression: $\lambda_{\text max}=\text{max}_{j}\lvert {\bf x}_j ^T ({\bf y}-\bar{p}) \rvert$ where $\bar p$ is the mean case rate.
+
+
+### Additional modifications
+
+* Coefficient bounds can be set (possible since coordinate descent is used)
+* Some coefficients can be excluded from the penalization (than thus forced in).
+* Offset can be added (popular if rate models for Poisson is used)
+* For binary and multinomial data factors or matrices can be input.
+* Sparse matrices with covariates can be supplied.
+
+---
+
+## Lasso variants
+
+Elastic net is already in glmnet (alpha-parameter).
+
+Other lasso variants have their own R packages:
+
+* The group lasso <https://cran.r-project.org/web/packages/grplasso/grplasso.pdf>
+* The fused lasso <https://cran.r-project.org/web/packages/genlasso/genlasso.pdf>
+
+* Bayesian lasso blasso function for normal data in package monomvn <https://rdrr.io/cran/monomvn/man/monomvn-package.html>
+
+* Elastic net for ordinal data: <https://cran.r-project.org/web/packages/ordinalNet/ordinalNet.pdf>
+
+---
+
+# Exercises
+
+This week the best way to spend the time is to work on the Data Analysis Project 1.
+
+But, also good to study the R-code for the South African heart disease example, and make some changes.
+
+**Smart:** save this file as an .Rmd file and then run `purl(file.Rmd)` to produce a file with only the R-commands. (At the html-version you choose Code-Download Rmd on the top of the file).
+
+* Change the CV criterion to auc and to class. Are there changes?
+
+# References
+
+* Robert Tibshirani Regression Shrinkage and Selection via the Lasso, Journal of the Royal Statistical Society. Series B (Methodological)
+Vol. 58, No. 1 (1996), pp. 267-288 (22 pages) 
+* [Lecture notes on ridge regression: Welle N. van Wieringen](https://arxiv.org/pdf/1509.09169.pdf)

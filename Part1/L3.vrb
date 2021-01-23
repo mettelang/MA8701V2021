@@ -1,0 +1,19 @@
+\frametitle{Exercises}
+\protect\hypertarget{exercises}{}
+
+This week the best way to spend the time is to work on the Data Analysis
+Project 1.
+
+But, also good to study the R-code for the South African heart disease
+example, and make some changes.
+
+\textbf{Smart:} save this file as an .Rmd file and then run
+\texttt{purl(file.Rmd)} to produce a file with only the R-commands. (At
+the html-version you choose Code-Download Rmd on the top of the file).
+
+\begin{itemize}
+\tightlist
+\item
+  Change the CV criterion to auc and to class. Are there changes?
+\end{itemize}
+

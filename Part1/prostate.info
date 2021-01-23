@@ -1,0 +1,22 @@
+Prostate data info
+
+Predictors (columns 1--8)
+
+lcavol
+lweight
+age
+lbph
+svi
+lcp
+gleason
+pgg45
+
+outcome (column 9)
+
+lpsa
+
+train/test indicator (column 10)
+
+This last column indicates which 67 observations were used as the 
+"training set" and which 30 as the test set, as described on page 48
+in the book.
