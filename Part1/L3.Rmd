@@ -3,17 +3,17 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  pdf_document:
-    toc: yes
-    toc_depth: 2
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
 subtitle: 'L3: Shrinkage - algorithm, variants, GLM'
 ---
 
