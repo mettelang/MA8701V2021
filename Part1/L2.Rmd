@@ -1013,5 +1013,5 @@ Please try yourself first, or take a small peek - and try some more - before ful
    + [Selecting tuning parameter](https://www.youtube.com/watch?v=xMKVUstjXBE)
 * Video from webinar with Trevor Hastie on [glmnet from 2019](http://youtu.be/BU2gjoLPfDc)
 
-* [Lecture notes on ridge regression: Welle N. van Wieringen](https://arxiv.org/pdf/1509.09169.pdf)
+* [Lecture notes on ridge regression: Wessel N. van Wieringen](https://arxiv.org/pdf/1509.09169.pdf)
 
