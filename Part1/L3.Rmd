@@ -67,7 +67,7 @@ We still work on the linear regression case - with continuous response.
 * soft thresholding plays an important role. 
 * Also mention the concept of subgradients (from HTW 5.4 - not on the reading list).
 
-See [slides from guest lecturer Benjamin Dunn](slides link)
+See [notes from guest lecturer Benjamin Dunn](https://github.com/mettelang/MA8701V2021/blob/main/Part1/LassoNotesBenDunn.pdf)
 
 ___
 
@@ -92,7 +92,7 @@ It is found that the coordinate descent algorithm is _guaranteed to converge_ to
 ## Generalizations of the lasso penalty
 (HTW 4.1-4.3, 4.5-4.6: NB only from a practical point of view)
 
-See [slides from guest lecturer Benjamin Dunn](slides link)
+See [slides from guest lecturer Benjamin Dunn](https://github.com/mettelang/MA8701V2021/blob/main/Part1/LassoandfriendsBenDunn.pdf)
 
 The main goal of this part is to 
 
