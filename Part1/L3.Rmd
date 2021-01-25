@@ -3,14 +3,14 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: 2
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: 2
   beamer_presentation:
     slide_level: 1
     keep_tex: yes
@@ -211,7 +211,7 @@ ggplot(data.frame(x=c(-6,5)), aes(x))+
 
 ## Parameter estimation
 
-* Maximum likelihood estimation = maximize the likelihood of the data $\cal L(\beta_0,\beta; {\bf y}, {\bf X})$.
+* Maximum likelihood estimation = maximize the likelihood of the data. We write for the loglikelihood ${\cal L}(\beta_0,\beta; {\bf y}, {\bf X})$.
 
 * For penalized method we instead minimize the negative loglikelihood scaled with $\frac{1}{N}$.
 
@@ -593,10 +593,10 @@ But, also good to study the R-code for the South African heart disease example, 
 
 **Smart:** save this file as an .Rmd file and then run `purl(file.Rmd)` to produce a file with only the R-commands. (At the html-version you choose Code-Download Rmd on the top of the file).
 
-* Change the CV criterion to auc and to class. Are there changes?
+* Change the CV criterion to auc and to class. Are there changes to what is the best choice for $\lambda$?
 
 # References
 
 * Robert Tibshirani Regression Shrinkage and Selection via the Lasso, Journal of the Royal Statistical Society. Series B (Methodological)
 Vol. 58, No. 1 (1996), pp. 267-288 (22 pages) 
-* [Lecture notes on ridge regression: Welle N. van Wieringen](https://arxiv.org/pdf/1509.09169.pdf)
+* [Lecture notes on ridge regression: Wessel N. van Wieringen](https://arxiv.org/pdf/1509.09169.pdf)
