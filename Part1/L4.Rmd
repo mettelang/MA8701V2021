@@ -3,15 +3,15 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
-  ioslides_presentation: default
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   pdf_document:
     toc: yes
     toc_depth: 2
@@ -70,7 +70,7 @@ suppressPackageStartupMessages(library(GGally))
 
 We start by discussing the data analysis included in the class material from L3, but not discussed in class before.  
 
-[L3 South African heart disease](http://htmlpreview.github.io/?https://github.com/mettelang/MA8701V2021/blob/main/Part1/L3.html#Example:_South_African_heart_disease)
+[L3 South African heart disease](http://htmlpreview.github.io/?https://github.com/mettelang/MA8701V2021/blob/main/Part1/L3.html)
 
 **Group discussion:** 
 
