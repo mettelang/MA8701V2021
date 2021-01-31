@@ -1,0 +1,15 @@
+structure(list(pval = NA, pval.corr = c(age = 1, sex = 1, bmi = 5.17883227508189e-10, 
+map = 0.0133153670920723, tc = 1, ldl = 1, hdl = 0.453373065511991, 
+tch = 1, ltg = 6.86305222013314e-08, glu = 1), pvals.nonaggr = NA, 
+    ci.level = 0.95, lci = c(age = -Inf, sex = -435.929106500619, 
+    bmi = 363.103304570431, map = 66.5832056787556, tc = -Inf, 
+    ldl = -Inf, hdl = -406.967767246165, tch = -764.326326817313, 
+    ltg = 301.708284056189, glu = -327.086419885308), uci = c(age = Inf, 
+    sex = 103.485984199701, bmi = 776.420625822498, map = 472.644390712918, 
+    tc = Inf, ldl = Inf, hdl = 14.7209583172289, tch = 201.012749310627, 
+    ltg = 715.183636169598, glu = 254.884203426011), gamma.min = c(0.999, 
+    0.999, 0.05, 0.064, 0.999, 0.999, 0.05, 0.999, 0.052, 0.999
+    ), sel.models = NA, method = "multi.split", call = multi.split(x = x, 
+        y = y, B = 1000, fraction = 0.5, ci.level = 0.95, model.selector = lasso.cv, 
+        classical.fit = lm.pval, classical.ci = lm.ci, return.nonaggr = FALSE, 
+        return.selmodels = FALSE, verbose = FALSE), clusterGroupTest = NULL), class = "hdi")
