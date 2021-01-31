@@ -47,6 +47,7 @@ suppressPackageStartupMessages(library(GGally))
 * Sample splitting
 * Inference after selection (Forward regression example, Polyhedral result, PoSI)
 * Reproducibility crisis and selective inference
+* Conclusions
 
 ---
 
@@ -950,9 +951,9 @@ This truncated normal distribution is used to calculate _selection-adjusted_ $p$
 
 ---
 
-## Polythedral lasso result
+## Polyhedral lasso result
 
-The same methodology can be used for the lasso, here also the selection of predictors can be described as a polythedral region of the form $Ay\le b$ - for a fixed value $\lambda$.
+The same methodology can be used for the lasso, here also the selection of predictors can be described as a polyhedral region of the form $Ay\le b$ - for a fixed value $\lambda$.
 
 For the lass the $A$ and $b$ will depend on 
 
