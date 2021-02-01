@@ -396,6 +396,8 @@ table(ys)
 
 dss=data.frame(ys,xss)
 colnames(dss)[1]="chd"
+apply(dss,2,sd)
+apply(dss,2,mean)
 ```
 
 The coloring is done according to the response variable, where green represents a case $Y=1$ and red represents a control $Y=0$.
@@ -428,10 +430,10 @@ A very surprising result here is that `sbp` and `obesity` are NOT significant an
 ## Ridge logistic regression
 
 ```{r,echo=TRUE}
-ridgefit=glmnet(x=xss,y=ys,alpha=0,standardize=FALSE) # already standardized
+ridgefit=glmnet(x=xss,y=ys,alpha=0,standardize=FALSE,family="binomial") # already standardized
 plot(ridgefit,xvar="lambda",label=TRUE)
 
-cv.ridge=cv.glmnet(x=xss,y=ys,alpha=0)
+cv.ridge=cv.glmnet(x=xss,y=ys,alpha=0,standardize=FALSE,family="binomial")
 print(paste("The lamda giving the smallest CV error",cv.ridge$lambda.min))
 print(paste("The 1sd err method lambda",cv.ridge$lambda.1se))
 
@@ -455,10 +457,10 @@ Numbering in plots is order of covariates, so:
 ```{r,echo=TRUE}
 cbind(1:9,colnames(xss))
 
-lassofit=glmnet(x=xss,y=ys,alpha=1,standardize=FALSE) # already standardized
+lassofit=glmnet(x=xss,y=ys,alpha=1,standardize=FALSE,family="binomial") # already standardized
 plot(lassofit,xvar="lambda",label=TRUE)
 
-cv.lasso=cv.glmnet(x=xss,y=ys,alpha=1)
+cv.lasso=cv.glmnet(x=xss,y=ys,alpha=1,standardize=FALSE,,family="binomial")
 print(paste("The lamda giving the smallest CV error",cv.lasso$lambda.min))
 print(paste("The 1sd err method lambda",cv.lasso$lambda.1se))
 
