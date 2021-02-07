@@ -3,16 +3,16 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document:
+  pdf_document:
     toc: yes
-    toc_float: yes
-    code_download: yes
     toc_depth: 3
   beamer_presentation:
     slide_level: 1
     keep_tex: yes
-  pdf_document:
+  html_document:
     toc: yes
+    toc_float: yes
+    code_download: yes
     toc_depth: 3
 subtitle: 'L2: Shrinkage - the beginning'
 ---
@@ -477,7 +477,7 @@ include_graphics("./ILS67ridge.png")
 <!-- $\frac{1}{2N}$ or not? -->
 
 $$ \hat{\beta}_{\text{ridge}}= \text{argmin}_{\beta}[\sum_{i=1}^N (y_i-\beta_0-\sum_{j=1}^p x_{ij}\beta_j )^2 + \lambda \sum_{j=1}^p \beta_j^2]$$
-where $\lambda \le 0$ is a complexity (regularization, penalty) parameter controlling the amount of shrinkage.
+where $\lambda \ge 0$ is a complexity (regularization, penalty) parameter controlling the amount of shrinkage.
 
 * The larger $\lambda$ the greater the amount of shrinkage
 * The shrinkage is towards 0
@@ -777,7 +777,7 @@ include_graphics("./ILS67lasso.png")
 <!-- $\frac{1}{2N}$ or not? -->
 
 $$ \hat{\beta}_{\text{lasso}}= \text{argmin}_{\beta} [\sum_{i=1}^N (y_i-\beta_0-\sum_{j=1}^p x_{ij}\beta_j )^2 + \lambda \sum_{j=1}^p \lvert \beta_j\rvert ] $$
-again, $\lambda \le 0$ is a complexity (regularization, penalty) parameter controlling the amount of shrinkage.
+again, $\lambda \ge 0$ is a complexity (regularization, penalty) parameter controlling the amount of shrinkage.
 
 * The larger $\lambda$ the greater the amount of shrinkage
 * The shrinkage is towards 0
