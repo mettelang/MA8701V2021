@@ -3,15 +3,15 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
-    latex_engine: xelatex
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+    latex_engine: xelatex
   pdf_document:
     toc: yes
     toc_depth: 2
@@ -815,7 +815,7 @@ tree.boston
 Choose your favourites below and discuss in group.
 (maybe use the Boston and Pima indian analysis to look for examples)
 
-1) Check out the partitioning of the predictor space to recursive binary three - or opposite (given as a problem earlier in this note).
+1) Check out the partitioning of the predictor space to recursive binary tree - or opposite (given as a problem earlier in this note).
 2) Why do we say that trees can automatically handle (and find?) non-linearities? Give example.
 3) Same, but now interactions in data. Give example.
 4) What rule do you think is used for the prediction with missing value for the `tree` and `rpart` example above?
@@ -1226,7 +1226,7 @@ If $B$ is sufficiently large (three times the number needed for the random fores
 
 ## Variable importance plots
 
-Bagging is an example of an _ensemble method_, so is boosting and random forests (to come next). For all of these methods many trees are grown and combined, and the predictive power can be highly improved. However, this comes at a cost of interpretability. Instead of having one tree, the resulting model consists of $B$ trees, where $B$ often is 300 or 500 (or maybe even 5000 when boosting). 
+Bagging is an example of an _ensemble method_, so is boosting and random forests. For all of these methods many trees are grown and combined, and the predictive power can be highly improved. However, this comes at a cost of interpretability. Instead of having one tree, the resulting model consists of $B$ trees, where $B$ often is 300 or 500 (or maybe even 5000 when boosting). 
 
 Variable importance plots show _the relative importance of the predictors:_ the predictors are sorted according to their importance, such that the top variables have a higher importance than the bottom variables. 
 There are in general two types of variable importance plots: 
@@ -1306,6 +1306,8 @@ Study Figure 15.5 in ELS.
 
 ### Boston
 
+%IncMSE is a OOB estimate. IncNodePurity is not OOB. Not normalized to 100.
+
 ```{r,echo=TRUE}
 set.seed(1)
 rf.boston=randomForest(medv~.,data=Boston,subset=train,mtry=6,importance=TRUE)
@@ -1313,6 +1315,7 @@ yhat.rf = predict(rf.boston,newdata=Boston[-train,])
 mean((yhat.rf-boston.test)^2)
 importance(rf.boston)
 varImpPlot(rf.boston)
+summary(rf.boston$oob.times) #for 500 trees in total
 ```
 
 ---
@@ -1320,6 +1323,8 @@ varImpPlot(rf.boston)
 ### Pima indians
 
 We decorrelate the trees by using the _randomForest()_ function again, but this time we set _mtry=3_. This means that the algorithm only considers three of the predictors in each split. We choose $3$ because we have $10$ predictors in total and $\sqrt{10}\approx 3$. 
+
+Deviance (not Gini) used for node impurity.
 
 ```{r, eval=TRUE,echo=TRUE}
 set.seed(1)
