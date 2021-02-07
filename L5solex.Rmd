@@ -1,0 +1,40 @@
+----
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+subtitle: 'L5: Solutions to Exercise random forest variance'
+---
+
+```{r setup, include=TRUE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+```
+
+
+The variance of the average of $B$ observations of i.i.d random variables $X$, each with variance $\sigma^2$ is $\frac{\sigma^2}{B}$. Now, suppose we have $B$ observations of a random variable $X$ which are identically distributed, each with mean $\mu$ and variance $\sigma^2$, but not independent. 
+
+That is, suppose the variables have a positive correlation $\rho$
+$$\text{Cov}(X_i, X_j) = \rho \sigma^2, \quad i \neq j.$$
+then the variance of the average is 
+$$\frac{1-(1-B)\rho}{B} \sigma^2$$
+Proof:
+
+$$\begin{aligned} \text{Var}(\bar{X}) &= \text{Var}\Big( \frac{1}{B}\sum_{i=1}^B X_i \Big) \\
+&= \sum_{i=1}^B \frac{1}{B^2} \text{Var} (X_i) + 2 \sum_{i=2}^B \sum_{j=1}^{i-1} \frac{1}{B} \frac{1}{B} \text{Cov} (X_i, X_j) \\
+&= \frac{1}{B} \sigma^2 + 2 \frac{B(B-1)}{2}\frac{1}{B^2} \rho \sigma^2 \\
+&= \frac{1}{B} \sigma^2 + \rho \sigma^2 - \frac{1}{B} \rho \sigma^2 \\
+&= \rho \sigma^2 + \frac{1-\rho}{B}\sigma^2\\
+&= \frac{1-(1-B)\rho}{B} \sigma^2\\ \end{aligned}$$

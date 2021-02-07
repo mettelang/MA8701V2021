@@ -3,14 +3,14 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  pdf_document:
-    toc: yes
-    toc_depth: 2
   beamer_presentation:
     slide_level: 1
     keep_tex: yes
@@ -21,15 +21,9 @@ subtitle: 'L3: Shrinkage - algorithm, variants, GLM'
 suppressPackageStartupMessages(library(knitr))
 knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
 suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(reticulate))
-#reticulate::use_python("/usr/bin/python3",required=TRUE)
 suppressPackageStartupMessages(library(ggpubr))
-suppressPackageStartupMessages(library(cowplot))
-suppressPackageStartupMessages(library(magick))
-suppressPackageStartupMessages(library(pheatmap))
-suppressPackageStartupMessages(library(amap))
 suppressPackageStartupMessages(library(kableExtra))
-whichformat="html"
+#whichformat="html"
 suppressPackageStartupMessages(library(GGally))
 suppressPackageStartupMessages(library(corrplot))
 suppressPackageStartupMessages(library(glmnet))
@@ -125,8 +119,6 @@ write down
 
 ---
 
----
-
 # Generalized linear models
 (HTW 3.1, 3.2, and TMA4315 GLM background)
 
@@ -139,10 +131,8 @@ The GLM model has three ingredients:
 
 We look into that for the normal and binomial distribution - to get multiple linear regression and logistic regression.
 
-* [Write in class](classnotelink)
+* Write in class
 * Poll on standardization and centering.
-
----
 
 ---
 
@@ -219,9 +209,7 @@ ggplot(data.frame(x=c(-6,5)), aes(x))+
 
 * We write this out for the normal and binomial distribution.
 
-* [Write in class](classnotelink)
-
----
+* Write in class
 
 ---
 
@@ -252,7 +240,7 @@ OUTER LOOP: start with lambdamax and decrement
          
          
               INNER LOOP: cyclic coordinate descent
-              to minimize Q added the lasso penalty
+              to minimize -Q added the lasso penalty
               
 ```            
 
