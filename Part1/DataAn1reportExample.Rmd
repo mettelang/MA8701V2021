@@ -3,16 +3,16 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
+    toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  pdf_document:
+    toc: yes
     toc_depth: 3
 subtitle: 'Example Data Analysis Report Project 1'
 ---
@@ -237,7 +237,6 @@ coef(cv.lasso)
 
 We now turn to bootstrapping for running an outer loop to get confidence intervals for regression parameters for the methods where model selection is used.
 
-Should the lambda grid be the same for the loop or different for each in loop? HTW outside, else inside?
 
 ```{r}
 insideloop=function(ids)
@@ -286,13 +285,14 @@ plasso
 
 lasso0perc=apply(abs(blassomat)<.Machine$double.eps,2,mean)
 
-quant95=function(x) return(quantile(x,probs=c(0.025,0.5,0.975)))
-bridgeCI=apply(bridgemat,2,quant95)
-blassoCI=apply(blassomat,2,quant95)
-bridgeCI
-blassoCI
+# not use percentile but BC interval for biased estiators!
+#quant95=function(x) return(quantile(x,probs=c(0.025,0.5,0.975)))
+#bridgeCI=apply(bridgemat,2,quant95)
+#blassoCI=apply(blassomat,2,quant95)
+#bridgeCI
+#blassoCI
 
-cbind(t(bridgeCI),t(blassoCI))
+#cbind(t(bridgeCI),t(blassoCI))
 ```
 
 # Discussion 

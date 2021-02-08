@@ -1,0 +1,225 @@
+---
+title: "Statistical models for comparing counts"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+---
+
+```{r setup, include=TRUE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(reticulate))
+#reticulate::use_python("/usr/bin/python3",required=TRUE)
+suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(magick))
+suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(GGally))
+suppressPackageStartupMessages(library(bestglm))
+suppressPackageStartupMessages(library(glmnet))
+suppressPackageStartupMessages(library(nortest))
+```
+
+
+```{r}
+```
+
+# Data description
+
+* Diaglogue id
+* Diaglogue class (categorical)
+* Number of utterances in word class 1
+* Number of utterances in word class 2
+* Number of utterances in word class M (M may be 3 or 4, or larger)
+* Number of utterances in dialogue
+* Possibly covariates for each dialogue
+
+**Goal 1:** For each word class we want to compare if the rate of utterances is different for two or many dialogue classes.
+
+**Goal 2:** For all the word classes simultaneously we want to compare the rates between dialogue classes, and test if at least one word class has different rate between the diagloue classes.
+
+
+# Rate models with offset Poisson 
+- for testing goal 1.
+
+## Description 
+(from TMA4315 Generalized linear models)
+
+In the Poisson process we might analyse an event that occurs within a time interval or region in space, and therefore it is often of interest to model the _rate_ at which events occur.
+
+Examples:
+
+* crime rates in cities
+* death rate for smokers vs. non-smokers
+* rate of auto thefts in cities 
+
+Agresti (1996, page 86): "what if we want to model the number of auto thefts for a year in a sample of cities. We would make a rate for each city by dividing the number of auto thefts by the population size of the city. The model could then describe how this rate depends on unemployment rate, median income, percentage of residents having completed high school."" 
+
+Now we don't want a model for $Y_i$=count of events, but for $Y_i/t_i$, where 
+
+* Let $t_i$ denote the index (population size in the example) associated with observation $i$. 
+* We assume that $Y_i$ follows a Poisson distribution, and include the index in the modelling and focus on $Y_i/t_i$.
+* The expected value of $Y_i/t_i$ would then be $\text{E}(Y_i)/t_i=\lambda_i/t_i$.
+
+A log-linear model would be
+$$ \log(\lambda_i/t_i)={\bf x}_i^T \beta$$
+We may equivalently write the model as
+$$ \log(\lambda_i)-\log(t_i)={\bf x}_i^T \beta$$
+This adjustment term is called an _offset_ and is a known quantity.
+
+The expected number of outcomes will then satisfy
+$$ \text{E}(Y_i)=\lambda_i=t_i \exp({\bf x}_i^T \beta).$$
+
+## Example: British doctors and rate models
+
+Count data - the number of times and event occurs - is common. In one famous study British doctors were in 1951 sent a questionnaire about whether they smoked tobacco - and later information about their death were collected. 
+
+Research questions that were asked were: 1) Is the death rate higher for smokers than for non-smokers? 2) If so, by how much? 3) And, how is this related to age?
+
+```{r}
+library(boot)
+?breslow
+#n=person-year, ns=smoker-years, 
+#age=midpoint 10 year age group, 
+#y=number of deaths due to cad, smoke=smoking status
+head(breslow,n=10)
+```
+
+
+To investigate this we will look at different ways of relating the expected number of deaths and the number of doctors at risk in the observation period for each smoke and age group. The aim is to model the rate of cardiovascular mortality.
+
+```{r}
+# first age and smoke (but not interaction thereof)
+fit1<- glm(y~factor(age)+factor(smoke),offset=log(n),family=poisson, data=breslow)
+summary(fit1)
+
+# do we need interaction?
+fit2<- update(fit1,.~.+factor(smoke)*factor(age))
+summary(fit2)
+anova(fit1,fit2,test="Chisq")
+#yes, significant interaction between age and smoking - how does this compare to a deviance test for fit1?
+
+# reporting on final model - give rate in each possible group
+cbind(fit2$fitted.values,breslow$y) #perfect fit since number of coeffs equal number of groups
+exp(predict(fit2,type="link"))
+predict(fit2,type="response")
+
+# I want to see the estimated value of lambda for a population size of 1 and of 1000
+length(fit2$coefficients)
+#year 40 nonsmokers should only be the intercept
+exp(fit2$coefficients[1]) # expected number of deaths pr individual in a population of 40-year olds who do not smoke
+# pr 1000
+exp(fit2$coefficients[1])*1000
+# 80 year olds who smoke
+exp(sum(fit2$coefficients[c(1,5,6,10)]))
+# pr 1000
+1000*exp(sum(fit2$coefficients[c(1,5,6,10)]))
+```
+
+## Applying the model to the dialogue data
+
+* The number of utterances will be the offset 
+* The offset model is applied to each subcategory separately - no joint modelling of the subcategories
+* Easy to compare two groups 
+* Easy to add additional covariates
+
+# Generalized linear mixed binomial models
+
+I think that is a good second option:
+
+* For each utterance say if it is 1 (specific type) or else 0 - which is the response
+* Use the dialogue id as a random effect to bind together the utterances in one dialogue
+* Type of dialogue is then a covariate.
+
+
+# Categorical regression
+
+Here I am a bit usure if this is really answering the dialogue questions, but just mention this in case there is something there in the future.
+
+* _Independent_ observation pairs $({\bf Y}_i,{\bf x}_i)$.
+* $\pi_{ir}$: probability that the response is category $r$ for subject $i$. 
+* $\sum_{s=1}^{c+1}\pi_{is}=1$ for all $i$, so that $\pi_{i,c+1}=1-\sum_{s=1}^{c}\pi_{is}$. So, we have $c$ probabilities to estimate.
+* Further, the covariate vector ${\bf x}_i$ consists of the same measurements for each response category 
+
+This is a generalization of the binary logit model with $P(Y=1)$ vs $P(Y=0)$, to $c$ models of $\pi_{ir}$ vs $\pi_{i,c+1}$ for $r=1,\ldots,c$.
+
+The models can be written using log ratios:
+$$ \ln(\frac{\pi_{ir}}{\pi_{i,c+1}})={\bf x}_i^T {\boldsymbol \beta}_r$$
+
+Remark: ${\boldsymbol \beta}_r$ is the $p\times 1$ coefficient vector for the $r$th response 
+
+Using this we may also look at the log ratio for any two probabilites $\pi_{ia}$ and $\pi_{ib}$:
+
+$$\ln(\frac{\pi_{ia}}{\pi_{ib}})=\ln(\frac{\pi_{ia}}{\pi_{i,c+1}})-\ln(\frac{\pi_{ib}}{\pi_{i,c+1}})={\bf x}_i^T ({\boldsymbol \beta}_a-{\boldsymbol \beta}_b)$$
+
+
+Alternatively, we may write out the model for the probabilites:
+
+$$P(Y_i=r)=\pi_{ir}=\frac{\exp({\bf x}_i^T {\boldsymbol\beta}_r)}{1+\sum_{s=1}^{c}\exp({\bf x}_i^T {\boldsymbol\beta}_s)}$$
+
+$$P(Y_i=c+1)=\pi_{i,c+1}=1-\pi_{i1}-\cdots \pi_{ic}=\frac{1}{1+\sum_{s=1}^{c}\exp({\bf x}_i^T {\boldsymbol\beta}_s)}$$
+
+
+## Alligators example 
+Example and data are taken from Agresti (2015, pages 217-219).
+
+Research question: what is the factors influencing the primary food choice of alligators?
+
+Data are from 219 captured alligators from four lakes in Florida, where the stomack contents of the alligators were investigated. The weight of different types of food was measured, and then the primary food choice (highest weight) was noted. The primary choice is given as y1:y5 below. In addition the size of the alligator (non-adult or adult) was registered.
+
+* lake: each of the 4 lakes in Florida (1:4)
+* size: non-adult=the size of the alligator (0: 2.3 meters or smaller) and adult=(1: larger than 2.3 meters)
+* y1: fish
+* y2: inverterbrate
+* y3: reptile
+* y4: bird
+* y5: other
+
+These data are grouped, and we let y1:fish be the reference category.
+
+```{r}
+# data from Agresti (2015), section 6, with use of the VGAM packages
+data="http://www.stat.ufl.edu/~aa/glm/data/Alligators.dat"
+ali = read.table(data, header = T)
+ali
+attach(ali)
+```
+  
+```{r}
+y.data=cbind(y2,y3,y4,y5,y1)
+y.data
+dim(y.data)
+x.data=model.matrix(~size+factor(lake),data=ali)
+x.data
+dim(x.data)
+```
+
+```{r}
+# We use library VGAM:
+library(VGAM)
+
+# We fit a multinomial logit model with fish (y1) as the reference category:
+fit.main=vglm(cbind(y2,y3,y4,y5,y1)~size+factor(lake),
+         family=multinomial, data=ali)
+summary(fit.main)
+pchisq(deviance(fit.main),df.residual(fit.main),lower.tail=FALSE)
+```
+
+```{r}
+exp(coefficients(fit.main))
+```
+
+
+
