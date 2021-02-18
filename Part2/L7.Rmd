@@ -7,15 +7,15 @@ output:
     slide_level: 1
     keep_tex: yes
     latex_engine: xelatex
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-    latex_engine: xelatex
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    latex_engine: xelatex
 subtitle: 'L7: Random forest, Super Learner, Hyperparameter tuning'
 ---
 
@@ -77,6 +77,8 @@ These models may be simple base models - or more elaborate models.
 We have studied bagging - where we take a simple average of the prediction from many models (or majority vote), and the base models can be trees - or other type of models. 
 
 Random forest is a version of bagging, with trees made to be different (decorrelated). 
+
+---
 
 We have studied boosting, where the models are trained on sequentially different data - from residuals or gradients of loss functions - and the ensemble members cast weighted votes. We have in particular looked into the xgboost variant of boosting, and also evaluated possible parameters to tune to optimize performance. 
 
@@ -315,6 +317,7 @@ The use of ensembles like the Super Learner may be seen as an alternative to hyp
 Overview of advices from Berent Å.S. Lunde on tuning parameters in xbgoost (written out after the lecture and approved by Berent):
 
 **Ways to speed-up computation:**
+
 * Higher learning-rate, then tune the number of boosting iterations.
 * When tuning, do not use too high k in k-fold CV (for both speed and also to avoid high variance), or drop CV and use a validation set.
 * Speedups with histogram algorithms of order $n$ (avoid exact enumeration of all splits, nlogn).
@@ -323,6 +326,7 @@ Overview of advices from Berent Å.S. Lunde on tuning parameters in xbgoost (wri
 ---
 
 **Comments on hyperparameters:**
+
 * Learning rate (eta in xgb): Set as low as computation times allow. Typically in between $0.01$ and $0.1$ is sufficient.
 * Number of trees (boosting iterations): Very much affected by the learning rate. Most important parameter to tune, given a learning rate.
 @ Maximum depth of trees: start low, then increase. High values takes significantly longer to train. Think about the problem, and the number of possible interaction effects. If max-depth = J, then interactions among J-1 features is possible. How much is needed?
@@ -406,6 +410,9 @@ Let $\mathbf{Y}_{(p\times 1)}$ be a random vector from $N_p(\mathbf{\mu},\Sigma)
 1. The grapical contours of the mvN are ellipsoids (can be shown using spectral decomposition).
 2. Linear combinations of components of $\mathbf{Y}$ are (multivariate) normal (can be easily proven using moment generating functions MGF).
 3. All subsets of the components of $\mathbf{Y}$ are (multivariate) normal (special case of the above).
+
+---
+
 4. Zero covariance implies that the corresponding components are independently distributed (can be proven using MGF).
 5. $\mathbf{A}\Sigma\mathbf{B}^T=\mathbf{0} \Leftrightarrow \mathbf{A}\mathbf{Y}$ and $\mathbf{B}\mathbf{Y}$ are independent.
 6. The conditional distributions of the components are (multivariate) normal. 
@@ -487,6 +494,7 @@ Thought experiment:
 
 2) Correction: We may perform one more evaluation. If we choose $x$ we observe $f(x)$, and the best point before that was $f^{*}_n$. The improvement at the new observation is then
 $$ \max(f(x)-f^{*}_n,0)$$
+
 ---
 
 
