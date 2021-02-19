@@ -7,6 +7,7 @@ output:
     slide_level: 1
     keep_tex: yes
     latex_engine: xelatex
+  ioslides_presentation: default
   html_document:
     toc: yes
     toc_float: yes
@@ -107,7 +108,7 @@ The Super Learner or _generalized stacking_ is an algorithm that combines
 
 ## Ingredients:
 
-* _Training data_ (level_zero data) $O_i=(X_i,Y_i)$ of $N$ i.i.d observations.
+* _Training data_ (level-zero data) $O_i=(X_i,Y_i)$ of $N$ i.i.d observations.
 * A total of $L$ _base learning algorithms_ $\Psi^l$ for $l=1,\ldots,L$, each from some algorithmic class and each with a specific set of model parameters.
 * A _metalearner_ ${\bf \Phi}$ is used to find an _optimal combination_ of the $L$ base learners.
 
@@ -117,15 +118,15 @@ The Super Learner or _generalized stacking_ is an algorithm that combines
 
 **Step 1: Produce level-one data** ${\bf Z}$
 
-a) Divide the training data ${\bf X}$ randomly into $V$ roughly-equally sized  validation folds ${\bf X}_(1),\ldots,{\bf X}_(V)$. $V$ is often 5 or 10.
+a) Divide the training data ${\bf X}$ randomly into $V$ roughly-equally sized  validation folds ${\bf X}_{(1)},\ldots,{\bf X}_{(V)}$. $V$ is often 5 or 10.
 
 b) For each base learner $\Phi^l$ perform $V$-fold cross-validation to produce prediction.  
 
 This gives the level-one data set ${\bf Z}$ consisting prediction of all the level-zero data - that is a matrix with $N$ rows and $L$ columns. 
 
----
-
 **What could the base learners be?**
+
+---
 
 "Any" method that produces a prediction - "all" types of problems.
 
@@ -142,12 +143,12 @@ This gives the level-one data set ${\bf Z}$ consisting prediction of all the lev
 
 **Step 2: Fit the metalearner**
 
-a) The starting point is the level-one prediction data ${\bf Z}$ together with the responses $(y_1,\ldots ,Y_N)$.
+a) The starting point is the level-one prediction data ${\bf Z}$ together with the responses $(Y_1,\ldots ,Y_N)$.
 b) The metalearner is used to estimate the weights given to each base learner: $\hat{Y_i}=\alpha_1 z_{1i}+ \cdots + \alpha_L z_{Li}$. (Should probably also involve some link function, so that this may be the linear predictor.)
 
----
-
 **What could the metalearner be?**
+
+---
 
 * the mean (bagging)
 * ordinary least squares
@@ -233,7 +234,7 @@ The data used is the Boston housing dataset from  `MASS`, but with the median va
 
 Observe that only 150 of the 560 observations is used (to speed up things, but of cause that gives less accurate results).
 
-```{r}
+```{r,echo=TRUE}
 data(Boston, package = "MASS")
 #colSums(is.na(Boston)) # no missing values
 outcome = Boston$medv
@@ -257,7 +258,7 @@ table(y_train, useNA = "ifany")
 
 Then checking out the possible functions and how they differ from their "original versions".
 
-```{r}
+```{r,echo=TRUE}
 listWrappers()
 # how does SL.glm differ from glm? obsWeight added to easy use the traning fold in the CV and returns a prediction for new observarions
 SL.glm
@@ -267,7 +268,7 @@ SL.glmnet
 
 The fitting lasso to check what is being done. The default metalearner is "method.NNLS" (both for regression and two-class classification - probably then for linear predictor NNLS?).
 
-```{r}
+```{r,echo=TRUE}
 set.seed(1)
 sl_lasso=SuperLearner(Y=y_train, X=x_train,family=binomial(),SL.library="SL.glmnet")
 sl_lasso
@@ -277,7 +278,7 @@ sl_lasso$cvRisk
 
 Now use lasso and randomforest, and also add the average of ys just as the benchmark.
 
-```{r}
+```{r,echo=TRUE}
 set.seed(1)
 sl=SuperLearner(Y=y_train, X=x_train,family=binomial(),SL.library=c("SL.mean","SL.glmnet","SL.randomForest"))
 sl
@@ -288,7 +289,7 @@ Our ensemble give weight 0.13 to lasso and 0.86 to the random forest. (The guide
 
 Predict on the part of the dataset not used for the training.
 
-```{r}
+```{r,echo=TRUE}
 pred=predict(sl,x_holdout=x_holdout,onlySL=TRUE)
 str(pred)
 summary(pred$pred)
@@ -297,7 +298,7 @@ summary(pred$library.predict)
 
 Add now an external cross-validation loop - only using the training data. Here the default $V=10$ is used for the inner loop, and we set the value for the outer loop (here $V=3$ for speed).
 
-```{r}
+```{r,echo=TRUE}
 system.time({cv_sl=CV.SuperLearner(Y=y_train, X=x_train,V=3,family=binomial(),SL.library=c("SL.mean","SL.glmnet","SL.randomForest"))})
 summary(cv_sl)
 ```
@@ -305,6 +306,11 @@ summary(cv_sl)
 See the guide for more information on running multiple versions of one base learner, and parallellisation.
 
 # Choosing hyperparameters
+
+* What are _hyperparameters_? 
+* Which hyperparameters have we encountered in the course so far?
+
+---
 
 _Hyperparameters_ are parameters than cannot be directly estimated from data. This may be model parameters (the $\lambda$ in lasso) or parameters that influence the fitting of the model (e.g. related to some optimization algorithm).
 
@@ -336,7 +342,7 @@ Overview of advices from Berent Å.S. Lunde on tuning parameters in xbgoost (wri
 * Min child weight: Something I usually do not think about. Default=1 (low) works. For me
  
 Every problem is different, and there will exist exceptions to the above guidelines.
-I look forward to a world without hyperparameters.
+_I look forward to a world without hyperparameters._ (Berent Å.S. Lunde)
 
 ---
 
@@ -344,7 +350,13 @@ The hyperparameters may be continuous (penalty parameter), discrete (number of l
 
 The choice of hyperparameters is important, and will often directly affect the model complexity, and unwise choices may lead to overfitting. 
 
-Hyperparametertuning is often based on a separate validation set or using cross-validation, and different loss functions or selection criteria may be used (MSE, AUC, misclassification rate, ...).
+---
+
+Hyperparametertuning is performed using a separate validation set or by cross-validation. Different loss functions or selection criteria may be used (MSE, AUC, misclassification rate, ...).
+
+The hyperparameter tuning is often referred to as a black-box optimization because we (usually) only calculate loss function values (with CV) and do not get to compute gradients. 
+
+What may be challenges with hyperparameter optimization?
 
 ---
 
@@ -355,16 +367,17 @@ Some challenges with hyperparameter optimization (Feurer and Hutter, Ch1):
 * gradient of selection criterion with respect to the hyperparameters not (generally) available, and criterion not convex or smooth in the hyperparameters
 * and the need for external validation or CV
 
-The hyperparameter tuning is referred to as a black-box optimization because we (usually) only calculate loss function values (with CV) and do not get to compute gradients. 
 
 ---
 
-There exist many ways to group methods for hyperparameter tuning. One way to look at this is (Kuhn and Silge, 2021, Ch 12)
+There exist many ways to _group_ methods for hyperparameter tuning. One way to look at this is (Kuhn and Silge, 2021, Ch 12)
 
 * grid search: specify a set of possible values a priori and investigate only these values, choose the value where the chosen selection criterion is optimal. This is also called "model free methods".
 * iterative search: start with a set of values, fit/evaluate some (surrogate) model (might also be the loss function), and based on this choose new values to evaluate next.
 
 For grid search also methods for _speeding up calculations_ exists - for example by stopping evaluation at a grid point where the loss is seen to be high after some CV-folds, for example the method of _racing_ described by Kuhn and Silge, Ch 13.4.
+
+---
 
 (Class notes: see example from Kuhn and Silge, 2021, Spacefilling grid vs global search)
 
@@ -431,7 +444,7 @@ A Gaussian process is defined for
 
 The process is _first order (mean) stationary_ if $\text{E}(Y(x))=\mu$ for all $x$, and this can be extended to depend on covariates.
 
-The process is _second order stationary_ if $\text{Var}(Y(t))=\sigma^2$ for all $x$ and the correlation $\text{Corr}(Y(x),Y(x´))$ only depends on differences between $x$ and $x'$.
+The process is _second order stationary_ if $\text{Var}(Y(t))=\sigma^2$ for all $x$ and the correlation $\text{Corr}(Y(x),Y(x'))$ only depends on differences between $x$ and $x'$.
 
 The multivariate Gaussian distribution is defined by the mean and covariance alone.
 
@@ -512,7 +525,7 @@ $$ \text{EI}_n(x)=\max(\mu_n(x)-f^{*}_n,0)])+\sigma_n(x) \phi(\frac{\max(\mu_n(x
 $$-\text{abs}(\mu_n(x)-f^{*}_n) \Phi(\frac{\max(\mu_n(x)-f^{*}_n,0)}{\sigma_n(x)})$$
 
 
-* $\mu_n(x)-f^{*}_n$ is expected proposed vs previously best
+$\mu_n(x)-f^{*}_n$ is expected proposed vs previously best
 
 5) We choose to evaluate the point with the largest expected improvement
 
@@ -522,6 +535,8 @@ $$ x_{n+1}=\text{argmax}\text{EI}_n(x)$$
 
 ### Algorithm for Bayesian optimization of a function $f$
 (Frazier 2018, page 3, noise-free evaluation)
+
+---
 
 Place a Gaussian process prior on $f$.
 
