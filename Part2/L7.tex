@@ -44,12 +44,13 @@
   \frame{\subsectionpage}
 }
 \usepackage{lmodern}
-\usepackage{amssymb,amsmath}
+\usepackage{amsmath}
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
+  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -121,7 +122,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{graphicx,grffile}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -138,20 +139,22 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
 
 \title{MA8701 Advanced methods in statistical inference and learning}
 \subtitle{L7: Random forest, Super Learner, Hyperparameter tuning}
 \author{Mette Langaas IMF/NTNU}
-\date{18 February, 2021}
+\date{20 February, 2021}
 
 \begin{document}
 \frame{\titlepage}
 
 \begin{frame}{Ensembles - third act}
 \protect\hypertarget{ensembles---third-act}{}
-
 \begin{block}{So far}
-
+\protect\hypertarget{so-far}{}
 \textbf{L5}:
 
 \begin{itemize}
@@ -175,15 +178,12 @@
 \item
   Avoiding hyperparameter tuning in xgboost
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Outline}
-
+\protect\hypertarget{outline}{}
 \begin{itemize}
 \tightlist
 \item
@@ -199,14 +199,11 @@
 
 Left for L8: How to use statistical inference to give CI and compare
 predictions from different methods.
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}{Ensembles - overview}
 \protect\hypertarget{ensembles---overview}{}
-
 (ELS Ch 16.1)
 
 With ensembles we want to build \emph{one prediction model} which
@@ -220,7 +217,9 @@ be trees - or other type of models.
 
 Random forest is a version of bagging, with trees made to be different
 (decorrelated).
+\end{frame}
 
+\begin{frame}
 We have studied boosting, where the models are trained on sequentially
 different data - from residuals or gradients of loss functions - and the
 ensemble members cast weighted votes. We have in particular looked into
@@ -230,19 +229,15 @@ to tune to optimize performance.
 In L7 we also look into an ensemble built of elaborate models with the
 Super Learner and study some possible methods for tuning
 hyperparameters.
-
 \end{frame}
 
 \begin{frame}{Random forest}
 \protect\hypertarget{random-forest}{}
-
 (ELS Ch 15) see learning material in L5.
-
 \end{frame}
 
 \begin{frame}{Super Learner}
 \protect\hypertarget{super-learner}{}
-
 (References: Le Dell (2015) Section 2.2 and van der Laan et al (2016),
 and Polley et al (2011))
 
@@ -257,13 +252,11 @@ combines
 \item
   a \emph{metalearner} - which can be seen as a \emph{single} method.
 \end{itemize}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Development:}
-
+\protect\hypertarget{development}{}
 \begin{itemize}
 \tightlist
 \item
@@ -277,19 +270,16 @@ combines
   2006: proven to have asymptotic theoretical oracle property by van der
   Laan, Polley and Hubbard.
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Ingredients:}
-
+\protect\hypertarget{ingredients}{}
 \begin{itemize}
 \tightlist
 \item
-  \emph{Training data} (level\_zero data) \(O_i=(X_i,Y_i)\) of \(N\)
+  \emph{Training data} (level-zero data) \(O_i=(X_i,Y_i)\) of \(N\)
   i.i.d observations.
 \item
   A total of \(L\) \emph{base learning algorithms} \(\Psi^l\) for
@@ -299,15 +289,12 @@ combines
   A \emph{metalearner} \({\bf \Phi}\) is used to find an \emph{optimal
   combination} of the \(L\) base learners.
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Algorithm}
-
+\protect\hypertarget{algorithm}{}
 \textbf{Step 1: Produce level-one data} \({\bf Z}\)
 
 \begin{enumerate}
@@ -315,7 +302,7 @@ combines
 \item
   Divide the training data \({\bf X}\) randomly into \(V\)
   roughly-equally sized validation folds
-  \({\bf X}_(1),\ldots,{\bf X}_(V)\). \(V\) is often 5 or 10.
+  \({\bf X}_{(1)},\ldots,{\bf X}_{(V)}\). \(V\) is often 5 or 10.
 \item
   For each base learner \(\Phi^l\) perform \(V\)-fold cross-validation
   to produce prediction.
@@ -325,14 +312,11 @@ This gives the level-one data set \({\bf Z}\) consisting prediction of
 all the level-zero data - that is a matrix with \(N\) rows and \(L\)
 columns.
 
+\textbf{What could the base learners be?}
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
-\textbf{What could the base learners be?}
-
 ``Any'' method that produces a prediction - ``all'' types of problems.
 
 \begin{itemize}
@@ -354,11 +338,9 @@ columns.
 \item
   neural net with hyperparameter set 1
 \end{itemize}
-
 \end{frame}
 
 \begin{frame}
-
 \textbf{Step 2: Fit the metalearner}
 
 \begin{enumerate}
@@ -366,7 +348,7 @@ columns.
 \tightlist
 \item
   The starting point is the level-one prediction data \({\bf Z}\)
-  together with the responses \((y_1,\ldots ,Y_N)\).
+  together with the responses \((Y_1,\ldots ,Y_N)\).
 \item
   The metalearner is used to estimate the weights given to each base
   learner: \(\hat{Y_i}=\alpha_1 z_{1i}+ \cdots + \alpha_L z_{Li}\).
@@ -374,12 +356,10 @@ columns.
   the linear predictor.)
 \end{enumerate}
 
+\textbf{What could the metalearner be?}
 \end{frame}
 
 \begin{frame}
-
-\textbf{What could the metalearner be?}
-
 \begin{itemize}
 \tightlist
 \item
@@ -393,17 +373,13 @@ columns.
 \item
   1-ROC-AUC
 \end{itemize}
-
 \end{frame}
 
 \begin{frame}
-
 (Class notes: Study Figure 3.2 from Polley et al)
-
 \end{frame}
 
 \begin{frame}
-
 \textbf{Step 3: Re-estimate base learners and combine into superlearner
 on full training data}
 
@@ -431,13 +407,11 @@ For a new observaton \({\bf x}^*\)
   feed this to the metalearnerfit to produce the final prediction
   \(y^*\).
 \end{enumerate}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{The metalearning}
-
+\protect\hypertarget{the-metalearning}{}
 \begin{itemize}
 \tightlist
 \item
@@ -462,36 +436,28 @@ For a new observaton \({\bf x}^*\)
   For classification the logistic response function can be used on the
   linear combination of base learners (Figure 3.2 Polley).
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Examples}
-
+\protect\hypertarget{examples}{}
 \begin{block}{Simulations examples}
-
+\protect\hypertarget{simulations-examples}{}
 (Class notes: Study Figure 3.3 and Table 3.2 from Polley et al)
-
 \end{block}
 
 \begin{block}{Real data}
-
+\protect\hypertarget{real-data}{}
 (Class notes: Study Figure 3.4 and Table 3.3 from Polley et al.~RE=MSE
 relative to the linear model OLS.)
-
 \end{block}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Theoretical result}
-
+\protect\hypertarget{theoretical-result}{}
 \begin{itemize}
 \tightlist
 \item
@@ -514,15 +480,12 @@ relative to the linear model OLS.)
   training set is sufficient to allow for unbounded loss fuctions (Le
   Dell page 6).
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Uncertainty in the ensemble}
-
+\protect\hypertarget{uncertainty-in-the-ensemble}{}
 (Class notes: Study ``Road map'' 2 from Polley et al)
 
 \begin{itemize}
@@ -539,15 +502,12 @@ relative to the linear model OLS.)
   variance for the Super Learner are based on asymptotic variances in
   the use of \(V\)-fold cross-validation (see Ch 5.3 of Le Dell, 2015)
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}[fragile]
-
 \begin{block}{Other issues}
-
+\protect\hypertarget{other-issues}{}
 \begin{itemize}
 \tightlist
 \item
@@ -562,15 +522,12 @@ relative to the linear model OLS.)
   subsampling, and the R \texttt{subsemble} package is one solution, the
   H2O Ensemble project another.
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}[fragile]
-
 \begin{block}{R example}
-
+\protect\hypertarget{r-example}{}
 Code is copied from \href{}{Guide to SuperLearner} and the presentation
 follows this guide. The data used is the Boston housing dataset from
 \texttt{MASS}, but with the median value of a house dichotomized into a
@@ -578,6 +535,30 @@ classification problem.
 
 Observe that only 150 of the 560 observations is used (to speed up
 things, but of cause that gives less accurate results).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{data}\NormalTok{(Boston, }\AttributeTok{package =} \StringTok{"MASS"}\NormalTok{)}
+\CommentTok{\#colSums(is.na(Boston)) \# no missing values}
+\NormalTok{outcome }\OtherTok{=}\NormalTok{ Boston}\SpecialCharTok{$}\NormalTok{medv}
+\CommentTok{\# Create a dataframe to contain our explanatory variables.}
+\NormalTok{data }\OtherTok{=} \FunctionTok{subset}\NormalTok{(Boston, }\AttributeTok{select =} \SpecialCharTok{{-}}\NormalTok{medv)}
+\CommentTok{\#Set a seed for reproducibility in this random sampling.}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\CommentTok{\# Reduce to a dataset of 150 observations to speed up model fitting.}
+\NormalTok{train\_obs }\OtherTok{=} \FunctionTok{sample}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(data), }\DecValTok{150}\NormalTok{)}
+\CommentTok{\# X is our training sample.}
+\NormalTok{x\_train }\OtherTok{=}\NormalTok{ data[train\_obs, ]}
+\CommentTok{\# Create a holdout set for evaluating model performance.}
+\CommentTok{\# Note: cross{-}validation is even better than a single holdout sample.}
+\NormalTok{x\_holdout }\OtherTok{=}\NormalTok{ data[}\SpecialCharTok{{-}}\NormalTok{train\_obs, ]}
+\CommentTok{\# Create a binary outcome variable: towns in which median home value is \textgreater{} 22,000.}
+\NormalTok{outcome\_bin }\OtherTok{=} \FunctionTok{as.numeric}\NormalTok{(outcome }\SpecialCharTok{\textgreater{}} \DecValTok{22}\NormalTok{)}
+\NormalTok{y\_train }\OtherTok{=}\NormalTok{ outcome\_bin[train\_obs]}
+\NormalTok{y\_holdout }\OtherTok{=}\NormalTok{ outcome\_bin[}\SpecialCharTok{{-}}\NormalTok{train\_obs]}
+\FunctionTok{table}\NormalTok{(y\_train, }\AttributeTok{useNA =} \StringTok{"ifany"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## y_train
@@ -587,6 +568,12 @@ things, but of cause that gives less accurate results).
 
 Then checking out the possible functions and how they differ from their
 ``original versions''.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{listWrappers}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ##  [1] "SL.bartMachine"      "SL.bayesglm"         "SL.biglasso"        
@@ -609,6 +596,13 @@ Then checking out the possible functions and how they differ from their
 ## [7] "screen.ttest"          "write.screen.template"
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# how does SL.glm differ from glm? obsWeight added to easy use the traning fold in the CV and returns a prediction for new observarions}
+\NormalTok{SL.glm}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ## function (Y, X, newX, family, obsWeights, model = TRUE, ...) 
 ## {
@@ -626,9 +620,16 @@ Then checking out the possible functions and how they differ from their
 ##     out <- list(pred = pred, fit = fit)
 ##     return(out)
 ## }
-## <bytecode: 0x7fe3724e5240>
+## <bytecode: 0x7fec59152f60>
 ## <environment: namespace:SuperLearner>
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# min and not 1sd used, again obsWeights, make sure model matrix correctly specified}
+\NormalTok{SL.glmnet}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## function (Y, X, newX, family, obsWeights, id, alpha = 1, nfolds = 10, 
@@ -650,13 +651,21 @@ Then checking out the possible functions and how they differ from their
 ##     out <- list(pred = pred, fit = fit)
 ##     return(out)
 ## }
-## <bytecode: 0x7fe37253fdf8>
+## <bytecode: 0x7fec5900d388>
 ## <environment: namespace:SuperLearner>
 \end{verbatim}
 
 The fitting lasso to check what is being done. The default metalearner
 is ``method.NNLS'' (both for regression and two-class classification -
 probably then for linear predictor NNLS?).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{sl\_lasso}\OtherTok{=}\FunctionTok{SuperLearner}\NormalTok{(}\AttributeTok{Y=}\NormalTok{y\_train, }\AttributeTok{X=}\NormalTok{x\_train,}\AttributeTok{family=}\FunctionTok{binomial}\NormalTok{(),}\AttributeTok{SL.library=}\StringTok{"SL.glmnet"}\NormalTok{)}
+\NormalTok{sl\_lasso}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -669,6 +678,13 @@ probably then for linear predictor NNLS?).
 ## SL.glmnet_All 0.08484849    1
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#str(sl\_lasso)}
+\NormalTok{sl\_lasso}\SpecialCharTok{$}\NormalTok{cvRisk}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ## SL.glmnet_All 
 ##    0.08484849
@@ -676,6 +692,14 @@ probably then for linear predictor NNLS?).
 
 Now use lasso and randomforest, and also add the average of ys just as
 the benchmark.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{sl}\OtherTok{=}\FunctionTok{SuperLearner}\NormalTok{(}\AttributeTok{Y=}\NormalTok{y\_train, }\AttributeTok{X=}\NormalTok{x\_train,}\AttributeTok{family=}\FunctionTok{binomial}\NormalTok{(),}\AttributeTok{SL.library=}\FunctionTok{c}\NormalTok{(}\StringTok{"SL.mean"}\NormalTok{,}\StringTok{"SL.glmnet"}\NormalTok{,}\StringTok{"SL.randomForest"}\NormalTok{))}
+\NormalTok{sl}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -690,9 +714,15 @@ the benchmark.
 ## SL.randomForest_All 0.07213058 0.865748
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sl}\SpecialCharTok{$}\NormalTok{times}\SpecialCharTok{$}\NormalTok{everything}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ##    user  system elapsed 
-##   3.163   0.078   3.260
+##   3.086   0.063   3.156
 \end{verbatim}
 
 Our ensemble give weight 0.13 to lasso and 0.86 to the random forest.
@@ -700,6 +730,13 @@ Our ensemble give weight 0.13 to lasso and 0.86 to the random forest.
 ranger, and got 0.02 and 0.98.)
 
 Predict on the part of the dataset not used for the training.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pred}\OtherTok{=}\FunctionTok{predict}\NormalTok{(sl,}\AttributeTok{x\_holdout=}\NormalTok{x\_holdout,}\AttributeTok{onlySL=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{str}\NormalTok{(pred)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## List of 2
@@ -713,6 +750,12 @@ Predict on the part of the dataset not used for the training.
 ##   .. ..$ : chr [1:3] "SL.mean_All" "SL.glmnet_All" "SL.randomForest_All"
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(pred}\SpecialCharTok{$}\NormalTok{pred)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ##        V1           
 ##  Min.   :0.0003034  
@@ -722,6 +765,12 @@ Predict on the part of the dataset not used for the training.
 ##  3rd Qu.:0.9036164  
 ##  Max.   :0.9955802
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(pred}\SpecialCharTok{$}\NormalTok{library.predict)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ##   SL.mean_All     SL.glmnet_All       SL.randomForest_All
@@ -737,10 +786,22 @@ Add now an external cross-validation loop - only using the training
 data. Here the default \(V=10\) is used for the inner loop, and we set
 the value for the outer loop (here \(V=3\) for speed).
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{system.time}\NormalTok{(\{cv\_sl}\OtherTok{=}\FunctionTok{CV.SuperLearner}\NormalTok{(}\AttributeTok{Y=}\NormalTok{y\_train, }\AttributeTok{X=}\NormalTok{x\_train,}\AttributeTok{V=}\DecValTok{3}\NormalTok{,}\AttributeTok{family=}\FunctionTok{binomial}\NormalTok{(),}\AttributeTok{SL.library=}\FunctionTok{c}\NormalTok{(}\StringTok{"SL.mean"}\NormalTok{,}\StringTok{"SL.glmnet"}\NormalTok{,}\StringTok{"SL.randomForest"}\NormalTok{))\})}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ##    user  system elapsed 
-##   8.966   0.215   9.253
+##   8.404   0.166   8.583
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(cv\_sl)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -762,14 +823,21 @@ the value for the outer loop (here \(V=3\) for speed).
 
 See the guide for more information on running multiple versions of one
 base learner, and parallellisation.
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}{Choosing hyperparameters}
 \protect\hypertarget{choosing-hyperparameters}{}
+\begin{itemize}
+\tightlist
+\item
+  What are \emph{hyperparameters}?
+\item
+  Which hyperparameters have we encountered in the course so far?
+\end{itemize}
+\end{frame}
 
+\begin{frame}
 \emph{Hyperparameters} are parameters than cannot be directly estimated
 from data. This may be model parameters (the \(\lambda\) in lasso) or
 parameters that influence the fitting of the model (e.g.~related to some
@@ -782,60 +850,82 @@ hyperparameter values.
 
 The use of ensembles like the Super Learner may be seen as an
 alternative to hyperparameter tuning.
-
 \end{frame}
 
 \begin{frame}
-
 Overview of advices from Berent Å.S. Lunde on tuning parameters in
 xbgoost (written out after the lecture and approved by Berent):
 
-\textbf{Ways to speed-up computation:} * Higher learning-rate, then tune
-the number of boosting iterations. * When tuning, do not use too high k
-in k-fold CV (for both speed and also to avoid high variance), or drop
-CV and use a validation set. * Speedups with histogram algorithms of
-order \(n\) (avoid exact enumeration of all splits, nlogn). * Use
-sparsity when possible!
+\textbf{Ways to speed-up computation:}
 
+\begin{itemize}
+\tightlist
+\item
+  Higher learning-rate, then tune the number of boosting iterations.
+\item
+  When tuning, do not use too high k in k-fold CV (for both speed and
+  also to avoid high variance), or drop CV and use a validation set.
+\item
+  Speedups with histogram algorithms of order \(n\) (avoid exact
+  enumeration of all splits, nlogn).
+\item
+  Use sparsity when possible!
+\end{itemize}
 \end{frame}
 
 \begin{frame}
+\textbf{Comments on hyperparameters:}
 
-\textbf{Comments on hyperparameters:} * Learning rate (eta in xgb): Set
-as low as computation times allow. Typically in between \(0.01\) and
-\(0.1\) is sufficient. * Number of trees (boosting iterations): Very
-much affected by the learning rate. Most important parameter to tune,
-given a learning rate. @ Maximum depth of trees: start low, then
-increase. High values takes significantly longer to train. Think about
-the problem, and the number of possible interaction effects. If
-max-depth = J, then interactions among J-1 features is possible. How
-much is needed? * Gamma: Very traditional tree-hyperparameter to tune.
-Tune. * Colsampling for tree is usually sufficient. * subsample: in
-0.5-0.9 * Min child weight: Something I usually do not think about.
-Default=1 (low) works. For me
+\begin{itemize}
+\tightlist
+\item
+  Learning rate (eta in xgb): Set as low as computation times allow.
+  Typically in between \(0.01\) and \(0.1\) is sufficient.
+\item
+  Number of trees (boosting iterations): Very much affected by the
+  learning rate. Most important parameter to tune, given a learning
+  rate. @ Maximum depth of trees: start low, then increase. High values
+  takes significantly longer to train. Think about the problem, and the
+  number of possible interaction effects. If max-depth = J, then
+  interactions among J-1 features is possible. How much is needed?
+\item
+  Gamma: Very traditional tree-hyperparameter to tune. Tune.
+\item
+  Colsampling for tree is usually sufficient.
+\item
+  subsample: in 0.5-0.9
+\item
+  Min child weight: Something I usually do not think about. Default=1
+  (low) works. For me
+\end{itemize}
 
 Every problem is different, and there will exist exceptions to the above
-guidelines. I look forward to a world without hyperparameters.
-
+guidelines. \emph{I look forward to a world without hyperparameters.}
+(Berent Å.S. Lunde)
 \end{frame}
 
 \begin{frame}
-
 The hyperparameters may be continuous (penalty parameter), discrete
 (number of layers in a neural network, applying early stopping or not)
 or categorical (choose between different optimizers).
 
 The choice of hyperparameters is important, and will often directly
 affect the model complexity, and unwise choices may lead to overfitting.
-
-Hyperparametertuning is often based on a separate validation set or
-using cross-validation, and different loss functions or selection
-criteria may be used (MSE, AUC, misclassification rate, \ldots).
-
 \end{frame}
 
 \begin{frame}
+Hyperparametertuning is performed using a separate validation set or by
+cross-validation. Different loss functions or selection criteria may be
+used (MSE, AUC, misclassification rate, \ldots).
 
+The hyperparameter tuning is often referred to as a black-box
+optimization because we (usually) only calculate loss function values
+(with CV) and do not get to compute gradients.
+
+What may be challenges with hyperparameter optimization?
+\end{frame}
+
+\begin{frame}
 Some challenges with hyperparameter optimization (Feurer and Hutter,
 Ch1):
 
@@ -854,17 +944,11 @@ Ch1):
 \item
   and the need for external validation or CV
 \end{itemize}
-
-The hyperparameter tuning is referred to as a black-box optimization
-because we (usually) only calculate loss function values (with CV) and
-do not get to compute gradients.
-
 \end{frame}
 
 \begin{frame}
-
-There exist many ways to group methods for hyperparameter tuning. One
-way to look at this is (Kuhn and Silge, 2021, Ch 12)
+There exist many ways to \emph{group} methods for hyperparameter tuning.
+One way to look at this is (Kuhn and Silge, 2021, Ch 12)
 
 \begin{itemize}
 \tightlist
@@ -882,24 +966,23 @@ For grid search also methods for \emph{speeding up calculations} exists
 - for example by stopping evaluation at a grid point where the loss is
 seen to be high after some CV-folds, for example the method of
 \emph{racing} described by Kuhn and Silge, Ch 13.4.
-
-(Class notes: see example from Kuhn and Silge, 2021, Spacefilling grid
-vs global search)
-
 \end{frame}
 
 \begin{frame}
+(Class notes: see example from Kuhn and Silge, 2021, Spacefilling grid
+vs global search)
+\end{frame}
 
+\begin{frame}
 \begin{block}{Surrogate methods}
-
+\protect\hypertarget{surrogate-methods}{}
 We will look at two types of surrogate models: Bayesian regression with
 Gaussian processes (in Bayesian optimization) and regression-type models
 in response surface methods (presented by group 2).
-
 \end{block}
 
 \begin{block}{Bayesian optimization}
-
+\protect\hypertarget{bayesian-optimization}{}
 Bayesian optimization is an iterative method - where we start with
 evaluating some loss function at some predefined set of points in the
 hyperparameter space. New position in the hyperparameter space are
@@ -917,13 +1000,10 @@ Two key ingredients:
   an \emph{acquisition} function to decide a new point in the
   hyperparameter space to evaluate next
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 Underlying idea: given some ``observations'' in the hyperparameter
 space, the task is to decide where to place a new point. We should try a
 point where:
@@ -942,13 +1022,11 @@ problem.
 
 We now look at the multivariate Gaussian distribution and conditional
 distribution, a Gaussian process
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Multivariate normal distribution}
-
+\protect\hypertarget{multivariate-normal-distribution}{}
 aka multivariate Gaussian distribution. Known from TMA4265 and TMA4267.
 
 The random vector \(\mathbf{Y}_{p\times 1}\) is multivariate normal
@@ -973,6 +1051,14 @@ Let \(\mathbf{Y}_{(p\times 1)}\) be a random vector from
 \item
   All subsets of the components of \(\mathbf{Y}\) are (multivariate)
   normal (special case of the above).
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\tightlist
 \item
   Zero covariance implies that the corresponding components are
   independently distributed (can be proven using MGF).
@@ -984,15 +1070,11 @@ Let \(\mathbf{Y}_{(p\times 1)}\) be a random vector from
   normal.
   \[\mathbf{Y}_2 \mid (\mathbf{Y}_1=\mathbf{Y}_1) \sim N_{p2}(\mathbf{\mu}_2+               \Sigma_{21}\Sigma_{11}^{-1} (\mathbf{Y}_1-\mathbf{\mu}_1),\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}).\]
 \end{enumerate}
-
-\end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Gaussian processes}
-
+\protect\hypertarget{gaussian-processes}{}
 (Eidsvik 2017, page 6-7, note in TMA4265)
 
 A Gaussian process is defined for
@@ -1013,20 +1095,17 @@ on covariates.
 
 The process is \emph{second order stationary} if
 \(\text{Var}(Y(t))=\sigma^2\) for all \(x\) and the correlation
-\(\text{Corr}(Y(x),Y(x´))\) only depends on differences between \(x\)
+\(\text{Corr}(Y(x),Y(x'))\) only depends on differences between \(x\)
 and \(x'\).
 
 The multivariate Gaussian distribution is defined by the mean and
 covariance alone.
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Correlation functions}
-
+\protect\hypertarget{correlation-functions}{}
 (Eidsvik 2017, page 7, Frazier 2018, Ch 3.1)
 
 Correlation functions are also referred to as \emph{kernels}.
@@ -1038,13 +1117,10 @@ correlation than point far apart.
 \[ \text{Corr}(Y(x),Y(x'))=\exp(-\phi_G \Vert x-x' \Vert ^2)\] where the
 L2 distance is used and \(\phi_G\) is a parameter that determine the
 decay in the correlations.
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \textbf{Matern-type kernel}
 
 \[\text{Corr}(Y(x),Y(x´))=(1+\phi_M \Vert x - x' \Vert)\exp(-\phi_M \Vert x - x' \Vert)\]
@@ -1056,13 +1132,11 @@ Frazier 2018 (who use a slightly different parameterization). We will
 just assume that these parameters are known.
 
 (Class notes: study Figure 4 of Eidsvik, 2018.)
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{From correlations into covariance matrix}
-
+\protect\hypertarget{from-correlations-into-covariance-matrix}{}
 For simplicty assume that \(d=1\). The number of positions to consider
 is \(n\).
 
@@ -1078,15 +1152,12 @@ where \(\otimes\) is elementwise multiplication.
 
 See Eidsvik (2018, Ch 3.2 and 3.3) for how to build covariance matrices
 in an efficient way.
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Acquisition function: Expected improvement}
-
+\protect\hypertarget{acquisition-function-expected-improvement}{}
 (Frazier 2018 page 7)
 
 Thought experiment:
@@ -1102,7 +1173,15 @@ Thought experiment:
   Correction: We may perform one more evaluation. If we choose \(x\) we
   observe \(f(x)\), and the best point before that was \(f^{*}_n\). The
   improvement at the new observation is then \[ \max(f(x)-f^{*}_n,0)\]
-  ---
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{enumerate}
+[1)]
+\setcounter{enumi}{2}
+\tightlist
 \item
   We define the \emph{expected improvement} as
 \end{enumerate}
@@ -1114,13 +1193,9 @@ we have evaluated \(f\) at \(n\) observations \(x_1,\ldots, x_n\), and
 the posterior distribution is that \(f\) conditional on
 \(x_1,\ldots,x_n,y_1,\ldots,y_n\) is normal with mean \(\mu_n(x)\) and
 variance \(\sigma^2_n(x)\).
-
-\end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{enumerate}
 [1)]
 \setcounter{enumi}{3}
@@ -1132,11 +1207,7 @@ variance \(\sigma^2_n(x)\).
 \[ \text{EI}_n(x)=\max(\mu_n(x)-f^{*}_n,0)])+\sigma_n(x) \phi(\frac{\max(\mu_n(x)-f^{*}_n,0)}{\sigma_n(x)}) \]
 \[-\text{abs}(\mu_n(x)-f^{*}_n) \Phi(\frac{\max(\mu_n(x)-f^{*}_n,0)}{\sigma_n(x)})\]
 
-\begin{itemize}
-\tightlist
-\item
-  \(\mu_n(x)-f^{*}_n\) is expected proposed vs previously best
-\end{itemize}
+\(\mu_n(x)-f^{*}_n\) is expected proposed vs previously best
 
 \begin{enumerate}
 [1)]
@@ -1147,21 +1218,22 @@ variance \(\sigma^2_n(x)\).
 \end{enumerate}
 
 \[ x_{n+1}=\text{argmax}\text{EI}_n(x)\]
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Algorithm for Bayesian optimization of a function \(f\)}
-
+\protect\hypertarget{algorithm-for-bayesian-optimization-of-a-function-f}{}
 (Frazier 2018, page 3, noise-free evaluation)
+\end{block}
+\end{frame}
 
+\begin{frame}
 Place a Gaussian process prior on \(f\).
 
 Observe \(f\) at \(n_0\) points from some experimental design. Set
 \(n=n_0\).
 
-\textbf{while \(n \le N\) do}
+\textbf{while} \(n \le N\) do
 
 Update the posterior on f with all available data
 
@@ -1176,13 +1248,9 @@ Increment \(n\)
 
 Return a solution: a point with largest \(f(x)\) or the point with the
 largest posterior mean
-
-\end{block}
-
 \end{frame}
 
 \begin{frame}
-
 What does the steps mean?
 
 \begin{itemize}
@@ -1202,11 +1270,9 @@ What does the steps mean?
 \end{itemize}
 
 (Class notes: Figure 1 of Frazier 2018.)
-
 \end{frame}
 
 \begin{frame}
-
 \begin{itemize}
 \tightlist
 \item
@@ -1220,45 +1286,43 @@ What does the steps mean?
 \item
   The width of the credibility interval at observations is 0.
 \end{itemize}
-
 \end{frame}
 
 \begin{frame}[fragile]
-
 \begin{block}{Example}
-
+\protect\hypertarget{example}{}
 (Kuhn and Silge, Ch 14, the example is for SVM)
 
 First just grid search to test what is best value for \texttt{mtry}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{data}\NormalTok{(Boston, }\DataTypeTok{package =} \StringTok{"MASS"}\NormalTok{)}
-\CommentTok{# first using a grid}
-\NormalTok{tune_grid <-}\StringTok{ }\KeywordTok{expand.grid}\NormalTok{(}
-  \DataTypeTok{mtry =}\NormalTok{ (}\DecValTok{1}\OperatorTok{:}\DecValTok{13}\NormalTok{))}
-\CommentTok{#  ntree=seq(100,500,length=10)) # how to also include ntree? primary only mtry, how to define secondary?}
-\NormalTok{tune_control <-}\StringTok{ }\NormalTok{caret}\OperatorTok{::}\KeywordTok{trainControl}\NormalTok{(}
-  \DataTypeTok{method =} \StringTok{"oob"}\NormalTok{, }\CommentTok{# cross-validation #eller cv}
-  \CommentTok{#number = 3, # with n folds }
-  \DataTypeTok{verboseIter =} \OtherTok{FALSE}\NormalTok{, }\CommentTok{# no training log}
-  \DataTypeTok{allowParallel =} \OtherTok{FALSE} \CommentTok{# FALSE for reproducible results }
+\FunctionTok{data}\NormalTok{(Boston, }\AttributeTok{package =} \StringTok{"MASS"}\NormalTok{)}
+\CommentTok{\# first using a grid}
+\NormalTok{tune\_grid }\OtherTok{\textless{}{-}} \FunctionTok{expand.grid}\NormalTok{(}
+  \AttributeTok{mtry =}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{:}\DecValTok{13}\NormalTok{))}
+\CommentTok{\#  ntree=seq(100,500,length=10)) \# how to also include ntree? primary only mtry, how to define secondary?}
+\NormalTok{tune\_control }\OtherTok{\textless{}{-}}\NormalTok{ caret}\SpecialCharTok{::}\FunctionTok{trainControl}\NormalTok{(}
+  \AttributeTok{method =} \StringTok{"oob"}\NormalTok{, }\CommentTok{\# cross{-}validation \#eller cv}
+  \CommentTok{\#number = 3, \# with n folds }
+  \AttributeTok{verboseIter =} \ConstantTok{FALSE}\NormalTok{, }\CommentTok{\# no training log}
+  \AttributeTok{allowParallel =} \ConstantTok{FALSE} \CommentTok{\# FALSE for reproducible results }
 \NormalTok{)}
-\NormalTok{rf_tune <-}\StringTok{ }\NormalTok{caret}\OperatorTok{::}\KeywordTok{train}\NormalTok{(}
-\NormalTok{  medv}\OperatorTok{~}\NormalTok{crim}\OperatorTok{+}\NormalTok{zn}\OperatorTok{+}\NormalTok{indus}\OperatorTok{+}\NormalTok{chas}\OperatorTok{+}\NormalTok{nox}\OperatorTok{+}\NormalTok{rm}\OperatorTok{+}\NormalTok{age}\OperatorTok{+}\NormalTok{dis}\OperatorTok{+}\NormalTok{rad}\OperatorTok{+}\NormalTok{tax}\OperatorTok{+}\NormalTok{ptratio}\OperatorTok{+}\NormalTok{black}\OperatorTok{+}\NormalTok{lstat, }
-  \DataTypeTok{data=}\NormalTok{Boston,}
-  \DataTypeTok{na.action=}\NormalTok{na.roughfix,}
-  \DataTypeTok{trControl =}\NormalTok{ tune_control,}
-  \DataTypeTok{tuneGrid =}\NormalTok{ tune_grid,}
-  \DataTypeTok{method =} \StringTok{"rf"}\NormalTok{, }\CommentTok{# rf is randomForest, checked at #vhttp://topepo.github.io/caret/train-models-by-tag.html#Random_Forest}
-  \DataTypeTok{verbose =} \OtherTok{TRUE}
+\NormalTok{rf\_tune }\OtherTok{\textless{}{-}}\NormalTok{ caret}\SpecialCharTok{::}\FunctionTok{train}\NormalTok{(}
+\NormalTok{  medv}\SpecialCharTok{\textasciitilde{}}\NormalTok{crim}\SpecialCharTok{+}\NormalTok{zn}\SpecialCharTok{+}\NormalTok{indus}\SpecialCharTok{+}\NormalTok{chas}\SpecialCharTok{+}\NormalTok{nox}\SpecialCharTok{+}\NormalTok{rm}\SpecialCharTok{+}\NormalTok{age}\SpecialCharTok{+}\NormalTok{dis}\SpecialCharTok{+}\NormalTok{rad}\SpecialCharTok{+}\NormalTok{tax}\SpecialCharTok{+}\NormalTok{ptratio}\SpecialCharTok{+}\NormalTok{black}\SpecialCharTok{+}\NormalTok{lstat, }
+  \AttributeTok{data=}\NormalTok{Boston,}
+  \AttributeTok{na.action=}\NormalTok{na.roughfix,}
+  \AttributeTok{trControl =}\NormalTok{ tune\_control,}
+  \AttributeTok{tuneGrid =}\NormalTok{ tune\_grid,}
+  \AttributeTok{method =} \StringTok{"rf"}\NormalTok{, }\CommentTok{\# rf is randomForest, checked at \#vhttp://topepo.github.io/caret/train{-}models{-}by{-}tag.html\#Random\_Forest}
+  \AttributeTok{verbose =} \ConstantTok{TRUE}
 \NormalTok{)}
-\NormalTok{tuneplot <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x, }\DataTypeTok{probs =} \FloatTok{.90}\NormalTok{) \{}
-  \KeywordTok{ggplot}\NormalTok{(x) }\OperatorTok{+}
-\StringTok{    }\KeywordTok{coord_cartesian}\NormalTok{(}\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\KeywordTok{quantile}\NormalTok{(x}\OperatorTok{$}\NormalTok{results}\OperatorTok{$}\NormalTok{RMSE, }\DataTypeTok{probs =}\NormalTok{ probs), }\KeywordTok{min}\NormalTok{(x}\OperatorTok{$}\NormalTok{results}\OperatorTok{$}\NormalTok{RMSE))) }\OperatorTok{+}
-\StringTok{    }\KeywordTok{theme_bw}\NormalTok{()}
+\NormalTok{tuneplot }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, }\AttributeTok{probs =}\NormalTok{ .}\DecValTok{90}\NormalTok{) \{}
+  \FunctionTok{ggplot}\NormalTok{(x) }\SpecialCharTok{+}
+    \FunctionTok{coord\_cartesian}\NormalTok{(}\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\FunctionTok{quantile}\NormalTok{(x}\SpecialCharTok{$}\NormalTok{results}\SpecialCharTok{$}\NormalTok{RMSE, }\AttributeTok{probs =}\NormalTok{ probs), }\FunctionTok{min}\NormalTok{(x}\SpecialCharTok{$}\NormalTok{results}\SpecialCharTok{$}\NormalTok{RMSE))) }\SpecialCharTok{+}
+    \FunctionTok{theme\_bw}\NormalTok{()}
 \NormalTok{\}}
-\KeywordTok{tuneplot}\NormalTok{(rf_tune)}
+\FunctionTok{tuneplot}\NormalTok{(rf\_tune)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1266,7 +1330,7 @@ First just grid search to test what is best value for \texttt{mtry}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{rf_tune}\OperatorTok{$}\NormalTok{bestTune}
+\NormalTok{rf\_tune}\SpecialCharTok{$}\NormalTok{bestTune}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1274,13 +1338,10 @@ First just grid search to test what is best value for \texttt{mtry}
 ##   mtry
 ## 6    6
 \end{verbatim}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}[fragile]
-
 The R the function \texttt{tune\_bayes} is available in the package
 \texttt{tune}, and requires that the analyses is done with a workflow.
 Default in the GP is exponential correlation function, but first we try
@@ -1288,41 +1349,41 @@ the Matern.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{tree_rec <-}\StringTok{ }\KeywordTok{recipe}\NormalTok{(medv}\OperatorTok{~}\NormalTok{crim}\OperatorTok{+}\NormalTok{zn}\OperatorTok{+}\NormalTok{indus}\OperatorTok{+}\NormalTok{chas}\OperatorTok{+}\NormalTok{nox}\OperatorTok{+}\NormalTok{rm}\OperatorTok{+}\NormalTok{age}\OperatorTok{+}\NormalTok{dis}\OperatorTok{+}\NormalTok{rad}\OperatorTok{+}\NormalTok{tax}\OperatorTok{+}\NormalTok{ptratio}\OperatorTok{+}\NormalTok{black}\OperatorTok{+}\NormalTok{lstat, }\DataTypeTok{data =}\NormalTok{ Boston)}
+\NormalTok{tree\_rec }\OtherTok{\textless{}{-}} \FunctionTok{recipe}\NormalTok{(medv}\SpecialCharTok{\textasciitilde{}}\NormalTok{crim}\SpecialCharTok{+}\NormalTok{zn}\SpecialCharTok{+}\NormalTok{indus}\SpecialCharTok{+}\NormalTok{chas}\SpecialCharTok{+}\NormalTok{nox}\SpecialCharTok{+}\NormalTok{rm}\SpecialCharTok{+}\NormalTok{age}\SpecialCharTok{+}\NormalTok{dis}\SpecialCharTok{+}\NormalTok{rad}\SpecialCharTok{+}\NormalTok{tax}\SpecialCharTok{+}\NormalTok{ptratio}\SpecialCharTok{+}\NormalTok{black}\SpecialCharTok{+}\NormalTok{lstat, }\AttributeTok{data =}\NormalTok{ Boston)}
 
-\NormalTok{tune_spec <-}\StringTok{ }\KeywordTok{rand_forest}\NormalTok{( }\CommentTok{# parsnip interface to random forests models}
-  \DataTypeTok{mode=}\StringTok{"regression"}\NormalTok{,}
-  \DataTypeTok{mtry =} \KeywordTok{tune}\NormalTok{(),}
-  \DataTypeTok{trees =} \KeywordTok{tune}\NormalTok{(),}
-\CommentTok{#  min_n = tune()}
-\NormalTok{) }\OperatorTok{%>%}
-\CommentTok{#  set_mode("regression") %>%}
-\CommentTok{#  set_engine("ranger",objective="reg:rmse") # errors with ranger}
-\StringTok{  }\KeywordTok{set_engine}\NormalTok{(}\StringTok{"randomForest"}\NormalTok{) }\CommentTok{# randomforest ok}
+\NormalTok{tune\_spec }\OtherTok{\textless{}{-}} \FunctionTok{rand\_forest}\NormalTok{( }\CommentTok{\# parsnip interface to random forests models}
+  \AttributeTok{mode=}\StringTok{"regression"}\NormalTok{,}
+  \AttributeTok{mtry =} \FunctionTok{tune}\NormalTok{(),}
+  \AttributeTok{trees =} \FunctionTok{tune}\NormalTok{(),}
+\CommentTok{\#  min\_n = tune()}
+\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\CommentTok{\#  set\_mode("regression") \%\textgreater{}\%}
+\CommentTok{\#  set\_engine("ranger",objective="reg:rmse") \# errors with ranger}
+  \FunctionTok{set\_engine}\NormalTok{(}\StringTok{"randomForest"}\NormalTok{) }\CommentTok{\# randomforest ok}
 
-\NormalTok{tune_wf <-}\StringTok{ }\KeywordTok{workflow}\NormalTok{() }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{add_recipe}\NormalTok{(tree_rec) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{add_model}\NormalTok{(tune_spec)}
+\NormalTok{tune\_wf }\OtherTok{\textless{}{-}} \FunctionTok{workflow}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_recipe}\NormalTok{(tree\_rec) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_model}\NormalTok{(tune\_spec)}
 
-\NormalTok{tune_param <-}\StringTok{ }\NormalTok{tune_spec}\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\NormalTok{parameters}\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{update}\NormalTok{(}\DataTypeTok{mtry=}\KeywordTok{mtry}\NormalTok{(}\KeywordTok{c}\NormalTok{(1L,13L)),}\DataTypeTok{trees=}\KeywordTok{trees}\NormalTok{(}\KeywordTok{c}\NormalTok{(100L,500L)))}
+\NormalTok{tune\_param }\OtherTok{\textless{}{-}}\NormalTok{ tune\_spec}\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{  parameters}\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{update}\NormalTok{(}\AttributeTok{mtry=}\FunctionTok{mtry}\NormalTok{(}\FunctionTok{c}\NormalTok{(1L,13L)),}\AttributeTok{trees=}\FunctionTok{trees}\NormalTok{(}\FunctionTok{c}\NormalTok{(100L,500L)))}
 
-\NormalTok{vfold  <-}\StringTok{ }\KeywordTok{vfold_cv}\NormalTok{(Boston, }\DataTypeTok{v =} \DecValTok{5}\NormalTok{)}
-\CommentTok{# then trying BO}
-\NormalTok{ctrl <-}\StringTok{ }\KeywordTok{control_bayes}\NormalTok{(}\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{)}
-\NormalTok{bayesres<-}\StringTok{ }\KeywordTok{tune_bayes}\NormalTok{(tune_wf,}
-    \DataTypeTok{resamples =}\NormalTok{ vfold,}
-    \CommentTok{#metrics = rmse,}
-    \DataTypeTok{corr=}\KeywordTok{list}\NormalTok{(}\DataTypeTok{type=}\StringTok{"matern"}\NormalTok{,}\DataTypeTok{nu=}\DecValTok{5}\OperatorTok{/}\DecValTok{2}\NormalTok{), }
-    \CommentTok{#default in corr_mat(GPfit) is "exponential" power 1.95}
-    \DataTypeTok{initial =} \DecValTok{10}\NormalTok{,}
-    \DataTypeTok{param_info =}\NormalTok{ tune_param,}
-    \DataTypeTok{iter =} \DecValTok{10}\NormalTok{,}
-    \DataTypeTok{objective=}\KeywordTok{exp_improve}\NormalTok{(),}
-    \DataTypeTok{control =}\NormalTok{ ctrl}
+\NormalTok{vfold  }\OtherTok{\textless{}{-}} \FunctionTok{vfold\_cv}\NormalTok{(Boston, }\AttributeTok{v =} \DecValTok{5}\NormalTok{)}
+\CommentTok{\# then trying BO}
+\NormalTok{ctrl }\OtherTok{\textless{}{-}} \FunctionTok{control\_bayes}\NormalTok{(}\AttributeTok{verbose =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{bayesres}\OtherTok{\textless{}{-}} \FunctionTok{tune\_bayes}\NormalTok{(tune\_wf,}
+    \AttributeTok{resamples =}\NormalTok{ vfold,}
+    \CommentTok{\#metrics = rmse,}
+    \AttributeTok{corr=}\FunctionTok{list}\NormalTok{(}\AttributeTok{type=}\StringTok{"matern"}\NormalTok{,}\AttributeTok{nu=}\DecValTok{5}\SpecialCharTok{/}\DecValTok{2}\NormalTok{), }
+    \CommentTok{\#default in corr\_mat(GPfit) is "exponential" power 1.95}
+    \AttributeTok{initial =} \DecValTok{10}\NormalTok{,}
+    \AttributeTok{param\_info =}\NormalTok{ tune\_param,}
+    \AttributeTok{iter =} \DecValTok{10}\NormalTok{,}
+    \AttributeTok{objective=}\FunctionTok{exp\_improve}\NormalTok{(),}
+    \AttributeTok{control =}\NormalTok{ ctrl}
 \NormalTok{  )}
-\KeywordTok{dput}\NormalTok{(bayesres,}\StringTok{"bayesres.dd"}\NormalTok{)}
+\FunctionTok{dput}\NormalTok{(bayesres,}\StringTok{"bayesres.dd"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1344,34 +1405,32 @@ the Matern.
 
 \includegraphics{L7_files/figure-beamer/unnamed-chunk-9-1.pdf}
 \includegraphics{L7_files/figure-beamer/unnamed-chunk-9-2.pdf}
-
 \end{frame}
 
 \begin{frame}[fragile]
-
 Here we try the default exponential correlation.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{bayesres2<-}\StringTok{ }\KeywordTok{tune_bayes}\NormalTok{(tune_wf,}
-    \DataTypeTok{resamples =}\NormalTok{ vfold,}
-    \CommentTok{#metrics = rmse,}
-    \CommentTok{#corr=list(type="matern",nu=5/2), }
-    \CommentTok{#default in corr_mat(GPfit) is "exponential" power 1.95}
-    \DataTypeTok{initial =} \DecValTok{10}\NormalTok{,}
-    \DataTypeTok{param_info =}\NormalTok{ tune_param,}
-    \DataTypeTok{iter =} \DecValTok{10}\NormalTok{,}
-    \DataTypeTok{objective=}\KeywordTok{exp_improve}\NormalTok{(),}
-    \DataTypeTok{control =}\NormalTok{ ctrl}
+\NormalTok{bayesres2}\OtherTok{\textless{}{-}} \FunctionTok{tune\_bayes}\NormalTok{(tune\_wf,}
+    \AttributeTok{resamples =}\NormalTok{ vfold,}
+    \CommentTok{\#metrics = rmse,}
+    \CommentTok{\#corr=list(type="matern",nu=5/2), }
+    \CommentTok{\#default in corr\_mat(GPfit) is "exponential" power 1.95}
+    \AttributeTok{initial =} \DecValTok{10}\NormalTok{,}
+    \AttributeTok{param\_info =}\NormalTok{ tune\_param,}
+    \AttributeTok{iter =} \DecValTok{10}\NormalTok{,}
+    \AttributeTok{objective=}\FunctionTok{exp\_improve}\NormalTok{(),}
+    \AttributeTok{control =}\NormalTok{ ctrl}
 \NormalTok{  )}
-\KeywordTok{dput}\NormalTok{(bayesres2,}\StringTok{"bayesres2.dd"}\NormalTok{)}
+\FunctionTok{dput}\NormalTok{(bayesres2,}\StringTok{"bayesres2.dd"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{bayesres2=}\KeywordTok{dget}\NormalTok{(}\StringTok{"bayesres2.dd"}\NormalTok{)}
-\KeywordTok{show_best}\NormalTok{(bayesres2,}\DataTypeTok{n=}\DecValTok{10}\NormalTok{)}
+\NormalTok{bayesres2}\OtherTok{=}\FunctionTok{dget}\NormalTok{(}\StringTok{"bayesres2.dd"}\NormalTok{)}
+\FunctionTok{show\_best}\NormalTok{(bayesres2,}\AttributeTok{n=}\DecValTok{10}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1393,7 +1452,7 @@ Here we try the default exponential correlation.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{autoplot}\NormalTok{(bayesres2,}\DataTypeTok{type=}\StringTok{"performance"}\NormalTok{)}
+\FunctionTok{autoplot}\NormalTok{(bayesres2,}\AttributeTok{type=}\StringTok{"performance"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1401,18 +1460,16 @@ Here we try the default exponential correlation.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{autoplot}\NormalTok{(bayesres2,}\DataTypeTok{type=}\StringTok{"parameters"}\NormalTok{)}
+\FunctionTok{autoplot}\NormalTok{(bayesres2,}\AttributeTok{type=}\StringTok{"parameters"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{L7_files/figure-beamer/unnamed-chunk-11-2.pdf}
-
 \end{frame}
 
 \begin{frame}[fragile]
-
 \begin{block}{Suggested software}
-
+\protect\hypertarget{suggested-software}{}
 (Frazier 2018, Ch 6)
 
 \begin{itemize}
@@ -1428,31 +1485,25 @@ Here we try the default exponential correlation.
   Python: GPFlow (Tensorflow) \url{https://github.com/GPflow/GPflow} and
   GPYTorch (PyTorch) \url{https://github.com/cornellius-gp/gpytorch}
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}
-
 \begin{block}{Design of experiments and response surface methodology}
-
+\protect\hypertarget{design-of-experiments-and-response-surface-methodology}{}
 Article presentation by group 2.
 
 G. A. Lujan-Moreno, P. R. Howard, O. G. Rojas and D. C. Montgomery
 (2018): Design of experiments and response surface methodology to tune
 machine learning hyperparameters, with a random forest case- study.
 Expert Systems with Applications. 109, 195-205.
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}{References}
 \protect\hypertarget{references}{}
-
 \begin{block}{Super Learner}
-
+\protect\hypertarget{super-learner-1}{}
 \begin{itemize}
 \item
   Erin Le Dell (2015):
@@ -1468,11 +1519,10 @@ Expert Systems with Applications. 109, 195-205.
   Learning. Chapter 3 of M. J. van der Laan and S. Rose. Targeted
   Learning, Springer.
 \end{itemize}
-
 \end{block}
 
 \begin{block}{Ensembles}
-
+\protect\hypertarget{ensembles}{}
 \begin{itemize}
 \tightlist
 \item
@@ -1482,11 +1532,10 @@ Expert Systems with Applications. 109, 195-205.
   Friedman.
   \href{https://web.stanford.edu/~hastie/Papers/ESLII.pdf}{Ebook}.
 \end{itemize}
-
 \end{block}
 
 \begin{block}{Hyperparameter tuning}
-
+\protect\hypertarget{hyperparameter-tuning}{}
 \begin{itemize}
 \item
   M. Feurer and F. Hutter (2019). In F. Hutter et al (eds.) Automated
@@ -1497,7 +1546,7 @@ Expert Systems with Applications. 109, 195-205.
   TMA4265.
 \item
   Peter I. Frazier (2018): A tutorial on Bayesian optimization. arxiv
-  \textgreater{}\url{https://arxiv.org/abs/1807.02811}\textgreater{}
+  \url{https://arxiv.org/abs/1807.02811}
 \item
   Max Kuhn and Julia Silge Version 0.0.1.9008 (2021-02-15) Tidy
   modelling with R. \url{https://www.tmwr.org/}
@@ -1509,9 +1558,7 @@ Expert Systems with Applications. 109, 195-205.
   Max Kuhn (2020). caret: Classification and Regression Training. R
   package version 6.0-86. \url{https://CRAN.R-project.org/package=caret}
 \end{itemize}
-
 \end{block}
-
 \end{frame}
 
 \end{document}

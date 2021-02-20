@@ -8,16 +8,19 @@ output:
     keep_tex: yes
     latex_engine: xelatex
   ioslides_presentation: default
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    latex_engine: xelatex
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-    latex_engine: xelatex
 subtitle: 'L7: Random forest, Super Learner, Hyperparameter tuning'
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE,echo=FALSE}
@@ -45,148 +48,193 @@ suppressPackageStartupMessages(library(tidymodels))
 
 **L5**:
 
-* Trees
-* Many trees with bootstrap aggregation
-* Many trees into a random forest (not finished)
+-   Trees
+-   Many trees with bootstrap aggregation
+-   Many trees into a random forest (not finished)
 
 **L6**: with Berent Å. S. Lunde (UiB)
 
-* Boosting
-* Xgboost
-* Avoiding hyperparameter tuning in xgboost
+-   Boosting
+-   Xgboost
+-   Avoiding hyperparameter tuning in xgboost
 
----
+------------------------------------------------------------------------
 
 ## Outline
 
-* Ensembles
-* Finishing the random forest from [L5](http://htmlpreview.github.com/?https://github.com/mettelang/MA8701V2021/blob/main/Part2/L5.html)
-* Super Learner
-* Hyperparameter tuning
+-   Ensembles
+-   Finishing the random forest from
+    [L5](http://htmlpreview.github.com/?https://github.com/mettelang/MA8701V2021/blob/main/Part2/L5.html)
+-   Super Learner
+-   Hyperparameter tuning
 
-Left for L8: How to use statistical inference to give CI and compare predictions from different methods.
+Left for L8: How to use statistical inference to give CI and compare
+predictions from different methods.
 
----
+------------------------------------------------------------------------
 
 # Ensembles - overview
+
 (ELS Ch 16.1)
 
-With ensembles we want to build _one prediction model_ which combines the strength of _a collection of models_.
+With ensembles we want to build *one prediction model* which combines
+the strength of *a collection of models*.
 
 These models may be simple base models - or more elaborate models.
 
-We have studied bagging - where we take a simple average of the prediction from many models (or majority vote), and the base models can be trees - or other type of models. 
+We have studied bagging - where we take a simple average of the
+prediction from many models (or majority vote), and the base models can
+be trees - or other type of models.
 
-Random forest is a version of bagging, with trees made to be different (decorrelated). 
+Random forest is a version of bagging, with trees made to be different
+(decorrelated).
 
----
+------------------------------------------------------------------------
 
-We have studied boosting, where the models are trained on sequentially different data - from residuals or gradients of loss functions - and the ensemble members cast weighted votes. We have in particular looked into the xgboost variant of boosting, and also evaluated possible parameters to tune to optimize performance. 
+We have studied boosting, where the models are trained on sequentially
+different data - from residuals or gradients of loss functions - and the
+ensemble members cast weighted votes. We have in particular looked into
+the xgboost variant of boosting, and also evaluated possible parameters
+to tune to optimize performance.
 
-In L7 we also look into an ensemble built of elaborate models with the Super Learner and study some possible methods for tuning hyperparameters.
+In L7 we also look into an ensemble built of elaborate models with the
+Super Learner and study some possible methods for tuning
+hyperparameters.
 
 # Random forest
+
 (ELS Ch 15) see learning material in L5.
 
 # Super Learner
-(References: Le Dell (2015) Section 2.2 and van der Laan et al (2016), and Polley et al (2011))
 
-The Super Learner or _generalized stacking_ is an algorithm that combines
+(References: Le Dell (2015) Section 2.2 and van der Laan et al (2016),
+and Polley et al (2011))
 
-* multiple, (typically) diverse prediction methods (learning algorithms) called _base learners_ into a 
-* a _metalearner_ - which can be seen as a _single_ method.
+The Super Learner or *generalized stacking* is an algorithm that
+combines
 
----
+-   multiple, (typically) diverse prediction methods (learning
+    algorithms) called *base learners* into a
+-   a *metalearner* - which can be seen as a *single* method.
+
+------------------------------------------------------------------------
 
 ## Development:
 
-* 1992: stacking introduce for neural nets by Wolpert 
-* 1996: adapted to regression problems by Breiman - but only for one type of methods at once (cart with different number of terminal nodes, glms with subset selection, ridge regression with different ridge penalty parameters)
-* 2006: proven to have asymptotic theoretical oracle property by van der Laan, Polley and Hubbard.
+-   1992: stacking introduce for neural nets by Wolpert
+-   1996: adapted to regression problems by Breiman - but only for one
+    type of methods at once (cart with different number of terminal
+    nodes, glms with subset selection, ridge regression with different
+    ridge penalty parameters)
+-   2006: proven to have asymptotic theoretical oracle property by van
+    der Laan, Polley and Hubbard.
 
----
+------------------------------------------------------------------------
 
 ## Ingredients:
 
-* _Training data_ (level-zero data) $O_i=(X_i,Y_i)$ of $N$ i.i.d observations.
-* A total of $L$ _base learning algorithms_ $\Psi^l$ for $l=1,\ldots,L$, each from some algorithmic class and each with a specific set of model parameters.
-* A _metalearner_ ${\bf \Phi}$ is used to find an _optimal combination_ of the $L$ base learners.
+-   *Training data* (level-zero data) $O_i=(X_i,Y_i)$ of $N$ i.i.d
+    observations.
+-   A total of $L$ *base learning algorithms* $\Psi^l$ for
+    $l=1,\ldots,L$, each from some algorithmic class and each with a
+    specific set of model parameters.
+-   A *metalearner* ${\bf \Phi}$ is used to find an *optimal
+    combination* of the $L$ base learners.
 
----
+------------------------------------------------------------------------
 
 ## Algorithm
 
 **Step 1: Produce level-one data** ${\bf Z}$
 
-a) Divide the training data ${\bf X}$ randomly into $V$ roughly-equally sized  validation folds ${\bf X}_{(1)},\ldots,{\bf X}_{(V)}$. $V$ is often 5 or 10.
+a)  Divide the training data ${\bf X}$ randomly into $V$ roughly-equally
+    sized validation folds ${\bf X}_{(1)},\ldots,{\bf X}_{(V)}$. $V$ is
+    often 5 or 10.
 
-b) For each base learner $\Phi^l$ perform $V$-fold cross-validation to produce prediction.  
+b)  For each base learner $\Phi^l$ perform $V$-fold cross-validation to
+    produce prediction.
 
-This gives the level-one data set ${\bf Z}$ consisting prediction of all the level-zero data - that is a matrix with $N$ rows and $L$ columns. 
+This gives the level-one data set ${\bf Z}$ consisting prediction of all
+the level-zero data - that is a matrix with $N$ rows and $L$ columns.
 
 **What could the base learners be?**
 
----
+------------------------------------------------------------------------
 
 "Any" method that produces a prediction - "all" types of problems.
 
-* linear regression
-* lasso
-* cart
-* random forest with mtry=value 1
-* random forest with mtry=value 2
-* xgboost with hyperparameter set 1
-* xgboost with hyperparameter set 2
-* neural net with hyperparameter set 1
+-   linear regression
+-   lasso
+-   cart
+-   random forest with mtry=value 1
+-   random forest with mtry=value 2
+-   xgboost with hyperparameter set 1
+-   xgboost with hyperparameter set 2
+-   neural net with hyperparameter set 1
 
----
+------------------------------------------------------------------------
 
 **Step 2: Fit the metalearner**
 
-a) The starting point is the level-one prediction data ${\bf Z}$ together with the responses $(Y_1,\ldots ,Y_N)$.
-b) The metalearner is used to estimate the weights given to each base learner: $\hat{Y_i}=\alpha_1 z_{1i}+ \cdots + \alpha_L z_{Li}$. (Should probably also involve some link function, so that this may be the linear predictor.)
+a)  The starting point is the level-one prediction data ${\bf Z}$
+    together with the responses $(Y_1,\ldots ,Y_N)$.
+b)  The metalearner is used to estimate the weights given to each base
+    learner: $\hat{Y_i}=\alpha_1 z_{1i}+ \cdots + \alpha_L z_{Li}$.
+    (Should probably also involve some link function, so that this may
+    be the linear predictor.)
 
 **What could the metalearner be?**
 
----
+------------------------------------------------------------------------
 
-* the mean (bagging)
-* ordinary least squares
-* non-negative least squares
-* ridge or lasso regression
-* 1-ROC-AUC
+-   the mean (bagging)
+-   ordinary least squares
+-   non-negative least squares
+-   ridge or lasso regression
+-   1-ROC-AUC
 
----
+------------------------------------------------------------------------
 
 (Class notes: Study Figure 3.2 from Polley et al)
 
----
+------------------------------------------------------------------------
 
-**Step 3: Re-estimate base learners and combine into superlearner on full training data**
+**Step 3: Re-estimate base learners and combine into superlearner on
+full training data**
 
-a) Fit each of the $L$ base learners to the full training set.
-b) The _ensemble fit_ consists the $L$ base learner fits together with the metalearner fit.
+a)  Fit each of the $L$ base learners to the full training set.
+b)  The *ensemble fit* consists the $L$ base learner fits together with
+    the metalearner fit.
 
 **Step 4: Using the ensemble for prediction**
 
 For a new observaton ${\bf x}^*$
 
-a) Use each of the $L$ base learners to produce a prediction ${\bf z}^*$, and
-b) feed this to the metalearnerfit to produce the final prediction $y^*$.
+a)  Use each of the $L$ base learners to produce a prediction
+    ${\bf z}^*$, and
+b)  feed this to the metalearnerfit to produce the final prediction
+    $y^*$.
 
----
+------------------------------------------------------------------------
 
 ## The metalearning
 
-* The term _discrete super learner_ is used if the base learner with the lowest risk (i.e. CV-error) is selected.
-* Since the predictions from multiple base learners may be highly correlated - the chosen method should perform well in that case (i.e. ridge and lasso)
-* when minimizing the squared loss it has been found that adding a non-negativity constraint $\alpha_l\le 0$ works well
-* and also the additivity constraint $\sum_{l=1}^L \alpha_l=1$ - the ensemble is a _convex combination_ of the base learners
-* non-linear optimization methods may be employed for the metalearner if no existing algorithm is available
-* historically a regularized linear model has "mostly" been used
-* For classification the logistic response function can be used on the linear combination of base learners (Figure 3.2 Polley).
+-   The term *discrete super learner* is used if the base learner with
+    the lowest risk (i.e. CV-error) is selected.
+-   Since the predictions from multiple base learners may be highly
+    correlated - the chosen method should perform well in that case
+    (i.e. ridge and lasso)
+-   when minimizing the squared loss it has been found that adding a
+    non-negativity constraint $\alpha_l\le 0$ works well
+-   and also the additivity constraint $\sum_{l=1}^L \alpha_l=1$ - the
+    ensemble is a *convex combination* of the base learners
+-   non-linear optimization methods may be employed for the metalearner
+    if no existing algorithm is available
+-   historically a regularized linear model has "mostly" been used
+-   For classification the logistic response function can be used on the
+    linear combination of base learners (Figure 3.2 Polley).
 
----
+------------------------------------------------------------------------
 
 ## Examples
 
@@ -196,43 +244,68 @@ b) feed this to the metalearnerfit to produce the final prediction $y^*$.
 
 ### Real data
 
-(Class notes: Study Figure 3.4 and Table 3.3 from Polley et al. RE=MSE relative to the linear model OLS.)
+(Class notes: Study Figure 3.4 and Table 3.3 from Polley et al. RE=MSE
+relative to the linear model OLS.)
 
----
+------------------------------------------------------------------------
 
 ## Theoretical result
 
-* Oracle selector: the estimator among all possible weighted combinations of the base prediction function that minimizes the risk under the _true data generating distribution_.
-* The _oracle result_ was established for the Super Learner by van der Laan et al (2006).
-* If the _true prediction function_ cannot be represented by a combination of the base learners (available), then "optimal" will be the closest linear combination that would be optimal if the true data-generating function was known.
-* The oracle result require an _uniformly bounded loss function_. Using the convex restriction (sum alphas =1) implies that if each based learner is bounded so is the convex combination. In practice: truncation of the predicted values to the range of the outcome in the training set is sufficient to allow for unbounded loss fuctions (Le Dell page 6).
+-   Oracle selector: the estimator among all possible weighted
+    combinations of the base prediction function that minimizes the risk
+    under the *true data generating distribution*.
+-   The *oracle result* was established for the Super Learner by van der
+    Laan et al (2006).
+-   If the *true prediction function* cannot be represented by a
+    combination of the base learners (available), then "optimal" will be
+    the closest linear combination that would be optimal if the true
+    data-generating function was known.
+-   The oracle result require an *uniformly bounded loss function*.
+    Using the convex restriction (sum alphas =1) implies that if each
+    based learner is bounded so is the convex combination. In practice:
+    truncation of the predicted values to the range of the outcome in
+    the training set is sufficient to allow for unbounded loss fuctions
+    (Le Dell page 6).
 
----
+------------------------------------------------------------------------
 
-## Uncertainty in the ensemble 
+## Uncertainty in the ensemble
 
 (Class notes: Study "Road map" 2 from Polley et al)
 
-* Add an outer (external) cross validation loop (where the super learner loop is inside). Suggestion: use 20-fold, especially when small sample size.
-* Overfitting? Check if the super learner does as well or better than any of the base learners in the ensemble.
-* Results using _influence functions_ for estimation of the variance for the Super Learner are based on asymptotic variances in the use of $V$-fold cross-validation (see Ch 5.3 of Le Dell, 2015)
+-   Add an outer (external) cross validation loop (where the super
+    learner loop is inside). Suggestion: use 20-fold, especially when
+    small sample size.
+-   Overfitting? Check if the super learner does as well or better than
+    any of the base learners in the ensemble.
+-   Results using *influence functions* for estimation of the variance
+    for the Super Learner are based on asymptotic variances in the use
+    of $V$-fold cross-validation (see Ch 5.3 of Le Dell, 2015)
 
----
+------------------------------------------------------------------------
 
-##  Other issues
+## Other issues
 
-* Many different implementations available, and much work on parallell processing and speed and memory efficient execution.
-* Super learner implicitly can handle hyperparameter tuning by including the same base learner with different model parameter sets in the ensemble.
-* Speed and memory improvements for large data sets involves subsampling, and the R `subsemble` package is one solution, the H2O Ensemble project another.
+-   Many different implementations available, and much work on parallell
+    processing and speed and memory efficient execution.
+-   Super learner implicitly can handle hyperparameter tuning by
+    including the same base learner with different model parameter sets
+    in the ensemble.
+-   Speed and memory improvements for large data sets involves
+    subsampling, and the R `subsemble` package is one solution, the H2O
+    Ensemble project another.
 
----
+------------------------------------------------------------------------
 
 ## R example
 
-Code is copied from [Guide to SuperLearner]() and the presentation follows this guide.
-The data used is the Boston housing dataset from  `MASS`, but with the median value of a house dichotomized into a classification problem. 
+Code is copied from [Guide to SuperLearner]() and the presentation
+follows this guide. The data used is the Boston housing dataset from
+`MASS`, but with the median value of a house dichotomized into a
+classification problem.
 
-Observe that only 150 of the 560 observations is used (to speed up things, but of cause that gives less accurate results).
+Observe that only 150 of the 560 observations is used (to speed up
+things, but of cause that gives less accurate results).
 
 ```{r,echo=TRUE}
 data(Boston, package = "MASS")
@@ -256,7 +329,8 @@ y_holdout = outcome_bin[-train_obs]
 table(y_train, useNA = "ifany")
 ```
 
-Then checking out the possible functions and how they differ from their "original versions".
+Then checking out the possible functions and how they differ from their
+"original versions".
 
 ```{r,echo=TRUE}
 listWrappers()
@@ -266,7 +340,9 @@ SL.glm
 SL.glmnet
 ```
 
-The fitting lasso to check what is being done. The default metalearner is "method.NNLS" (both for regression and two-class classification - probably then for linear predictor NNLS?).
+The fitting lasso to check what is being done. The default metalearner
+is "method.NNLS" (both for regression and two-class classification -
+probably then for linear predictor NNLS?).
 
 ```{r,echo=TRUE}
 set.seed(1)
@@ -276,7 +352,8 @@ sl_lasso
 sl_lasso$cvRisk
 ```
 
-Now use lasso and randomforest, and also add the average of ys just as the benchmark.
+Now use lasso and randomforest, and also add the average of ys just as
+the benchmark.
 
 ```{r,echo=TRUE}
 set.seed(1)
@@ -285,7 +362,9 @@ sl
 sl$times$everything
 ```
 
-Our ensemble give weight 0.13 to lasso and 0.86 to the random forest. (The guide used a different implementation of the random forest called ranger, and got 0.02 and 0.98.)
+Our ensemble give weight 0.13 to lasso and 0.86 to the random forest.
+(The guide used a different implementation of the random forest called
+ranger, and got 0.02 and 0.98.)
 
 Predict on the part of the dataset not used for the training.
 
@@ -296,287 +375,384 @@ summary(pred$pred)
 summary(pred$library.predict)
 ```
 
-Add now an external cross-validation loop - only using the training data. Here the default $V=10$ is used for the inner loop, and we set the value for the outer loop (here $V=3$ for speed).
+Add now an external cross-validation loop - only using the training
+data. Here the default $V=10$ is used for the inner loop, and we set the
+value for the outer loop (here $V=3$ for speed).
 
 ```{r,echo=TRUE}
 system.time({cv_sl=CV.SuperLearner(Y=y_train, X=x_train,V=3,family=binomial(),SL.library=c("SL.mean","SL.glmnet","SL.randomForest"))})
 summary(cv_sl)
 ```
 
-See the guide for more information on running multiple versions of one base learner, and parallellisation.
+See the guide for more information on running multiple versions of one
+base learner, and parallellisation.
 
 # Choosing hyperparameters
 
-* What are _hyperparameters_? 
-* Which hyperparameters have we encountered in the course so far?
+-   What are *hyperparameters*?
+-   Which hyperparameters have we encountered in the course so far?
 
----
+------------------------------------------------------------------------
 
-_Hyperparameters_ are parameters than cannot be directly estimated from data. This may be model parameters (the $\lambda$ in lasso) or parameters that influence the fitting of the model (e.g. related to some optimization algorithm).
+*Hyperparameters* are parameters than cannot be directly estimated from
+data. This may be model parameters (the $\lambda$ in lasso) or
+parameters that influence the fitting of the model (e.g. related to some
+optimization algorithm).
 
-We have already studied hyperparameter tuning for the lasso, ridge, elastic net, random forest, and boosting - with the use of cross-validation of some loss function for a predefined set of hyperparameter values. 
+We have already studied hyperparameter tuning for the lasso, ridge,
+elastic net, random forest, and boosting - with the use of
+cross-validation of some loss function for a predefined set of
+hyperparameter values.
 
-The use of ensembles like the Super Learner may be seen as an alternative to hyperparameter tuning.
+The use of ensembles like the Super Learner may be seen as an
+alternative to hyperparameter tuning.
 
----
+------------------------------------------------------------------------
 
-Overview of advices from Berent Å.S. Lunde on tuning parameters in xbgoost (written out after the lecture and approved by Berent):
+Overview of advices from Berent Å.S. Lunde on tuning parameters in
+xbgoost (written out after the lecture and approved by Berent):
 
 **Ways to speed-up computation:**
 
-* Higher learning-rate, then tune the number of boosting iterations.
-* When tuning, do not use too high k in k-fold CV (for both speed and also to avoid high variance), or drop CV and use a validation set.
-* Speedups with histogram algorithms of order $n$ (avoid exact enumeration of all splits, nlogn).
-* Use sparsity when possible!
- 
----
+-   Higher learning-rate, then tune the number of boosting iterations.
+-   When tuning, do not use too high k in k-fold CV (for both speed and
+    also to avoid high variance), or drop CV and use a validation set.
+-   Speedups with histogram algorithms of order $n$ (avoid exact
+    enumeration of all splits, nlogn).
+-   Use sparsity when possible!
+
+------------------------------------------------------------------------
 
 **Comments on hyperparameters:**
 
-* Learning rate (eta in xgb): Set as low as computation times allow. Typically in between $0.01$ and $0.1$ is sufficient.
-* Number of trees (boosting iterations): Very much affected by the learning rate. Most important parameter to tune, given a learning rate.
-@ Maximum depth of trees: start low, then increase. High values takes significantly longer to train. Think about the problem, and the number of possible interaction effects. If max-depth = J, then interactions among J-1 features is possible. How much is needed?
-* Gamma: Very traditional tree-hyperparameter to tune. Tune.
-* Colsampling for tree is usually sufficient.
-* subsample: in 0.5-0.9
-* Min child weight: Something I usually do not think about. Default=1 (low) works. For me
- 
-Every problem is different, and there will exist exceptions to the above guidelines.
-_I look forward to a world without hyperparameters._ (Berent Å.S. Lunde)
+-   Learning rate (eta in xgb): Set as low as computation times allow.
+    Typically in between $0.01$ and $0.1$ is sufficient.
+-   Number of trees (boosting iterations): Very much affected by the
+    learning rate. Most important parameter to tune, given a learning
+    rate. \@ Maximum depth of trees: start low, then increase. High
+    values takes significantly longer to train. Think about the problem,
+    and the number of possible interaction effects. If max-depth = J,
+    then interactions among J-1 features is possible. How much is
+    needed?
+-   Gamma: Very traditional tree-hyperparameter to tune. Tune.
+-   Colsampling for tree is usually sufficient.
+-   subsample: in 0.5-0.9
+-   Min child weight: Something I usually do not think about. Default=1
+    (low) works. For me
 
----
+Every problem is different, and there will exist exceptions to the above
+guidelines. *I look forward to a world without hyperparameters.* (Berent
+Å.S. Lunde)
 
-The hyperparameters may be continuous (penalty parameter), discrete (number of layers in a neural network, applying early stopping or not) or categorical (choose between different optimizers). 
+------------------------------------------------------------------------
 
-The choice of hyperparameters is important, and will often directly affect the model complexity, and unwise choices may lead to overfitting. 
+The hyperparameters may be continuous (penalty parameter), discrete
+(number of layers in a neural network, applying early stopping or not)
+or categorical (choose between different optimizers).
 
----
+The choice of hyperparameters is important, and will often directly
+affect the model complexity, and unwise choices may lead to overfitting.
 
-Hyperparametertuning is performed using a separate validation set or by cross-validation. Different loss functions or selection criteria may be used (MSE, AUC, misclassification rate, ...).
+------------------------------------------------------------------------
 
-The hyperparameter tuning is often referred to as a black-box optimization because we (usually) only calculate loss function values (with CV) and do not get to compute gradients. 
+Hyperparametertuning is performed using a separate validation set or by
+cross-validation. Different loss functions or selection criteria may be
+used (MSE, AUC, misclassification rate, ...).
+
+The hyperparameter tuning is often referred to as a black-box
+optimization because we (usually) only calculate loss function values
+(with CV) and do not get to compute gradients.
 
 What may be challenges with hyperparameter optimization?
 
----
+------------------------------------------------------------------------
 
-Some challenges with hyperparameter optimization (Feurer and Hutter, Ch1):
+Some challenges with hyperparameter optimization (Feurer and Hutter,
+Ch1):
 
-* expensive evaluation of the model under study (large networks, large data sets)
-* unclear which of possibly many hyperparameters that need to be selected carefully (refer to the discussion for xgboost)
-* gradient of selection criterion with respect to the hyperparameters not (generally) available, and criterion not convex or smooth in the hyperparameters
-* and the need for external validation or CV
+-   expensive evaluation of the model under study (large networks, large
+    data sets)
+-   unclear which of possibly many hyperparameters that need to be
+    selected carefully (refer to the discussion for xgboost)
+-   gradient of selection criterion with respect to the hyperparameters
+    not (generally) available, and criterion not convex or smooth in the
+    hyperparameters
+-   and the need for external validation or CV
 
+------------------------------------------------------------------------
 
----
+There exist many ways to *group* methods for hyperparameter tuning. One
+way to look at this is (Kuhn and Silge, 2021, Ch 12)
 
-There exist many ways to _group_ methods for hyperparameter tuning. One way to look at this is (Kuhn and Silge, 2021, Ch 12)
+-   grid search: specify a set of possible values a priori and
+    investigate only these values, choose the value where the chosen
+    selection criterion is optimal. This is also called "model free
+    methods".
+-   iterative search: start with a set of values, fit/evaluate some
+    (surrogate) model (might also be the loss function), and based on
+    this choose new values to evaluate next.
 
-* grid search: specify a set of possible values a priori and investigate only these values, choose the value where the chosen selection criterion is optimal. This is also called "model free methods".
-* iterative search: start with a set of values, fit/evaluate some (surrogate) model (might also be the loss function), and based on this choose new values to evaluate next.
+For grid search also methods for *speeding up calculations* exists - for
+example by stopping evaluation at a grid point where the loss is seen to
+be high after some CV-folds, for example the method of *racing*
+described by Kuhn and Silge, Ch 13.4.
 
-For grid search also methods for _speeding up calculations_ exists - for example by stopping evaluation at a grid point where the loss is seen to be high after some CV-folds, for example the method of _racing_ described by Kuhn and Silge, Ch 13.4.
+------------------------------------------------------------------------
 
----
+(Class notes: see example from Kuhn and Silge, 2021, Spacefilling grid
+vs global search)
 
-(Class notes: see example from Kuhn and Silge, 2021, Spacefilling grid vs global search)
-
----
+------------------------------------------------------------------------
 
 ## Surrogate methods
 
-We will look at two types of surrogate models: Bayesian regression with Gaussian processes (in Bayesian optimization) and regression-type models in response surface methods (presented by group 2).
+We will look at two types of surrogate models: Bayesian regression with
+Gaussian processes (in Bayesian optimization) and regression-type models
+in response surface methods (presented by group 2).
 
 ## Bayesian optimization
 
-Bayesian optimization is an iterative method - where we start with evaluating some loss function at some predefined set of points in the hyperparameter space. New position in the hyperparameter space are chosen iteratively.
+Bayesian optimization is an iterative method - where we start with
+evaluating some loss function at some predefined set of points in the
+hyperparameter space. New position in the hyperparameter space are
+chosen iteratively.
 
 Two key ingredients:
 
-* a surrogate model (we will only look at Bayesian regression with Gaussian processes) to fit to the observed values of the loss function in the hyperparameter space 
-* an _acquisition_ function to decide a new point in the hyperparameter space to evaluate next
+-   a surrogate model (we will only look at Bayesian regression with
+    Gaussian processes) to fit to the observed values of the loss
+    function in the hyperparameter space
+-   an *acquisition* function to decide a new point in the
+    hyperparameter space to evaluate next
 
----
+------------------------------------------------------------------------
 
-Underlying idea: given some "observations" in the hyperparameter space, the task is to decide where to place a new point. We should try a point where:
+Underlying idea: given some "observations" in the hyperparameter space,
+the task is to decide where to place a new point. We should try a point
+where:
 
-* we expect a good value and/or
-* we have little information so far 
+-   we expect a good value and/or
+-   we have little information so far
 
-To do that we need information on both expected value _and_ variance - or preferably the distribution of the loss function for your problem.
+To do that we need information on both expected value *and* variance -
+or preferably the distribution of the loss function for your problem.
 
-We now look at the multivariate Gaussian distribution and conditional distribution, a Gaussian process
+We now look at the multivariate Gaussian distribution and conditional
+distribution, a Gaussian process
 
----
+------------------------------------------------------------------------
 
-### Multivariate normal distribution 
+### Multivariate normal distribution
+
 aka multivariate Gaussian distribution. Known from TMA4265 and TMA4267.
 
-The random vector $\mathbf{Y}_{p\times 1}$ is multivariate normal $N_p$ with mean $\mathbf{\mu}$ and (positive definite) covariate matrix $\Sigma$. The pdf is:
+The random vector $\mathbf{Y}_{p\times 1}$ is multivariate normal $N_p$
+with mean $\mathbf{\mu}$ and (positive definite) covariate matrix
+$\Sigma$. The pdf is:
 
 $$f(\mathbf{Y})=\frac{1}{(2\pi)^\frac{p}{2}|\Sigma|^\frac{1}{2}} \exp\{-\frac{1}{2}(\mathbf{Y}-\mathbf{\mu})^T\Sigma^{-1}(\mathbf{Y}-\mathbf{\mu})\}$$
 
 Six useful properties of the mvN - we need number 6.
 
-Let $\mathbf{Y}_{(p\times 1)}$ be a random vector from $N_p(\mathbf{\mu},\Sigma)$.
+Let $\mathbf{Y}_{(p\times 1)}$ be a random vector from
+$N_p(\mathbf{\mu},\Sigma)$.
 
-1. The grapical contours of the mvN are ellipsoids (can be shown using spectral decomposition).
-2. Linear combinations of components of $\mathbf{Y}$ are (multivariate) normal (can be easily proven using moment generating functions MGF).
-3. All subsets of the components of $\mathbf{Y}$ are (multivariate) normal (special case of the above).
+1.  The grapical contours of the mvN are ellipsoids (can be shown using
+    spectral decomposition).
+2.  Linear combinations of components of $\mathbf{Y}$ are (multivariate)
+    normal (can be easily proven using moment generating functions MGF).
+3.  All subsets of the components of $\mathbf{Y}$ are (multivariate)
+    normal (special case of the above).
 
----
+------------------------------------------------------------------------
 
-4. Zero covariance implies that the corresponding components are independently distributed (can be proven using MGF).
-5. $\mathbf{A}\Sigma\mathbf{B}^T=\mathbf{0} \Leftrightarrow \mathbf{A}\mathbf{Y}$ and $\mathbf{B}\mathbf{Y}$ are independent.
-6. The conditional distributions of the components are (multivariate) normal. 
-$$\mathbf{Y}_2 \mid (\mathbf{Y}_1=\mathbf{Y}_1) \sim N_{p2}(\mathbf{\mu}_2+               \Sigma_{21}\Sigma_{11}^{-1} (\mathbf{Y}_1-\mathbf{\mu}_1),\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}).$$
+4.  Zero covariance implies that the corresponding components are
+    independently distributed (can be proven using MGF).
+5.  $\mathbf{A}\Sigma\mathbf{B}^T=\mathbf{0} \Leftrightarrow \mathbf{A}\mathbf{Y}$
+    and $\mathbf{B}\mathbf{Y}$ are independent.
+6.  The conditional distributions of the components are (multivariate)
+    normal.
+    $$\mathbf{Y}_2 \mid (\mathbf{Y}_1=\mathbf{Y}_1) \sim N_{p2}(\mathbf{\mu}_2+               \Sigma_{21}\Sigma_{11}^{-1} (\mathbf{Y}_1-\mathbf{\mu}_1),\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}).$$
 
----
+------------------------------------------------------------------------
 
 ### Gaussian processes
+
 (Eidsvik 2017, page 6-7, note in TMA4265)
 
-A Gaussian process is defined for 
+A Gaussian process is defined for
 
-* times or locations $x_i$, $i=1,\ldots,n$ in $\Re^d$, where
-* $Y_i=Y(x_i)$ is a random variable at $x_i$
-* such that ${\bf Y}=(Y_1,\ldots,Y_n)$ is multivariate Gaussian.
+-   times or locations $x_i$, $i=1,\ldots,n$ in $\Re^d$, where
+-   $Y_i=Y(x_i)$ is a random variable at $x_i$
+-   such that ${\bf Y}=(Y_1,\ldots,Y_n)$ is multivariate Gaussian.
 
-The process is _first order (mean) stationary_ if $\text{E}(Y(x))=\mu$ for all $x$, and this can be extended to depend on covariates.
+The process is *first order (mean) stationary* if $\text{E}(Y(x))=\mu$
+for all $x$, and this can be extended to depend on covariates.
 
-The process is _second order stationary_ if $\text{Var}(Y(t))=\sigma^2$ for all $x$ and the correlation $\text{Corr}(Y(x),Y(x'))$ only depends on differences between $x$ and $x'$.
+The process is *second order stationary* if $\text{Var}(Y(t))=\sigma^2$
+for all $x$ and the correlation $\text{Corr}(Y(x),Y(x'))$ only depends
+on differences between $x$ and $x'$.
 
-The multivariate Gaussian distribution is defined by the mean and covariance alone.
+The multivariate Gaussian distribution is defined by the mean and
+covariance alone.
 
----
+------------------------------------------------------------------------
 
 #### Correlation functions
+
 (Eidsvik 2017, page 7, Frazier 2018, Ch 3.1)
 
-Correlation functions are also referred to as _kernels_.
+Correlation functions are also referred to as *kernels*.
 
-We assume that points at positions close to each other have a stronger correlation than point far apart.
+We assume that points at positions close to each other have a stronger
+correlation than point far apart.
 
 **Power exponential or Gaussian kernel**
 <!-- $$\text{Corr}(Y(x),Y(x'))=\alpha_0 \exp(-\sum_{j=1}^d \alpha_j (x_j-x_j')^2) -->
 <!-- $$ -->
-$$ \text{Corr}(Y(x),Y(x'))=\exp(-\phi_G \Vert x-x' \Vert ^2)$$
-where the L2 distance is used and $\phi_G$ is a parameter that determine the decay in the correlations.
+$$ \text{Corr}(Y(x),Y(x'))=\exp(-\phi_G \Vert x-x' \Vert ^2)$$ where the
+L2 distance is used and $\phi_G$ is a parameter that determine the decay
+in the correlations.
 
 <!-- (Class notes: study Figure 2 of Frazier 2018 for plots for Gaussian kernel.) -->
 
----
+------------------------------------------------------------------------
 
 **Matern-type kernel**
 
 <!-- $$\text{Corr}(Y(x),Y(x´))=\alpha_0 \frac{2^{1-\nu}}{\Gamma(\nu)} (\sqrt{2\nu}\sum_{j=1}^d \alpha_j (x_j-x_j'))^{\nu} K_{\nu}(\sum_{j=1}^d \alpha_j (x_j-x_j'))  -->
+
 <!-- $$with the modified Bessel function $K_{\nu}$ and additional  -->
 
 $$\text{Corr}(Y(x),Y(x´))=(1+\phi_M \Vert x - x' \Vert)\exp(-\phi_M \Vert x - x' \Vert)$$
 
 now with decay-describing parameter $\phi_M$.
 
-The parameters of the kernels need to be estimated, see Ch 3.2 of Frazier 2018 (who use a slightly different parameterization). We will just assume that these parameters are known.
+The parameters of the kernels need to be estimated, see Ch 3.2 of
+Frazier 2018 (who use a slightly different parameterization). We will
+just assume that these parameters are known.
 
 (Class notes: study Figure 4 of Eidsvik, 2018.)
 
----
+------------------------------------------------------------------------
 
 #### From correlations into covariance matrix
 
-For simplicty assume that $d=1$. 
-The number of positions to consider is $n$.
+For simplicty assume that $d=1$. The number of positions to consider is
+$n$.
 
-To get from correlation function to a $n \times n$ covariance matrix first construct a $n \times n$ matrix of distances for each pair of positions, denote this ${\bf H}$.
+To get from correlation function to a $n \times n$ covariance matrix
+first construct a $n \times n$ matrix of distances for each pair of
+positions, denote this ${\bf H}$.
 
-For the Matern-type correlation function the covariance matrix can then be written
+For the Matern-type correlation function the covariance matrix can then
+be written
 
 $$ \Sigma=\sigma^2 (1+\phi_M {\bf H}) \otimes \exp(-\phi_M {\bf H}))$$
 where $\otimes$ is elementwise multiplication.
 
-See Eidsvik (2018, Ch 3.2 and 3.3) for how to build covariance matrices in an efficient way.
+See Eidsvik (2018, Ch 3.2 and 3.3) for how to build covariance matrices
+in an efficient way.
 
----
+------------------------------------------------------------------------
 
 ### Acquisition function: Expected improvement
+
 (Frazier 2018 page 7)
 
-Thought experiment: 
+Thought experiment:
 
-1) we have evaluated our function at all possible points $x$, and must return a solution based on what we already have evaluated. If the evaluation is noise-less we need to return the point with the largest observed value $f$.
+1)  we have evaluated our function at all possible points $x$, and must
+    return a solution based on what we already have evaluated. If the
+    evaluation is noise-less we need to return the point with the
+    largest observed value $f$.
 
-2) Correction: We may perform one more evaluation. If we choose $x$ we observe $f(x)$, and the best point before that was $f^{*}_n$. The improvement at the new observation is then
-$$ \max(f(x)-f^{*}_n,0)$$
+2)  Correction: We may perform one more evaluation. If we choose $x$ we
+    observe $f(x)$, and the best point before that was $f^{*}_n$. The
+    improvement at the new observation is then $$ \max(f(x)-f^{*}_n,0)$$
 
----
+------------------------------------------------------------------------
 
-
-3) We define the _expected improvement_ as
+3)  We define the *expected improvement* as
 
 $$ \text{EI}_n(x)=\text{E}_n[\max(f(x)-f^{*}_n,0)]$$
 
-where the expectation is taken at the posterior distribution given that we have evaluated $f$ at $n$ observations $x_1,\ldots, x_n$, and the posterior distribution is that $f$ conditional on $x_1,\ldots,x_n,y_1,\ldots,y_n$ is normal with mean $\mu_n(x)$ and variance $\sigma^2_n(x)$.
+where the expectation is taken at the posterior distribution given that
+we have evaluated $f$ at $n$ observations $x_1,\ldots, x_n$, and the
+posterior distribution is that $f$ conditional on
+$x_1,\ldots,x_n,y_1,\ldots,y_n$ is normal with mean $\mu_n(x)$ and
+variance $\sigma^2_n(x)$.
 
----
+------------------------------------------------------------------------
 
-4) How to evaluate the expected improvement? Integration by parts gives
+4)  How to evaluate the expected improvement? Integration by parts gives
 
 $$ \text{EI}_n(x)=\max(\mu_n(x)-f^{*}_n,0)])+\sigma_n(x) \phi(\frac{\max(\mu_n(x)-f^{*}_n,0)}{\sigma_n(x)}) $$
 $$-\text{abs}(\mu_n(x)-f^{*}_n) \Phi(\frac{\max(\mu_n(x)-f^{*}_n,0)}{\sigma_n(x)})$$
 
-
 $\mu_n(x)-f^{*}_n$ is expected proposed vs previously best
 
-5) We choose to evaluate the point with the largest expected improvement
+5)  We choose to evaluate the point with the largest expected
+    improvement
 
 $$ x_{n+1}=\text{argmax}\text{EI}_n(x)$$
 
----
+------------------------------------------------------------------------
 
 ### Algorithm for Bayesian optimization of a function $f$
+
 (Frazier 2018, page 3, noise-free evaluation)
 
----
+------------------------------------------------------------------------
 
 Place a Gaussian process prior on $f$.
 
 Observe $f$ at $n_0$ points from some experimental design. Set $n=n_0$.
 
-**while $n \le N$ do**
+**while** $n \le N$ do
 
-   Update the posterior on f with all available data
-   
-   Let $x_n$ be a maximizer of the acquisition function over $x$, computed using the current posterior
-   
-   Observe $y_n=f(x_n)$ 
-   
-   Increment $n$
-   
+Update the posterior on f with all available data
+
+Let $x_n$ be a maximizer of the acquisition function over $x$, computed
+using the current posterior
+
+Observe $y_n=f(x_n)$
+
+Increment $n$
+
 **end while**
 
-Return a solution: a point with largest $f(x)$ or the point with the largest posterior mean
+Return a solution: a point with largest $f(x)$ or the point with the
+largest posterior mean
 
----
+------------------------------------------------------------------------
 
 What does the steps mean?
 
-* Gaussian prior: choose (estimate?) mean and correlation function for the problem.
-* Observe $n_0$ points: calculate the loss function at each of the points (remark: we have noise)
-* Update the posterior: calculate the conditional distribution for $f$ for a new point given the observed loss at all previously observed points
-* Acquisition function:
+-   Gaussian prior: choose (estimate?) mean and correlation function for
+    the problem.
+-   Observe $n_0$ points: calculate the loss function at each of the
+    points (remark: we have noise)
+-   Update the posterior: calculate the conditional distribution for $f$
+    for a new point given the observed loss at all previously observed
+    points
+-   Acquisition function:
 
 (Class notes: Figure 1 of Frazier 2018.)
 
----
+------------------------------------------------------------------------
 
-* For a point $x$ we model the distribution of $f(x)$, 
-* which is normally distributed with mean $\mu_n(x)$ and variance $\sigma_n^2(x)$. The mean and variance is found from the conditional distribution.
-* With 95% credibility interval $\mu_n(x)\pm 1.95 \sigma_n(x)$.
-* The width of the credibility interval at observations is 0.
+-   For a point $x$ we model the distribution of $f(x)$,
+-   which is normally distributed with mean $\mu_n(x)$ and variance
+    $\sigma_n^2(x)$. The mean and variance is found from the conditional
+    distribution.
+-   With 95% credibility interval $\mu_n(x)\pm 1.95 \sigma_n(x)$.
+-   The width of the credibility interval at observations is 0.
 
----
+------------------------------------------------------------------------
 
 ### Example
+
 (Kuhn and Silge, Ch 14, the example is for SVM)
 
 First just grid search to test what is best value for `mtry`
@@ -611,10 +787,11 @@ tuneplot(rf_tune)
 rf_tune$bestTune
 ```
 
+------------------------------------------------------------------------
 
----
-
-The R the function `tune_bayes` is available in the package `tune`, and requires that the analyses is done with a workflow. Default in the GP is exponential correlation function, but first we try the Matern. 
+The R the function `tune_bayes` is available in the package `tune`, and
+requires that the analyses is done with a workflow. Default in the GP is
+exponential correlation function, but first we try the Matern.
 
 ```{r,echo=TRUE,eval=FALSE}
 tree_rec <- recipe(medv~crim+zn+indus+chas+nox+rm+age+dis+rad+tax+ptratio+black+lstat, data = Boston)
@@ -662,7 +839,7 @@ autoplot(bayesres,type="parameters")
 #names(bayesres)
 ```
 
----
+------------------------------------------------------------------------
 
 Here we try the default exponential correlation.
 
@@ -688,54 +865,75 @@ autoplot(bayesres2,type="performance")
 autoplot(bayesres2,type="parameters")
 ```
 
-
----
+------------------------------------------------------------------------
 
 ### Suggested software
+
 (Frazier 2018, Ch 6)
 
-* R: DiceOptim (on CRAN)
-* R: tune_bayes in `tune` (also CRAN)
+-   R: DiceOptim (on CRAN)
 
-* Python: Spearmint <https://github.com/HIPS/Spearmint>
-* Python: GPyOpt <https://github.com/SheffieldML/GPyOpt>
-* Python: GPFlow (Tensorflow) <https://github.com/GPflow/GPflow> and GPYTorch (PyTorch) <https://github.com/cornellius-gp/gpytorch>
+-   R: tune_bayes in `tune` (also CRAN)
 
----
+-   Python: Spearmint <https://github.com/HIPS/Spearmint>
+
+-   Python: GPyOpt <https://github.com/SheffieldML/GPyOpt>
+
+-   Python: GPFlow (Tensorflow) <https://github.com/GPflow/GPflow> and
+    GPYTorch (PyTorch) <https://github.com/cornellius-gp/gpytorch>
+
+------------------------------------------------------------------------
 
 ## Design of experiments and response surface methodology
 
 Article presentation by group 2.
 
-G. A. Lujan-Moreno, P. R. Howard, O. G. Rojas and D. C. Montgomery (2018): Design of experiments and response surface methodology to tune machine learning hyperparameters, with a random forest case- study. Expert Systems with Applications. 109, 195-205.
+G. A. Lujan-Moreno, P. R. Howard, O. G. Rojas and D. C. Montgomery
+(2018): Design of experiments and response surface methodology to tune
+machine learning hyperparameters, with a random forest case- study.
+Expert Systems with Applications. 109, 195-205.
 
 # References
 
 ## Super Learner
 
-* Erin Le Dell (2015): [Scalable Ensemble Learning and Computationally Efficient Variance Estimation. PhD Thesis, University of California, Berkeley.](https://escholarship.org/uc/item/3kb142r2)
+-   Erin Le Dell (2015): [Scalable Ensemble Learning and Computationally
+    Efficient Variance Estimation. PhD Thesis, University of California,
+    Berkeley.](https://escholarship.org/uc/item/3kb142r2)
 
-* Mark J. van der Laan, Eric C. Polley, Alan E. Hubbard (2007): Super Learner, Statistical Applications in Genetics and Molecular Biology, 6, 1, 25
+-   Mark J. van der Laan, Eric C. Polley, Alan E. Hubbard (2007): Super
+    Learner, Statistical Applications in Genetics and Molecular Biology,
+    6, 1, 25
 
-* Eric C. Polley, Sherri Rose, Mark J. van der Laan (2011): Super Learning. Chapter 3 of M. J. van der Laan and S. Rose. Targeted Learning, Springer. 
+-   Eric C. Polley, Sherri Rose, Mark J. van der Laan (2011): Super
+    Learning. Chapter 3 of M. J. van der Laan and S. Rose. Targeted
+    Learning, Springer.
 
 ## Ensembles
 
-* [ELS] The Elements of Statistical Learning: Data Mining, Inference, and Prediction, Second Edition (Springer Series in Statistics, 2009) by Trevor Hastie, Robert Tibshirani, and Jerome Friedman. [Ebook](https://web.stanford.edu/~hastie/Papers/ESLII.pdf). 
+-   [ELS] The Elements of Statistical Learning: Data Mining, Inference,
+    and Prediction, Second Edition (Springer Series in Statistics, 2009)
+    by Trevor Hastie, Robert Tibshirani, and Jerome Friedman.
+    [Ebook](https://web.stanford.edu/~hastie/Papers/ESLII.pdf).
 
 ## Hyperparameter tuning
 
-* M. Feurer and F. Hutter (2019). In F. Hutter et al (eds.) Automated Machine Learning. The Springer Series on Challenges in Machine Learning.
+-   M. Feurer and F. Hutter (2019). In F. Hutter et al (eds.) Automated
+    Machine Learning. The Springer Series on Challenges in Machine
+    Learning.
 
-* Jo Eidsvik (2017): Introduction to Gaussian processes, note to TMA4265.
+-   Jo Eidsvik (2017): Introduction to Gaussian processes, note to
+    TMA4265.
 
-* Peter I. Frazier (2018): A tutorial on Bayesian optimization. arxiv >https://arxiv.org/abs/1807.02811>
+-   Peter I. Frazier (2018): A tutorial on Bayesian optimization.
+    arxiv <https://arxiv.org/abs/1807.02811>
 
-* Max Kuhn and Julia Silge Version 0.0.1.9008 (2021-02-15) Tidy modelling with R. <https://www.tmwr.org/>
+-   Max Kuhn and Julia Silge Version 0.0.1.9008 (2021-02-15) Tidy
+    modelling with R. <https://www.tmwr.org/>
 
-* Roger Gosse, University of Toronto: CSC321 Lecture 21: Bayesian Hyperparameter Optimization. <http://www.cs.toronto.edu/~rgrosse/courses/csc321_2017/slides/lec21.pdf>
+-   Roger Gosse, University of Toronto: CSC321 Lecture 21: Bayesian
+    Hyperparameter Optimization.
+    <http://www.cs.toronto.edu/~rgrosse/courses/csc321_2017/slides/lec21.pdf>
 
-* Max Kuhn (2020). caret: Classification and Regression Training. R package
-version 6.0-86. <https://CRAN.R-project.org/package=caret>
-
-
+-   Max Kuhn (2020). caret: Classification and Regression Training. R
+    package version 6.0-86. <https://CRAN.R-project.org/package=caret>
