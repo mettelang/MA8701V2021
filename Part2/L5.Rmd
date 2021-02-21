@@ -609,7 +609,7 @@ best=cv.fit$size[which.min(cv.fit$dev)]
 prune.fit=prune.tree(fit,best=best)
 plot(prune.fit)
 text(prune.fit,pretty=0)
-fit
+prune.fit
 
 train.res=predict(prune.fit)[,2]
 test.res=predict(prune.fit,newdata=ctest)[,2]
@@ -1253,9 +1253,21 @@ At each internal node $t$ there is a split, where the covariate to split on is d
 
 The importance measure is the square root, so  $I_l(T)= \sqrt{I_l^2(T)}$.
 
+The term *important* relates to _total decrease in the node impurity, over splits for a predictor_, and is defined differently for regression trees and classification trees.
+
 ---
 
-The term *important* relates to _total decrease in the node impurity, over splits for a predictor_, and is defined differently for regression trees and classification trees.
+### From single to many trees 
+
+$$I_l^2=\frac{1}{B} \sum_{b=1}^B I_l^2(T_b)$$
+The measure is relative:
+
+* the highest value is set to 100
+* the others are scaled according to this
+
+
+
+---
 
 **Regression trees:** 
 
@@ -1271,14 +1283,6 @@ The term *important* relates to _total decrease in the node impurity, over split
 * The importance is the mean decrease (over all $B$ trees) in the Gini index by splits of a predictor.
 
 ---
-
-### From single to many trees 
-
-$$I_l^2=\frac{1}{B} \sum_{b=1}^B I_l^2(T_b)$$
-The measure is relative:
-
-* the highest value is set to 100
-* the others are scaled according to this
 
 R: `varImpPlot` (or `importance`) in `randomForest` with `type=2`.
 
@@ -1316,6 +1320,9 @@ mean((yhat.rf-boston.test)^2)
 importance(rf.boston)
 varImpPlot(rf.boston)
 summary(rf.boston$oob.times) #for 500 trees in total
+varImpPlot(rf.boston,pch=20,type=1)
+#varImpPlot(rf.boston,pch=20,type=2)
+
 ```
 
 ---

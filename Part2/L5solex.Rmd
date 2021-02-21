@@ -3,18 +3,18 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+  ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  ioslides_presentation: default
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
-  pdf_document:
-    toc: yes
-    toc_depth: 2
 subtitle: 'L5: Solutions to Exercise random forest variance'
 ---
 
@@ -29,7 +29,8 @@ The variance of the average of $B$ observations of i.i.d random variables $X$, e
 That is, suppose the variables have a positive correlation $\rho$
 $$\text{Cov}(X_i, X_j) = \rho \sigma^2, \quad i \neq j.$$
 then the variance of the average is 
-$$\rho \sigma^2+\frac{1-\rho}{B} \sigma^2$$$
+$$\rho \sigma^2+\frac{1-\rho}{B} \sigma^2$$
+
 Proof:
 
 $$\begin{aligned} \text{Var}(\bar{X}) &= \text{Var}\Big( \frac{1}{B}\sum_{i=1}^B X_i \Big) \\

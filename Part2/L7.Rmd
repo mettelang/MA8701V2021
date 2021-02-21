@@ -3,20 +3,20 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
-    latex_engine: xelatex
-  ioslides_presentation: default
   pdf_document:
     toc: yes
     toc_depth: 3
     latex_engine: xelatex
+  ioslides_presentation: default
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+    latex_engine: xelatex
 subtitle: 'L7: Random forest, Super Learner, Hyperparameter tuning'
 editor_options: 
   markdown: 
@@ -110,6 +110,8 @@ hyperparameters.
 (References: Le Dell (2015) Section 2.2 and van der Laan et al (2016),
 and Polley et al (2011))
 
+Why do we want to study the Super Learner?
+
 The Super Learner or *generalized stacking* is an algorithm that
 combines
 
@@ -135,9 +137,11 @@ combines
 
 -   *Training data* (level-zero data) $O_i=(X_i,Y_i)$ of $N$ i.i.d
     observations.
+    
 -   A total of $L$ *base learning algorithms* $\Psi^l$ for
     $l=1,\ldots,L$, each from some algorithmic class and each with a
     specific set of model parameters.
+    
 -   A *metalearner* ${\bf \Phi}$ is used to find an *optimal
     combination* of the $L$ base learners.
 
@@ -149,9 +153,9 @@ combines
 
 a)  Divide the training data ${\bf X}$ randomly into $V$ roughly-equally
     sized validation folds ${\bf X}_{(1)},\ldots,{\bf X}_{(V)}$. $V$ is
-    often 5 or 10.
+    often 5 or 10. (The responses ${\bf Y}$ are also needed.)
 
-b)  For each base learner $\Phi^l$ perform $V$-fold cross-validation to
+b)  For each base learner $\Psi^l$ perform $V$-fold cross-validation to
     produce prediction.
 
 This gives the level-one data set ${\bf Z}$ consisting prediction of all
@@ -179,19 +183,18 @@ the level-zero data - that is a matrix with $N$ rows and $L$ columns.
 a)  The starting point is the level-one prediction data ${\bf Z}$
     together with the responses $(Y_1,\ldots ,Y_N)$.
 b)  The metalearner is used to estimate the weights given to each base
-    learner: $\hat{Y_i}=\alpha_1 z_{1i}+ \cdots + \alpha_L z_{Li}$.
-    (Should probably also involve some link function, so that this may
-    be the linear predictor.)
+    learner: $\hat{\eta_i}=\alpha_1 z_{1i}+ \cdots + \alpha_L z_{Li}$.
 
 **What could the metalearner be?**
 
 ------------------------------------------------------------------------
 
--   the mean (bagging)
--   ordinary least squares
--   non-negative least squares
--   ridge or lasso regression
--   1-ROC-AUC
+* the mean (bagging)
+* constructed by minimizing the 
+  + squared loss (ordinary least squares) or
+  +  non-negative least squares
+* ridge or lasso regression
+* constructed by minimizing 1-ROC-AUC
 
 ------------------------------------------------------------------------
 
@@ -212,25 +215,27 @@ For a new observaton ${\bf x}^*$
 
 a)  Use each of the $L$ base learners to produce a prediction
     ${\bf z}^*$, and
-b)  feed this to the metalearnerfit to produce the final prediction
+b)  feed this to the metalearner-fit to produce the final prediction
     $y^*$.
 
 ------------------------------------------------------------------------
 
 ## The metalearning
 
+Some observations
+
 -   The term *discrete super learner* is used if the base learner with
     the lowest risk (i.e. CV-error) is selected.
 -   Since the predictions from multiple base learners may be highly
     correlated - the chosen method should perform well in that case
-    (i.e. ridge and lasso)
--   when minimizing the squared loss it has been found that adding a
-    non-negativity constraint $\alpha_l\le 0$ works well
+    (i.e. ridge and lasso).
+-   When minimizing the squared loss it has been found that adding a
+    non-negativity constraint $\alpha_l\le 0$ works well,
 -   and also the additivity constraint $\sum_{l=1}^L \alpha_l=1$ - the
-    ensemble is a *convex combination* of the base learners
--   non-linear optimization methods may be employed for the metalearner
+    ensemble is a *convex combination* of the base learners.
+-   Non-linear optimization methods may be employed for the metalearner
     if no existing algorithm is available
--   historically a regularized linear model has "mostly" been used
+-   Historically a regularized linear model has "mostly" been used
 -   For classification the logistic response function can be used on the
     linear combination of base learners (Figure 3.2 Polley).
 
@@ -250,22 +255,29 @@ relative to the linear model OLS.)
 ------------------------------------------------------------------------
 
 ## Theoretical result
+(Le Dell 2015, page 6)
 
 -   Oracle selector: the estimator among all possible weighted
     combinations of the base prediction function that minimizes the risk
     under the *true data generating distribution*.
+    
+    
 -   The *oracle result* was established for the Super Learner by van der
     Laan et al (2006).
+    
+    
 -   If the *true prediction function* cannot be represented by a
     combination of the base learners (available), then "optimal" will be
     the closest linear combination that would be optimal if the true
     data-generating function was known.
+    
+    
 -   The oracle result require an *uniformly bounded loss function*.
     Using the convex restriction (sum alphas =1) implies that if each
     based learner is bounded so is the convex combination. In practice:
     truncation of the predicted values to the range of the outcome in
-    the training set is sufficient to allow for unbounded loss fuctions
-    (Le Dell page 6).
+    the training set is sufficient to allow for unbounded loss functions
+
 
 ------------------------------------------------------------------------
 
@@ -276,8 +288,10 @@ relative to the linear model OLS.)
 -   Add an outer (external) cross validation loop (where the super
     learner loop is inside). Suggestion: use 20-fold, especially when
     small sample size.
+    
 -   Overfitting? Check if the super learner does as well or better than
     any of the base learners in the ensemble.
+    
 -   Results using *influence functions* for estimation of the variance
     for the Super Learner are based on asymptotic variances in the use
     of $V$-fold cross-validation (see Ch 5.3 of Le Dell, 2015)
@@ -288,9 +302,11 @@ relative to the linear model OLS.)
 
 -   Many different implementations available, and much work on parallell
     processing and speed and memory efficient execution.
--   Super learner implicitly can handle hyperparameter tuning by
+    
+-   Super Learner implicitly can handle hyperparameter tuning by
     including the same base learner with different model parameter sets
     in the ensemble.
+    
 -   Speed and memory improvements for large data sets involves
     subsampling, and the R `subsemble` package is one solution, the H2O
     Ensemble project another.
@@ -299,7 +315,7 @@ relative to the linear model OLS.)
 
 ## R example
 
-Code is copied from [Guide to SuperLearner]() and the presentation
+Code is copied from [Guide to SuperLearner](https://cran.r-project.org/web/packages/SuperLearner/vignettes/Guide-to-SuperLearner.html) and the presentation
 follows this guide. The data used is the Boston housing dataset from
 `MASS`, but with the median value of a house dichotomized into a
 classification problem.
@@ -380,7 +396,7 @@ data. Here the default $V=10$ is used for the inner loop, and we set the
 value for the outer loop (here $V=3$ for speed).
 
 ```{r,echo=TRUE}
-system.time({cv_sl=CV.SuperLearner(Y=y_train, X=x_train,V=3,family=binomial(),SL.library=c("SL.mean","SL.glmnet","SL.randomForest"))})
+system.time({cv_sl=CV.SuperLearner(Y=y_train, X=x_train,V=10,family=binomial(),SL.library=c("SL.mean","SL.glmnet","SL.randomForest"))})
 summary(cv_sl)
 ```
 
@@ -429,7 +445,7 @@ xbgoost (written out after the lecture and approved by Berent):
     Typically in between $0.01$ and $0.1$ is sufficient.
 -   Number of trees (boosting iterations): Very much affected by the
     learning rate. Most important parameter to tune, given a learning
-    rate. \@ Maximum depth of trees: start low, then increase. High
+    rate. Maximum depth of trees: start low, then increase. High
     values takes significantly longer to train. Think about the problem,
     and the number of possible interaction effects. If max-depth = J,
     then interactions among J-1 features is possible. How much is
@@ -535,7 +551,7 @@ where:
 -   we have little information so far
 
 To do that we need information on both expected value *and* variance -
-or preferably the distribution of the loss function for your problem.
+or preferably the distribution of the loss function for our problem.
 
 We now look at the multivariate Gaussian distribution and conditional
 distribution, a Gaussian process
@@ -572,7 +588,7 @@ $N_p(\mathbf{\mu},\Sigma)$.
     and $\mathbf{B}\mathbf{Y}$ are independent.
 6.  The conditional distributions of the components are (multivariate)
     normal.
-    $$\mathbf{Y}_2 \mid (\mathbf{Y}_1=\mathbf{Y}_1) \sim N_{p2}(\mathbf{\mu}_2+               \Sigma_{21}\Sigma_{11}^{-1} (\mathbf{Y}_1-\mathbf{\mu}_1),\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}).$$
+    $$\mathbf{Y}_2 \mid (\mathbf{Y}_1=\mathbf{Y}_1) \sim N_{p2}(\mathbf{\mu}_2+\Sigma_{21}\Sigma_{11}^{-1} (\mathbf{Y}_1-\mathbf{\mu}_1),\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}).$$
 
 ------------------------------------------------------------------------
 
@@ -589,7 +605,7 @@ A Gaussian process is defined for
 The process is *first order (mean) stationary* if $\text{E}(Y(x))=\mu$
 for all $x$, and this can be extended to depend on covariates.
 
-The process is *second order stationary* if $\text{Var}(Y(t))=\sigma^2$
+The process is *second order stationary* if $\text{Var}(Y(x))=\sigma^2$
 for all $x$ and the correlation $\text{Corr}(Y(x),Y(x'))$ only depends
 on differences between $x$ and $x'$.
 
