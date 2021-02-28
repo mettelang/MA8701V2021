@@ -3,20 +3,20 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document:
+  pdf_document:
     toc: yes
-    toc_float: yes
-    code_download: yes
     toc_depth: 3
+    latex_engine: xelatex
   ioslides_presentation: default
   beamer_presentation:
     slide_level: 1
     keep_tex: yes
     latex_engine: xelatex
-  pdf_document:
+  html_document:
     toc: yes
+    toc_float: yes
+    code_download: yes
     toc_depth: 3
-    latex_engine: xelatex
 subtitle: 'L8: Hyperparameter tuning with Bayesian Optimization and Evaluating and comparing results from prediction models'
 editor_options: 
   markdown: 
@@ -160,7 +160,6 @@ classlasso=ifelse(predlasso > 0.5, 1, 0)
 table(test$diabetes, classlasso)# 223 non-diabetes and 109 diabetes cases
 # randomforest
 rf=randomForest(factor(diabetes)~.,data=train,mtry=2,ntree=500,importance=TRUE)
-rf$confusion #error rates based on OOB data
 classrf=predict(rf,newdata=test)
 table(test$diabetes, classrf)# 223 non-diabetes and 109 diabetes cases
 rfpred = predict(rf,test, type = "prob")[,2]
@@ -250,7 +249,7 @@ $$T(X_{01},X_{10})=(X_{01}-X_{10})^2/(X_{01}+X_{10})$$
 
 is often used, with large values indicating rejection (McNemar, 1947, Agresti, 2002 pp. 410--412). 
 
-Asymptotically $T$ follows a $\Chi^2$ distribution with 1 degree of freedom when the null hypothesis is true. 
+Asymptotically $T$ follows a $\chi^2$ distribution with 1 degree of freedom when the null hypothesis is true. 
 
 ---
 
@@ -335,7 +334,7 @@ roc.test(lassoroc,rfroc,paired=TRUE)
 
 Conclusion: with respect to ROC-AUC then the two-sided test that lasso and RF produce equally good results is rejected at level 0.05.
 
-Observe that the RF is significantly better than lasso wrt ROC-AUC, but not wrt misclassifiation error. 
+Observe that the lasso is significantly better than RF wrt ROC-AUC, but not wrt misclassifiation error. 
 
 ---
 
@@ -516,6 +515,15 @@ There are 10 observations in each of 5 folds - ordered so that observations labe
 
 This means that the residuals from a 5-fold CV can not be seen to be independent across all observations, but will exhibit slight positive and negative correlations. 
 
+
+---
+
+There are $50*49/2=1225$ unique pairs of observations (residuals) for the simulated example. There are 5 folds and the average correlation for the 5 times $10*9/2=45$ pairs = 225 pairs within each fold is `r mean(withinvec)`.
+
+The average correlation for the 1000 pairs between folds is `r mean(betweenvec)`.
+
+However - testing if the correlation is different from null for all possible pairs of observation of the residuals (with 50 observation we have $50*49/2$ pairs), only gave a significant result for 12 using FDR cut-off 0.05. 
+
 ---
 
 ```{r}
@@ -528,11 +536,6 @@ ggplot(data=df,aes(y=corr,x=comb))+geom_boxplot()
 
 The boxplot of the correlation between residuals are taken between two folds, labelled on the horizonal axes.
 
-There are $50*49/2=1225$ unique pairs of observations (residuals) for the simulated example. There are 5 folds and the average correlation for the 5 times $10*9/2=45$ pairs = 225 pairs within each fold is `r mean(withinvec)`.
-
-The average correlation for the 1000 pairs between folds is `r mean(betweenvec)`.
-
-However - testing if the correlation is different from null for all possible pairs of observation of the residuals (with 50 observation we have $50*49/2$ pairs), only gave a significant result for 12 using FDR cut-off 0.05. 
 
 Most articles state that this is a substantial problem, mainly because for constructing tests the variance of the test statistics is underestimated with positively correlated tests. However, other articles like Wong and Yang (2017) do not consider this a problem. 
 
