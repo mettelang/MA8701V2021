@@ -22,6 +22,7 @@ suppressPackageStartupMessages(library(knitr))
 knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(ggroc))
 suppressPackageStartupMessages(library(kableExtra))
 #whichformat="html"
 suppressPackageStartupMessages(library(GGally))

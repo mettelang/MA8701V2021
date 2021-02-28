@@ -8,15 +8,15 @@ output:
     toc_depth: 3
     latex_engine: xelatex
   ioslides_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+    latex_engine: xelatex
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
-  beamer_presentation:
-    slide_level: 1
-    keep_tex: yes
-    latex_engine: xelatex
 subtitle: 'L7: Random forest, Super Learner, Hyperparameter tuning'
 editor_options: 
   markdown: 
@@ -526,6 +526,17 @@ We will look at two types of surrogate models: Bayesian regression with
 Gaussian processes (in Bayesian optimization) and regression-type models
 in response surface methods (presented by group 2).
 
+## Design of experiments and response surface methodology
+
+Article presentation by group 2.
+
+G. A. Lujan-Moreno, P. R. Howard, O. G. Rojas and D. C. Montgomery
+(2018): Design of experiments and response surface methodology to tune
+machine learning hyperparameters, with a random forest case- study.
+Expert Systems with Applications. 109, 195-205.
+
+---
+
 ## Bayesian optimization
 
 Bayesian optimization is an iterative method - where we start with
@@ -558,39 +569,6 @@ distribution, a Gaussian process
 
 ------------------------------------------------------------------------
 
-### Multivariate normal distribution
-
-aka multivariate Gaussian distribution. Known from TMA4265 and TMA4267.
-
-The random vector $\mathbf{Y}_{p\times 1}$ is multivariate normal $N_p$
-with mean $\mathbf{\mu}$ and (positive definite) covariate matrix
-$\Sigma$. The pdf is:
-
-$$f(\mathbf{Y})=\frac{1}{(2\pi)^\frac{p}{2}|\Sigma|^\frac{1}{2}} \exp\{-\frac{1}{2}(\mathbf{Y}-\mathbf{\mu})^T\Sigma^{-1}(\mathbf{Y}-\mathbf{\mu})\}$$
-
-Six useful properties of the mvN - we need number 6.
-
-Let $\mathbf{Y}_{(p\times 1)}$ be a random vector from
-$N_p(\mathbf{\mu},\Sigma)$.
-
-1.  The grapical contours of the mvN are ellipsoids (can be shown using
-    spectral decomposition).
-2.  Linear combinations of components of $\mathbf{Y}$ are (multivariate)
-    normal (can be easily proven using moment generating functions MGF).
-3.  All subsets of the components of $\mathbf{Y}$ are (multivariate)
-    normal (special case of the above).
-
-------------------------------------------------------------------------
-
-4.  Zero covariance implies that the corresponding components are
-    independently distributed (can be proven using MGF).
-5.  $\mathbf{A}\Sigma\mathbf{B}^T=\mathbf{0} \Leftrightarrow \mathbf{A}\mathbf{Y}$
-    and $\mathbf{B}\mathbf{Y}$ are independent.
-6.  The conditional distributions of the components are (multivariate)
-    normal.
-    $$\mathbf{Y}_2 \mid (\mathbf{Y}_1=\mathbf{Y}_1) \sim N_{p2}(\mathbf{\mu}_2+\Sigma_{21}\Sigma_{11}^{-1} (\mathbf{Y}_1-\mathbf{\mu}_1),\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}).$$
-
-------------------------------------------------------------------------
 
 ### Gaussian processes
 
@@ -672,6 +650,40 @@ in an efficient way.
 
 ------------------------------------------------------------------------
 
+### Multivariate normal distribution
+
+aka multivariate Gaussian distribution. Known from TMA4265 and TMA4267.
+
+The random vector $\mathbf{Y}_{p\times 1}$ is multivariate normal $N_p$
+with mean $\mathbf{\mu}$ and (positive definite) covariate matrix
+$\Sigma$. The pdf is:
+
+$$f(\mathbf{Y})=\frac{1}{(2\pi)^\frac{p}{2}|\Sigma|^\frac{1}{2}} \exp\{-\frac{1}{2}(\mathbf{Y}-\mathbf{\mu})^T\Sigma^{-1}(\mathbf{Y}-\mathbf{\mu})\}$$
+
+Six useful properties of the mvN - we need number 6.
+
+Let $\mathbf{Y}_{(p\times 1)}$ be a random vector from
+$N_p(\mathbf{\mu},\Sigma)$.
+
+1.  The grapical contours of the mvN are ellipsoids (can be shown using
+    spectral decomposition).
+2.  Linear combinations of components of $\mathbf{Y}$ are (multivariate)
+    normal (can be easily proven using moment generating functions MGF).
+3.  All subsets of the components of $\mathbf{Y}$ are (multivariate)
+    normal (special case of the above).
+
+------------------------------------------------------------------------
+
+4.  Zero covariance implies that the corresponding components are
+    independently distributed (can be proven using MGF).
+5.  $\mathbf{A}\Sigma\mathbf{B}^T=\mathbf{0} \Leftrightarrow \mathbf{A}\mathbf{Y}$
+    and $\mathbf{B}\mathbf{Y}$ are independent.
+6.  The conditional distributions of the components are (multivariate)
+    normal.
+    $$\mathbf{Y}_2 \mid (\mathbf{Y}_1=\mathbf{Y}_1) \sim N_{p2}(\mathbf{\mu}_2+\Sigma_{21}\Sigma_{11}^{-1} (\mathbf{Y}_1-\mathbf{\mu}_1),\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}).$$
+
+------------------------------------------------------------------------
+
 ### Acquisition function: Expected improvement
 
 (Frazier 2018 page 7)
@@ -703,8 +715,8 @@ variance $\sigma^2_n(x)$.
 
 4)  How to evaluate the expected improvement? Integration by parts gives
 
-$$ \text{EI}_n(x)=\max(\mu_n(x)-f^{*}_n,0)])+\sigma_n(x) \phi(\frac{\max(\mu_n(x)-f^{*}_n,0)}{\sigma_n(x)}) $$
-$$-\text{abs}(\mu_n(x)-f^{*}_n) \Phi(\frac{\max(\mu_n(x)-f^{*}_n,0)}{\sigma_n(x)})$$
+$$ \text{EI}_n(x)=\max(\mu_n(x)-f^{*}_n,0)])+\sigma_n(x) \phi(\frac{\mu_n(x)-f^{*}_n}{\sigma_n(x)}) $$
+$$-\text{abs}(\mu_n(x)-f^{*}_n) \Phi(\frac{\mu_n(x)-f^{*}_n}{\sigma_n(x)})$$
 
 $\mu_n(x)-f^{*}_n$ is expected proposed vs previously best
 
@@ -712,6 +724,8 @@ $\mu_n(x)-f^{*}_n$ is expected proposed vs previously best
     improvement
 
 $$ x_{n+1}=\text{argmax}\text{EI}_n(x)$$
+
+Is often found using quasi-Newton optimization.
 
 ------------------------------------------------------------------------
 
@@ -752,7 +766,7 @@ What does the steps mean?
 -   Update the posterior: calculate the conditional distribution for $f$
     for a new point given the observed loss at all previously observed
     points
--   Acquisition function:
+-   Acquisition function: find $\text{argmax}\text{EI}_n(x)$.
 
 (Class notes: Figure 1 of Frazier 2018.)
 
@@ -766,6 +780,15 @@ What does the steps mean?
 -   The width of the credibility interval at observations is 0.
 
 ------------------------------------------------------------------------
+
+## Extension
+
+What is the objection function is not observed noise-less?
+
+Independent normal error term $\varepsilon$ can be added to the previously defined $Y=f(x)$ to make a new $Y=f(x)+\varepsilon$.
+This (only) adds a diagonal term to the covariance matrix, and it is common to assume that the variance is the same for all $x$ and treat the variance as a hyperparameter.
+
+---
 
 ### Example
 
@@ -900,14 +923,6 @@ autoplot(bayesres2,type="parameters")
 
 ------------------------------------------------------------------------
 
-## Design of experiments and response surface methodology
-
-Article presentation by group 2.
-
-G. A. Lujan-Moreno, P. R. Howard, O. G. Rojas and D. C. Montgomery
-(2018): Design of experiments and response surface methodology to tune
-machine learning hyperparameters, with a random forest case- study.
-Expert Systems with Applications. 109, 195-205.
 
 # References
 
