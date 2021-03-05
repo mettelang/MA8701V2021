@@ -3,24 +3,21 @@ title: "MA8701 Advanced methods in statistical inference and learning"
 author: "Mette Langaas IMF/NTNU"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document:
+  html_document:
     toc: yes
+    toc_float: no
+    code_download: yes
     toc_depth: 3
-    latex_engine: xelatex
   ioslides_presentation: default
   beamer_presentation:
     slide_level: 1
     keep_tex: yes
     latex_engine: xelatex
-  html_document:
+  pdf_document:
     toc: yes
-    toc_float: yes
-    code_download: yes
     toc_depth: 3
+    latex_engine: xelatex
 subtitle: 'L8: Hyperparameter tuning with Bayesian Optimization and Evaluating and comparing results from prediction models'
-editor_options: 
-  markdown: 
-    wrap: 72
 ---
 
 ```{r setup, include=FALSE,echo=FALSE}
