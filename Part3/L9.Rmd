@@ -7,15 +7,15 @@ output:
     slide_level: 1
     keep_tex: yes
     latex_engine: xelatex
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-    latex_engine: xelatex
   html_document:
     toc: yes
     toc_float: yes
     code_download: yes
     toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    latex_engine: xelatex
 subtitle: 'L9: Feedforward neural networks'
 bibliography: ref.bib
 nocite: | 
@@ -232,7 +232,22 @@ ggplot(data.frame(x = c(-6, 5)), aes(x)) + xlab(expression(x)) + ylab("Sigmoid")
 
 ---
 
-**Softmax**
+**Softmax $K=2$**
+Showing $K=2$ with $\frac{\exp{\beta_k x}}{\sum_{k=1}^2 \exp{\beta_{k} x }}$ where $\beta_1=1$ (red), $\beta_2=1.1$ (orange). Observe that this is that same as using a sigmoid for one of the classes.
+
+```{r,echo=FALSE,fig.width = 4,fig.height=2.5}
+p=ggplot(data.frame(x=c(-40,40)), aes(x))+
+  xlab(expression(x))+ 
+  ylab("Softmax with two classes")
+p=p+stat_function(fun=function(x) exp(1*x)/(exp(1*x)+exp(1.1*x)), geom="line", colour="red")
+p=p+stat_function(fun=function(x) exp(1.1*x)/(exp(1*x)+exp(1.1*x)), geom="line", colour="orange")
+p
+```
+
+---
+
+
+**Softmax $K=3$ v1**
 Showing $K=3$ with $\frac{\exp{\beta_k x}}{\sum_{k=1}^3 \exp{\beta_{k} x }}$ where $\beta_1=1$ (red), $\beta_2=1.1$ (orange) and $\beta_3=0.9$ (green). 
 
 
@@ -248,22 +263,24 @@ p
 
 ---
 
-Observe that adding a constant what is in the exponent does not change the function. 
-Softmax has to be handled smart so that not overflow (value in exponent too large) will be a problem, and that log(softmax) is calculated in a numerically stable way. Many smart tricks starting at page 21- in Slide deck from Ch 4 of @goodfellow [Numerical precision: a deep learning super skill](https://www.deeplearningbook.org/slides/04_numerical.pdf)
+**Softmax $K=3$ v2**
+Showing $K=3$ with $\frac{\exp{\beta_k x}}{\sum_{k=1}^3 \exp{\beta_{k} x }}$ where $\beta_1=1$ (red), $\beta_2=5$ (orange) and $\beta_3=0.5$ (green). 
+
+
+```{r,echo=FALSE,fig.width = 4,fig.height=2.5}
+p=ggplot(data.frame(x=c(-7,7)), aes(x))+
+  xlab(expression(x))+ 
+  ylab("Softmax")
+p=p+stat_function(fun=function(x) exp(5*x)/(exp(1*x)+exp(5*x)+exp(0.5*x)), geom="line", colour="orange")
+p=p+stat_function(fun=function(x) exp(0.5*x)/(exp(1*x)+exp(5*x)+exp(0.5*x)), geom="line", colour="green")
+p=p+stat_function(fun=function(x) exp(1*x)/(exp(1*x)+exp(5*x)+exp(0.5*x)), geom="line", colour="red")
+p
+```
 
 ---
 
-**Softmax**
-Showing $K=2$ with $\frac{\exp{\beta_k x}}{\sum_{k=1}^2 \exp{\beta_{k} x }}$ where $\beta_1=1$ (red), $\beta_2=1.1$ (orange). Observe that this is that same as using a sigmoid for one of the classes.
-
-```{r,echo=FALSE,fig.width = 4,fig.height=2.5}
-p=ggplot(data.frame(x=c(-40,40)), aes(x))+
-  xlab(expression(x))+ 
-  ylab("Softmax with two classes")
-p=p+stat_function(fun=function(x) exp(1*x)/(exp(1*x)+exp(1.1*x)), geom="line", colour="red")
-p=p+stat_function(fun=function(x) exp(1.1*x)/(exp(1*x)+exp(1.1*x)), geom="line", colour="orange")
-p
-```
+Observe that adding a constant what is in the exponent does not change the function. 
+Softmax has to be handled smart so that not overflow (value in exponent too large) will be a problem, and that log(softmax) is calculated in a numerically stable way. Many smart tricks starting at page 21- in Slide deck from Ch 4 of @goodfellow [Numerical precision: a deep learning super skill](https://www.deeplearningbook.org/slides/04_numerical.pdf)
 
 ---
   
@@ -327,14 +344,12 @@ _Empirically, greater depth does seem to result in better generalization for a w
 ---
 
 ## Group discussion
-(first two were given at the oral exam in 2019)
 
 1. Why do we need to use non-linear activation functions when defining a neural network model?
 
 2. One of the most popular activation function is called Rectified Linear Unit (ReLU), defined as $g(x) = \max(x,0)$. What makes this activation function so attractive?
 
-3. Solve this exam question from TMA4268V2019
-
+3. 
 **a)** Which network architecture and activation functions does this formula give? Include a drawing of the network architecture.
 
 $$ \hat{y}({\bf x})=[1+\exp(-\beta_{01}-\sum_{m=1}^2 \beta_{m1}\max(\gamma_{0m}+$$
@@ -665,9 +680,7 @@ $~$
 
 $~$ 
 
-* There is a formal equivalence between early stopping and $L_2$ regularization for a linear regression and squared loss, elaborating on the trajectory of the gradient descent during training. 
-
-**Q: Should details on the result be included?**
+* There is a formal equivalence between early stopping and $L_2$ regularization for a linear regression and squared loss, elaborating on the trajectory of the gradient descent during training. See @goodfellow page 251-252.
 
 $~$ 
 
@@ -690,32 +703,125 @@ $~$
    + different hyperparameters
  
  $~$ 
- 
+
+But, this may be costly for large networks.
+
 ---
 
 ## Dropout
-(@goodfellow, Section 7.12, @kerasR 4.4.3) and will discuss more in L11. 
+(@goodfellow, Section 7.12) and **will discuss more in L11**. 
 
-Dropout was developed by Geoff Hinton and his students. 
+$~$ 
 
-* During training: randomly _dropout_ (set to zero) outputs in a layer. Drop-out rates may be chosen between 0.2 and 0.5.
-* During test: not dropout, but scale done the layer output values by a factor equal to the drop-out rate (since now more units are active than we had during training)
+_Dropout_ can be sees as a method for _makes bagging practical_ for ensembles of many large neural networks, and can mimic an ensemble of "exponentially" many networks.
 
-Alternatively, the drop-out and scaling (now upscaling) can be done during training.
+$~$ 
+
+* Positive: low cost of computations, robust and can be applied to many types of network models, 
+* Negative: not good for very large datasets, not good with low sample size.
+
+$~$ 
+
+With small changes to the implementation dropout can also be seen to perform boosting, 
 
 ---
 
-One way to look at dropout is on the lines of what we did in Module 8 when we used bootstrapping to produced many data sets and then fitted a model to each of them and then took the average (bagging). But randomly dropping out outputs in a layer, this can be looked as mimicking bagging — in an efficient way.
+### Training
 
-See @goodfellow, Section 7.12 for more insight into the mathematics behind drop-out, and we will look more into drop-out in L11.
+* Dropout trains the ensemble of all sub-networks that can be formed by removing _non-output_ units from _an underlying base network_
+* Removing= multiplying the output value from the unit by zero.
+
+$~$ 
+
+* Minibatch-based algorithm (small steps) used, where each time an example is loaded into a minibatch a _random binary mask_ is sampled to be applied to all input and hidden units in the network.
+* Mask (0=not included, 1=include) has probability fixed (hyperparameter). Input unit has default 0.8 to include and hidden 0.5.
+
+$~$ 
+
+(Study Figure 7.6 and 7.7 in @goodfellow.)
+
+---
+
+* $\mu$: mask vector (which units to include)
+* $\theta$: model parameters
+* $J(\theta,\mu)$: loss (cost) of the model defined by $\mu$ and $\theta$
+
+Dropout training aims to minimize $\text{E}_{\mu}(J(\theta,\mu))$.
+
+$~$ 
+
+Compare to bagging: 
+
+* not independent models
+* models share parameters
+* the different models are not explicitly trained
+    + tiny fraction of possible sub-networks each trained at a single step
+    + parameter sharing helps remaining sub-networks to get good parameters
+* but: training set at each sub-network is a subset of the original training data (resampled with replacement=minibatch SDG)
+
+---
+
+### Use for prediction
+
+To make a prediction in bagging we needed to include the prediction from all the members. How can that be done with dropout-trained networks?
+
+For bagging with $k$ models:
+$$\frac{1}{k} \sum_{i=1}^k  p^{(i)}(y\mid {\bf x})$$
+* Each model $i$ gives a probability distributions $p^{(i)}(y\mid {\bf x})$
+    + for softmax and sigmoid output units it is the probability of each class, 
+    + for regression  output units just one value.
+
+$~$ 
+
+---
+
+**Method 1**
+
+For dropout each sub-model is defined by the mask $\mu$, and the prediction may be
+
+$$\sum_{\mu} p^{(i)}(y\mid {\bf x},\mu)p(\mu)$$
+where $p(\mu)$ is the probability distribution describing how the masking was done.
+
+But, this is not possible (many terms in the sum), so instead outputs from many masks are averaged together. These maskes are then sampled, and even 10-20 may be enough.
+
+---
+
+**Method 2**
+
+* Let $d$ be the number of units that may be dropped (input and hidden).
+* The there are $2^d$ possible sub-networks (minus some that have no connection between input and output?)
+* Models that assign probability 0 to any event is not included
+
+This method uses the geometric instead of the arithmetic mean.
+
+$$\hat{p}_{\text{ensemble}}(y\mid {\bf x})=(\prod_{\mu}p(y\mid {\bf x},\mu)))^ {\frac{1}{2d}}$$
+Here $p(\mu)=1$ - so a uniform model (but should have been $p(\mu)=\frac{1}{2d}$), and the ensemble is renormalized across all possible outputs.
+
+$$p_{\text{ensemble}}(y\mid {\bf x})=\frac{\hat{p}_{\text{ensemble}}(y\mid {\bf x})}{\sum_{y'} \hat{p}_{\text {ensemble}}(y' \mid {\bf x})}$$
 
 
-**some QC remaining**
+---
+
+**Method 3: the weight scaling inference rule**
+
+* Approximate the ensemble by just using one model = the model with all units present.
+* but - modified by multiplying the weigth out of unit $j$ by the probability of including this unit in the training.
+
+$~$ 
+
+* No mathematical argument for deep non-linear, but "empirically works well".
+* For methods without non-linear unit it can be shown that the weight scaling rule is exact (see pages 263-264 of @goodfellow)
+
+$~$ 
+
+Alternatively: during training the probability of inclusion is $0.5$, then multiply all weights by $2$ by the end of traning and use as "usual" for prediction.
+
+$~$ 
 
 ---
 
 ## Group discussion
-(first was asked at the oral exam in 2019)
+(q1 was asked at the oral exam in 2019)
 
 1) Can you mention three different techniques to prevent overfitting? What are key aspects of one of the techniques? Have you used any of theses yourself? Elaborate.
 
@@ -723,7 +829,9 @@ See @goodfellow, Section 7.12 for more insight into the mathematics behind drop-
 
 3) What is your experience with using Python or R to fit (deep) FNN? "Packages" used?
 
-4) What is the connection between an artificial neural network and the neural network of our brains (that is studied in the field of neuroscience)?
+---
+
+4) What are connections between an artificial neural network and the neural network of our brains (that is studied in the field of neuroscience)?
 
 ```{r, out.width="500pt",echo=FALSE}
 knitr::include_graphics("./Neuron3.png")
@@ -757,11 +865,11 @@ We observe that we may see the gradient as an average over many individual gradi
 
 The idea here is that the optimizer will converge much faster if they can rapidly compute approximate estimates of the gradient, instead of slowly computing the exact gradient (using all training data).
 
+---
+
 In addition with multicore systems, mini-batches may be processed in parallell and the batch size is often a power of 2 (32 or 256).
 
 It also turns out that small batches also serves as a regularization effect maybe due to the variability they bring to the optimization process.
-
----
 
 In the 4th video (on backpropagation) from 3Blue1Brown there is nice example of one trajectory from gradient decent and one from SGD (13:50 minutes into the video):
 <https://www.youtube.com/watch?v=tIeHLnjs5U8>
@@ -771,7 +879,7 @@ In the 4th video (on backpropagation) from 3Blue1Brown there is nice example of 
 This means that for (mini-batch) stochastic gradient descent we do as follows:
 
 1. Divide all the training samples randomly into mini-batches.
-2. For each mini-batch: Make predictions of the reponses in the mini-batch in a _forward pass_.
+2. For each mini-batch: Make predictions of the responses in the mini-batch in a _forward pass_.
 3. Compute the loss for the training data in this batch.
 4. Compute the gradient of the loss with regard to the model's parameters (_backward pass_) based on the training data in the batch. $\nabla_{\boldsymbol \theta}^* J({\boldsymbol \theta}^{(t)})$
 5. Update all weighs, but just using the average gradient from the mini-batch ${\boldsymbol \theta}^{(t+1)}={\boldsymbol \theta}^{(t)} - \lambda \nabla_{\boldsymbol \theta} ^* J({\boldsymbol \theta}^{(t)})$
@@ -833,6 +941,8 @@ Named variants: In `keras` the "default optimizer" is RMSprop.
 * <https://keras.rstudio.com/>
 * Cheat-sheet for R Keras: <https://github.com/rstudio/cheatsheets/raw/master/keras.pdf>
 * [Keras documentation for Optimizers](https://keras.io/optimizers/)
+
+---
 
 ## Resources from MA8701 in 2019
 (made by Thiago G. Martins)
