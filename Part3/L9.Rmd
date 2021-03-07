@@ -199,14 +199,14 @@ J({\theta})=\frac{1}{n}\sum_{i=1}^n (y_i-{\hat{y}({\bf x}_i)})^2
 
 **Binary-Bernoulli-sigmoid-binary cross-entropy**
 \begin{eqnarray*}
-\hat{y}({\bf x}_i)=\frac{1}{1+\exp(-{\bf w}^T {\bf h}_i+b)}\\
+\hat{y}({\bf x}_i)=\frac{1}{1+\exp(-{\bf w}^T {\bf h}_i-b)}\\
 J({\theta})=-\frac{1}{n}\sum_{i=1}^n (y_i\ln({\hat{y}({\bf x}_i)})+(1-y_i)\ln(1-{\hat{y}({\bf x}_i)})
 \end{eqnarray*}
 
 **Discrete-Multinoulli-softmax-discrete cross-entropy**
 \begin{eqnarray*}
-\hat{y}_c({\bf x}_i)=\frac{\exp({\bf w}_c^T {\bf h}_i+b_c)}{\sum_{s=1}^{C}\exp({\bf w}_s^T {\bf h}_i+b_s)}\\
-J(\theta)=-\frac{1}{n}\sum_{i=1}^n\frac{1}{C} \sum_{c=1}^C (y_{ic}\ln({\hat{y}_c({\bf x}_i)})
+\hat{y}_k({\bf x}_i)=\frac{\exp({\bf w}_k^T {\bf h}_i+b_k)}{\sum_{s=1}^{K}\exp({\bf w}_s^T {\bf h}_i+b_s)}\\
+J(\theta)=-\frac{1}{n}\sum_{i=1}^n\frac{1}{K} \sum_{k=1}^K (y_{ik}\ln({\hat{y}_k({\bf x}_i)})
 \end{eqnarray*}
 
 More on [multinomial regression in GLM](https://www.math.ntnu.no/emner/TMA4315/2018h/6Categorical.html)
@@ -425,7 +425,7 @@ $~$
 
 ---
 
-### Weight decay
+## Weight decay
 aka $L_2$, ridge regression or Tikhonov regularization.
 
 $$\Omega(\theta)=\frac{1}{2} {\bf w}^T {\bf w}$$
@@ -434,67 +434,11 @@ $$\Omega(\theta)=\frac{1}{2} {\bf w}^T {\bf w}$$
 
 $~$ 
 
-In @WNvW we studied (briefly) the interpretation of the ridge penalty for multiple linear regression, and will elaborate a bit more here - and then relate to FNN.
-
-$$ {\bf w}=({\bf X}^T{\bf X}+\alpha {\bf I})^{-1}{\bf X}^T{\bf y}$$
-
----
-
-Assume covariates and response are centered (no intercept needed). To look at figures we let the number of covariates be $p=2$, and assume that both covariates contribute equally to the response (weigths without penalization would be the same).
-
-$~$ 
-
-1) Assume covariates are uncorrelated with the same variance, so that the estimated covariance matrix $\frac{1}{n}{\bf X}^T{\bf X}$ is diagonal. Ridge: The weights for each covariate is then shrunken with the same factor.
-
-$~$ 
-
-2) Assume covariates are uncorrelated with different variances. Then the weights for the covariate with the largest variance is shrunken less than the covariate with the smallest variance (the weight for the covariate with the larger variance is larger than for the other). 
-
-$~$ 
-
----
-
-Remark: if covariates are standardized the variances are the same. Then ridge estimates before and after scaling will not simply differ by a factor.
-
----
-
-```{r, out.width="100%",echo=FALSE,fig.cap="Figure 1.5 of W. N. van Wieringen (2020)"}
-knitr::include_graphics("WNvWfig15bottom.jpg")
-```
-
----
-
-3) Assume covariates are correlated but have the same variance. The ridge shrinks less the weights of the strongly positively correlated covariates. 
-
-
-```{r, out.width="60%",echo=FALSE,fig.cap="Figure 1.6 of W. N. van Wieringen (2020)"}
-knitr::include_graphics("WNvWfig16left.jpg")
-```
-
-
----
-
-In ELS (Ch 3.4.1) we looked at the singular value decomposition of the covariate matrix ${\bf X}$, and the result was that:
-
-$$\hat{y}_{\text{ridge}}={\bf X}\hat{\beta}_{\text ridge}= \cdots =
-{\bf U}{\bf D}^2({\bf D}^2+\alpha {\bf I}_p)^{-1}{\bf U}^T {\bf y}=
-\sum_{j=1}^p {\bf u}_j \frac{d_j^2}{d_j^2+\alpha}{\bf u}_j^T {\bf y}$$
-
-* The estimated covariance matrix for centred covariates is $\frac{1}{N}{\bf X}^T{\bf X}$. The eigenvalues of ${\bf X}^T{\bf X}$ are the squared singular values, $d^2_j$. 
-* The small singular values $d_j$ correspond to directions in the column space of ${\bf X}$ with small variance, which will be the direction for the last principal components. 
-
-$~$ 
-
-* The ridge penalties shrinks the direction with the small singular values the most.
-(Which is the same as we saw with the highly correlated directions being shrunken less.)
-
-$~$ 
-
 ---
 
 In @goodfellow, the transition over to FNN is done by first looking at the effect of the penalty term in gradient descent.
 
-#### Gradient descent
+### Gradient descent
 
 Let $\nabla J({\boldsymbol \theta}^{(t)})$ be the gradient of the loss function evaluated at the current estimate ${\boldsymbol \theta}^{(t)}$, then a step $t+1$ of the algorithm the new values (estimates) of of the parameters are given as:
 
@@ -512,9 +456,9 @@ $~$
 
 ---
 
-#### Effect of penalty on gradient
+### Effect of penalty on gradient
 
-Assume not bias parameter (maybe centering of covariates and response)
+Assume not bias parameter (maybe center covariates and response)
 
 $$\tilde{J}({\bf w}; {\bf X}, {\bf y})=J({\bf w}; {\bf X}, {\bf y})+\frac{\alpha}{2}{\bf w}^T {\bf w}$$
 $$\nabla_{\bf w} \tilde{J}({\bf w}; {\bf X}, {\bf y})=\nabla_{\bf w} J({\bf w}; {\bf X}, {\bf y})+\alpha{\bf w}$$
@@ -594,6 +538,25 @@ For the GLM with canonical link the Hessian of the (negative) log-likelihood is 
 $~$ 
 
 
+---
+
+In ELS (Ch 3.4.1) we looked at the singular value decomposition of the covariate matrix ${\bf X}$, and the result was that:
+
+$$\hat{y}_{\text{ridge}}={\bf X}\hat{\beta}_{\text ridge}= \cdots =
+{\bf U}{\bf D}^2({\bf D}^2+\alpha {\bf I}_p)^{-1}{\bf U}^T {\bf y}=
+\sum_{j=1}^p {\bf u}_j \frac{d_j^2}{d_j^2+\alpha}{\bf u}_j^T {\bf y}$$
+
+* The estimated covariance matrix for centred covariates is $\frac{1}{N}{\bf X}^T{\bf X}$. The eigenvalues of ${\bf X}^T{\bf X}$ are the squared singular values, $d^2_j$. 
+* The small singular values $d_j$ correspond to directions in the column space of ${\bf X}$ with small variance, which will be the direction for the last principal components. 
+
+$~$ 
+
+* The ridge penalties shrinks the direction with the small singular values the most.
+
+$~$ 
+
+---
+
 With the Hessian taking the place of the ${\bf X}^T{\bf X}$ in our results from the ridge regression we may also now conclude that
 
 * the ridge penalty shrinks the directions of the small eigenvalue of the Hessian matrix the most.
@@ -606,7 +569,47 @@ $~$
 
 ---
 
-### $L_1$ penalty
+In @WNvW we studied (briefly) the interpretation of the ridge penalty for multiple linear regression.
+
+$$ {\bf w}=({\bf X}^T{\bf X}+\alpha {\bf I})^{-1}{\bf X}^T{\bf y}$$
+
+---
+
+Assume covariates and response are centered (no intercept needed). To look at figures we let the number of covariates be $p=2$, and assume that both covariates contribute equally to the response (weigths without penalization would be the same).
+
+$~$ 
+
+1) Assume covariates are uncorrelated with the same variance, so that the estimated covariance matrix $\frac{1}{n}{\bf X}^T{\bf X}$ is diagonal. Ridge: The weights for each covariate is then shrunken with the same factor.
+
+$~$ 
+
+2) Assume covariates are uncorrelated with different variances. Then the weights for the covariate with the largest variance is shrunken less than the covariate with the smallest variance (the weight for the covariate with the larger variance is larger than for the other). 
+
+$~$ 
+
+---
+
+Remark: if covariates are standardized the variances are the same. Then ridge estimates before and after scaling will not simply differ by a factor.
+
+---
+
+```{r, out.width="100%",echo=FALSE,fig.cap="Figure 1.5 of W. N. van Wieringen (2020)"}
+knitr::include_graphics("WNvWfig15bottom.jpg")
+```
+
+---
+
+3) Assume covariates are correlated but have the same variance. The ridge shrinks less the weights of the strongly positively correlated covariates. 
+
+
+```{r, out.width="60%",echo=FALSE,fig.cap="Figure 1.6 of W. N. van Wieringen (2020)"}
+knitr::include_graphics("WNvWfig16left.jpg")
+```
+
+
+---
+
+## $L_1$ penalty
 
 $~$ 
 
@@ -722,7 +725,7 @@ $~$
 
 $~$ 
 
-With small changes to the implementation dropout can also be seen to perform boosting, 
+With small changes to the implementation dropout can also be seen to perform boosting.
 
 ---
 
@@ -767,6 +770,7 @@ To make a prediction in bagging we needed to include the prediction from all the
 
 For bagging with $k$ models:
 $$\frac{1}{k} \sum_{i=1}^k  p^{(i)}(y\mid {\bf x})$$
+
 * Each model $i$ gives a probability distributions $p^{(i)}(y\mid {\bf x})$
     + for softmax and sigmoid output units it is the probability of each class, 
     + for regression  output units just one value.
