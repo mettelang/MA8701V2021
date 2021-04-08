@@ -1,0 +1,338 @@
+---
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+    latex_engine: xelatex
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    latex_engine: xelatex
+subtitle: 'L12+L13 with Kjersti Aas'
+bibliography: ../Part3/ref.bib
+---
+  
+```{r setup, include=FALSE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(iml))
+suppressPackageStartupMessages(library(ICEbox))
+suppressPackageStartupMessages(library(ALEPlot))
+suppressPackageStartupMessages(library(pdp))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(glmnet))
+suppressPackageStartupMessages(library(randomForest))
+suppressPackageStartupMessages(library(MASS))
+suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(caret)) #for confusion matrices
+suppressPackageStartupMessages(library(pROC)) #for ROC curves
+suppressPackageStartupMessages(library(corrplot)) #for ROC curves
+suppressPackageStartupMessages(library(correlation)) #for ROC curves
+```
+
+# Part 4: Explainable AI
+
+The main role of this note is to give the R code for the examples found on the Part 4 slide sets, and detailed references for further reading. 
+
+## Why a part on XAI?
+
+In **Part 1** we worked with _interpretable_ methods:
+
+* linear regression (LS/MLE, ridge and lasso)
+* logistic regression (MLE, ridge and lasso)
+
+By studying the estimated regression coefficients we could (to some extent) explain what our fitted model could tell us about the data we had analysed. 
+
+In **Part 2** we started by studying a classification and regression tree, which is also an interpretable method. 
+
+See Chapter 4.1, 4.2 and 4.4 of @molnar2019 (Chapther 4_ Interpretable Models, 4.1 Linear regression, 4.2 Logistic regression and 4.4 Decision tree) on a discussion around what to report or plot from interpretable methods.
+
+In Part 2 we then moved on to different versions of ensemble methods (bagging, random forest, xgboost, superlearner) - which are not interpretable. In **Part 3** we studied artificial neural networks (deep nets, recurrent nets, Bayesian nets) - again not interpretable methods.
+
+We may refer to the methods of Part 2 and 3 as _black box_ methods, since in a prediction setting we would input an observation to the fitted method and the method would output a prediction - but we would not have a specific formula that we use to explain why the method gave this prediction. 
+
+In many situations we would like to know more about the model that the method have fitted. We would like some kind of interpretation of what the underlying methods does, for example:
+
+* what is the mathematical relationship between $x$ and $y$ in the fitted method?
+* how much of the variability in the data is explained by feature $x$ in the fitted method?
+* is there an interaction effect between $x_1$ and $x_2$ in the fitted method?
+
+Remark: we want to interpret the fitted method, based on the available data (but not really interpret directly the data). 
+
+We would also like to _explain_ the prediction for a given input. 
+
+See Chapter 2 of @molnar2019 on a discussion of _interpretability_.
+
+## Reading list 
+
+* @molnar2019: Chapters 2, 5, 6.1
+* Four slide sets from Kjersti Aas (sent to participants by email)
+   + Introduction
+   + LIME
+   + Shapley values
+   + Counterfactual explanations
+   
+Supplementary reading is specified for (below) each of the four slide sets.
+
+## Outline
+
+We start by motivating the need for XAI, and then look at
+
+* Global explanation methods
+   + Model specific methods
+   + Model agnostic methods (PDP plots, ICE plots, ALE plots)
+
+* Local explanation methods
+   + Method specific
+   + Model agnostic (LIME, Shapley values, Counterfactual explanations)
+
+## Plan
+
+* L12: Two slide sets - Introduction and LIME
+* L13: Two slide sets - Shapley values and Counterfactuals
+
+# L12: Introduction slide set
+
+## Analysis of the bike data
+
+### Linear model
+
+```{r}
+# download manually
+#"https://github.com/christophM/interpretable‐ml‐book/blob/master/data/bike.Rdata"
+load("bike.Rdata")
+colnames(bike)
+
+n=dim(bike)[1]
+bikeTrain=bike[1:600,]
+bikeTest<-bike[601:n,]
+
+linearMod <- lm(cnt~.,data=bikeTrain) #bikeTrain
+
+tmp <- summary(linearMod)
+tmp$r.square
+tmp$coefficients[rev(order(abs(tmp$coefficients[,3]))),]
+corrplot(cor(bikeTrain[,8:11]))
+```
+
+### LMG
+
+Problems with variable 6, removed for the LMG-method.
+
+```{r,eval=FALSE}
+library("relaimpo")
+calc.relimp(cnt~., data=bikeTrain|,-6], type="lmg",rela=TRUE)
+rev(sort(crf$lmg))
+```
+
+### ALE and PDP for RF
+
+```{r}
+
+# ICE
+X=model.matrix(~.-cnt,data=bike)
+rf=randomForest(y=bike$cnt, x=X,ntree=50,  importance=TRUE)        
+this=ice(rf,X=X,predictor=27,plot=TRUE)
+plot(this,centered=FALSE,xlab="temp",frac_to_plot=1,plot_orig_pts_preds=TRUE,pts_preds_size=0.5)
+plot(this,centered=FALSE,xlab="temp",frac_to_plot=0.1,plot_orig_pts_preds=TRUE,pts_preds_size=0.5)
+
+rf=randomForest(cnt ~ ., data = bike, ntree = 50)
+print(rf)
+mod=Predictor$new(rf, data = bike)
+
+
+eff1=FeatureEffect$new(mod, feature = "days_since_2011", method="ale")
+plot(eff1)
+eff2=FeatureEffect$new(mod, feature = "days_since_2011", method="pdp")
+plot(eff2)
+
+#PD plot
+eff1=FeatureEffect$new(mod, feature = "temp", method="pdp")
+plot(eff1)
+#ALE plot
+eff2=FeatureEffect$new(mod, feature = "temp", method="ale")
+plot(eff2)
+
+eff<-FeatureEffects$new(mod, method="ale")
+eff$plot()
+
+#eff<-FeatureEffects$new(mod, method="ice",feature="temp")
+#eff$plot()
+```
+
+### ALE and PDP for xgboost
+
+```{r}
+library(xgboost)
+n<-dim(bike)[1]
+bikeTrain<-bike[1:600,]
+bikeTest<-bike[601:n,]
+xgb.train=xgb.DMatrix(data = as.matrix(sapply(bikeTrain[,-11], as.numeric)),label = bikeTrain[,"cnt"])
+xgb.test<-xgb.DMatrix(data = as.matrix(sapply(bikeTest[,-11], as.numeric)),label = bikeTest[,"cnt"])
+
+params<-list(eta = 0.1,
+objective = "reg:squarederror",
+eval_metric = "rmse",
+tree_method="hist") # gpu_hist
+#RNGversion(vstr = "3.5.0")
+set.seed(12345)
+
+model<-xgb.train(data = xgb.train,
+params = params,
+nrounds = 50,
+print_every_n = 10,
+ntread = 5,
+watchlist = list(train = xgb.train,
+test = xgb.test),
+verbose = 1)
+
+xgb.importance(model=model)
+# 1. create a data frame with just the features
+features<-bikeTrain[,-11]
+# 2. Create a vector with the actual responses
+response<-bikeTrain[,"cnt"]
+# 3. Create custom predict function that returns the predicted values as a vector
+pred<-function(model, newdata)
+{
+#xgb.test<-xgb.DMatrix(data = as.matrix(sapply(newdata[,‐11], as.numeric)),label = newdata[,11])
+xgb.test<-xgb.DMatrix(data = as.matrix(sapply(newdata, as.numeric)))
+results<-predict(model,newdata=xgb.test)
+#return(results[[3L]])
+return(results)
+}
+#4. Define predictor
+predictor.xgb<-Predictor$new(
+model = model,
+data = features,
+y = response,
+predict.fun = pred,
+class = "regression"
+)
+#5. Compute feature effects
+eff<-FeatureEffect$new(predictor.xgb, feature = "temp", method="ale")
+plot(eff)
+eff<-FeatureEffects$new(predictor.xgb, method="ale")
+eff$plot()
+```
+
+## References for further reading
+
+* LMG: the method is nicely explained in @gromping2007
+* ICEplot: @ice2015
+* ALEplot: @aleplot2020
+* PDPplot: @ESL chapter 10.13.2
+
+
+# L12: LIME slide set
+
+## R-code
+
+Fitting random forest with the ranger package to the bike data.
+
+```{r}
+library(lime)
+library(ranger)
+predict_model.ranger <- function(x,newdata,type)
+{
+pred.rf <- predict(x, data = newdata)
+switch(
+type,
+raw = data.frame(Response = res$class, stringsAsFactors = FALSE),
+prob = as.data.frame(pred.rf$predictions[,2])
+)
+}
+
+model_type.ranger <- function(x, ...)
+{
+'regression'
+}
+
+model<- ranger(cnt ~ ., data = bikeTrain, num.trees = 50, num.threads = 6,
+verbose = TRUE,
+probability = FALSE,
+importance = "impurity",
+mtry = sqrt(27))
+
+print(model)
+```
+
+Using `lime` to explain the random forest.
+
+```{r}
+explainer <- lime::lime(
+bikeTrain,
+model = model,
+#bin_continuous = FALSE
+bin_continuous = TRUE,
+n_bins = 10,
+quantile_bins=TRUE
+)
+explanationLime <- explain(
+bikeTest[10:14,-11],
+explainer = explainer,
+#n_labels = 1,
+n_features = 5,
+n_permutations = 5000,
+feature_select = "auto",
+kernel_width = 3)
+lime::plot_features(explanationLime,
+ncol = 2)
+```
+
+## References for further reading
+
+* The original LIME article?
+
+# L13: Shapley values slide set
+
+Link to slide set.
+
+## R-code
+
+```{r}
+```
+
+```{r}
+```
+
+## References for further reading
+
+* Kernel SHAP: @LundbergLee2017
+* Hva er ref til group shap? ikke denne? <https://arxiv.org/abs/2007.01027>
+* Annet?
+
+## Exercise
+
+Kopiere inn teksten fra katteoppgaven til Inga Strumke? Og lenke til fasit? Eller regne på noe annet?
+
+# L13: Counterfactuals slide set 
+
+ Link to slide set.
+
+## R-code
+
+```{r}
+```
+
+```{r}
+```
+
+## References for further reading
+
+The two methods can be studied in detail here:
+
+* @Wachter2018
+* @Dandletal2020
+
+# <a id="further">References</a>
+
+

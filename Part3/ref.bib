@@ -83,3 +83,114 @@ author={François Chollet and J. J. Allaire},
 year={2018},
 publisher={Manning Press}}
 
+@book{molnar2019,
+  title      = {Interpretable Machine Learning},
+  author     = {Christoph Molnar},
+  note       = {\url{https://christophm.github.io/interpretable-ml-book/}},
+  year       = {2019},
+  subtitle   = {A Guide for Making Black Box Models Explainable}
+}
+
+@article{aleplot2020,
+author = {Apley, Daniel W. and Zhu, Jingyu},
+title = {Visualizing the effects of predictor variables in black box supervised learning models},
+journal = {Journal of the Royal Statistical Society: Series B (Statistical Methodology)},
+volume = {82},
+number = {4},
+pages = {1059-1086},
+keywords = {Functional analysis of variance, Marginal plots, Partial dependence plots, Supervised learning, Visualization},
+doi = {https://doi.org/10.1111/rssb.12377},
+url = {https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12377},
+eprint = {https://rss.onlinelibrary.wiley.com/doi/pdf/10.1111/rssb.12377},
+abstract = {Summary In many supervised learning applications, understanding and visualizing the effects of the predictor variables on the predicted response is of paramount importance. A shortcoming of black box supervised learning models (e.g. complex trees, neural networks, boosted trees, random forests, nearest neighbours, local kernel-weighted methods and support vector regression) in this regard is their lack of interpretability or transparency. Partial dependence plots, which are the most popular approach for visualizing the effects of the predictors with black box supervised learning models, can produce erroneous results if the predictors are strongly correlated, because they require extrapolation of the response at predictor values that are far outside the multivariate envelope of the training data. As an alternative to partial dependence plots, we present a new visualization approach that we term accumulated local effects plots, which do not require this unreliable extrapolation with correlated predictors. Moreover, accumulated local effects plots are far less computationally expensive than partial dependence plots. We also provide an R package ALEPlot as supplementary material to implement our proposed method.},
+year = {2020}
+}
+
+@InProceedings{Dandletal2020,
+author="Dandl, Susanne
+and Molnar, Christoph
+and Binder, Martin
+and Bischl, Bernd",
+editor="B{\"a}ck, Thomas
+and Preuss, Mike
+and Deutz, Andr{\'e}
+and Wang, Hao
+and Doerr, Carola
+and Emmerich, Michael
+and Trautmann, Heike",
+title="Multi-Objective Counterfactual Explanations",
+booktitle="Parallel Problem Solving from Nature -- PPSN XVI",
+year="2020",
+publisher="Springer International Publishing",
+address="Cham",
+pages="448--469",
+url={https://link.springer.com/content/pdf/10.1007%2F978-3-030-58112-1_31.pdf},
+abstract="Counterfactual explanations are one of the most popular methods to make predictions of black box machine learning models interpretable by providing explanations in the form of `what-if scenarios'. Most current approaches optimize a collapsed, weighted sum of multiple objectives, which are naturally difficult to balance a-priori. We propose the Multi-Objective Counterfactuals (MOC) method, which translates the counterfactual search into a multi-objective optimization problem. Our approach not only returns a diverse set of counterfactuals with different trade-offs between the proposed objectives, but also maintains diversity in feature space. This enables a more detailed post-hoc analysis to facilitate better understanding and also more options for actionable user responses to change the predicted outcome. Our approach is also model-agnostic and works for numerical and categorical input features. We show the usefulness of MOC in concrete cases and compare our approach with state-of-the-art methods for counterfactual explanations.",
+isbn="978-3-030-58112-1"
+}
+
+@article{gromping2007,
+author = {Grömping, U.},
+title = {Estimators of Relative Importance in Linear Regression Based on Variance Decomposition},
+journal = {The American Statistician},
+volume = {61},
+year=2007,
+pages = {139-147},
+eprint = {https://prof.beuth-hochschule.de/fileadmin/prof/groemp/downloads/amstat07mayp139.pdf}}
+
+
+@Article{ice2015,
+    title = {Peeking Inside the Black Box: Visualizing Statistical
+      Learning With Plots of Individual Conditional Expectation},
+    author = {Alex Goldstein and Adam Kapelner and Justin Bleich and
+      Emil Pitkin},
+    journal = {Journal of Computational and Graphical Statistics},
+    volume = {24},
+    number = {1},
+    pages = {44--65},
+    doi = {10.1080/10618600.2014.907095},
+    year = {2015},
+  }
+
+@inproceedings{LundbergLee2017,
+ author = {Lundberg, Scott M and Lee, Su-In},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {I. Guyon and U. V. Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {A Unified Approach to Interpreting Model Predictions},
+ url = {https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf},
+ volume = {30},
+ year = {2017}
+}
+
+@Article{Wachter2018,
+title={Counterfactual Explanations Without Opening the Black Box: Automated Decisions and the GDPR},
+author={Wachter, Sandra and Mittelstadt, Brent and Russell, Chris},
+journal={Harvard Journal of Law \& Technology},
+volume=31,
+number=2,
+year=2018,
+url={http://dx.doi.org/10.2139/ssrn.3063289}} 
+
+@inproceedings{lime2016,
+author = {Ribeiro, Marco Tulio and Singh, Sameer and Guestrin, Carlos},
+title = {"Why Should I Trust You?": Explaining the Predictions of Any Classifier},
+year = {2016},
+isbn = {9781450342322},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2939672.2939778},
+doi = {10.1145/2939672.2939778},
+abstract = {Despite widespread adoption, machine learning models remain mostly black boxes. Understanding the reasons behind predictions is, however, quite important in assessing trust, which is fundamental if one plans to take action based on a prediction, or when choosing whether to deploy a new model. Such understanding also provides insights into the model, which can be used to transform an untrustworthy model or prediction into a trustworthy one.In this work, we propose LIME, a novel explanation technique that explains the predictions of any classifier in an interpretable and faithful manner, by learning an interpretable model locally varound the prediction. We also propose a method to explain models by presenting representative individual predictions and their explanations in a non-redundant way, framing the task as a submodular optimization problem. We demonstrate the flexibility of these methods by explaining different models for text (e.g. random forests) and image classification (e.g. neural networks). We show the utility of explanations via novel experiments, both simulated and with human subjects, on various scenarios that require trust: deciding if one should trust a prediction, choosing between models, improving an untrustworthy classifier, and identifying why a classifier should not be trusted.},
+booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+pages = {1135–1144},
+numpages = {10},
+keywords = {explaining machine learning, interpretable machine learning, interpretability, black box classifier},
+location = {San Francisco, California, USA},
+series = {KDD '16}
+}
+
+  
+
+
