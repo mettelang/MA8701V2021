@@ -21,8 +21,8 @@ bibliography: ../Part3/ref.bib
 ---
   
 ```{r setup, include=FALSE,echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE,warning = FALSE, error = FALSE)
 suppressPackageStartupMessages(library(knitr))
-knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning = FALSE, error = FALSE)
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(iml))
 suppressPackageStartupMessages(library(ICEbox))
@@ -74,14 +74,14 @@ See Chapter 2 of @molnar2019 on a discussion of _interpretability_.
 
 ## Reading list 
 
-* @molnar2019: Chapters 2, 5, 6.1
+* @molnar2019: Chapters 2, 5 (not 5.8), 6.1
 * Four slide sets from Kjersti Aas (**sent to participants by email**)
    + Introduction
    + LIME
    + Shapley values
    + Counterfactual explanations
    
-Supplementary reading is specified for (below) each of the four slide sets.
+Supplementary reading is specified for (below).
 
 ## Outline
 

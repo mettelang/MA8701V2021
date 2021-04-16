@@ -1,0 +1,186 @@
+---
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+    latex_engine: xelatex
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    latex_engine: xelatex
+subtitle: 'L13 with Kjersti Aas'
+bibliography: ../Part3/ref.bib
+---
+  
+```{r setup, include=FALSE,echo=FALSE}
+suppressPackageStartupMessages(library(knitr))
+knitr::opts_chunk$set(echo = TRUE, message=FALSE,warning = FALSE, error = FALSE)
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(iml))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(ranger))
+suppressPackageStartupMessages(library(randomForest))
+library(relaimpo)
+library(tibble)
+library(tidyverse)
+library(rwa)
+library(party)
+library(partykit)
+library(shapr)
+```
+
+# Part 4: Explainable AI
+
+## Outline
+
+In L12 we motivated XAI, and then looked at 
+
+* Global explanation methods
+   + Model specific methods
+   + Model agnostic methods (PDP plots, ICE plots, ALE plots)
+
+In L12, we alseo coverde LIME, of the local model agnostic methods.
+
+* Local explanation methods
+   + Method specific
+   + Model agnostic (LIME, Shapley values, Counterfactual explanations)
+
+## Reading list
+
+* @molnar2019: Chapters 59, 5.10, 6.1
+* Two slide sets from Kjersti Aas (**sent to participants by email**)
+   + Shapley values
+   + Counterfactual explanations
+   
+# L13: Counterfactuals slide set 
+
+Supplemental reading is Dandletal2020 and @Wachter2018.
+
+Software in R at <https://github.com/susanne-207/moc>.
+
+# L13: Shapley values slide set
+
+## Bike data example
+
+```{r}
+# download manually
+#"https://github.com/christophM/interpretable-ml-book/blob/master/data/bike.Rdata"
+load("bike.Rdata")
+colnames(bike)
+
+n=dim(bike)[1]
+bikeTrain=bike[1:600,]
+bikeTest<-bike[601:n,]
+```
+
+## Shapley regression with realtive weights
+
+Show that relative weight give the same answer as the LMG-method.
+
+```{r}
+rwa(bikeTrain[,-6],"cnt",c("temp","hum","windspeed","days_since_2011"))$result$Rescaled.RelWeight
+
+100*calc.relimp(cnt~.,data=bikeTrain[,8:12],type ="lmg", rela = TRUE )$lmg
+```
+
+## Kernel SHAP to calculate Shapley values
+with taxi example
+
+```{r}
+y=c(0,6,12,42,12,42,42,42)
+m <- 3 
+xMat <- NULL
+for (i in 1:m)
+{ # compute all possible combinations of i features
+coalitions <- combn(m, i)
+tmpMat <- matrix(0,ncol=m,nrow=ncol(coalitions))
+for(j in 1:ncol(coalitions)) tmpMat[j,coalitions[,j]] <- 1
+xMat <- rbind(xMat,tmpMat) 
+}
+#Add row for intercept
+xMat <- rbind(rep(0,m),xMat)
+d <- dim(xMat)[1]
+w <- array(0,d)
+for(i in 1:d)
+{ 
+  s <- length(which(xMat[i,]==1))
+ # w[i] = (m-1)/(mCooseS(m,s)*s*(m-s))
+  w[i] = (m-1)/(choose(m,s)*s*(m-s))
+  
+}
+w[1] <- 10^6
+w[d] <- 10^6
+lm(y ~ ., data=as.data.frame(cbind(y,xMat)),weights=w)
+```
+
+```{r}
+# probably other model used in slide set
+model<- ranger(cnt ~ ., data = bikeTrain,
+num.trees = 50, num.threads = 6,
+verbose = TRUE,
+probability = FALSE,
+importance = "impurity",
+mtry = sqrt(27))
+  
+pfun <- function(object, newdata)
+predict(object, data = newdata)$predictions
+mod <- Predictor$new(model = model, data = bikeTrain, predict.fun = pfun)
+x.interest <- bikeTest[1, ]
+shapley <- Shapley$new(mod, x.interest = x.interest)
+plot(shapley)
+```
+
+## ctree approach in shapr
+
+```{r,eval=FALSE}
+explainer <- shapr(bikeTrain[,-11], model)
+p <- mean(bikeTrain[,11])
+explain <- shapr::explain(bikeTest[1,],
+explainer,
+approach = "ctree",
+prediction_zero = p,
+mincriterion = 0.95,
+minsplit = 20,
+minbucket = 7,
+sample = TRUE)
+
+print(explain$dt)
+
+if (requireNamespace("ggplot2", quietly = TRUE))
+{plot(explain)}
+
+```
+
+```{r,eval=FALSE}
+#Independence
+pfun <- function(object, newdata)
+predict(object, data = newdata)$predictions
+mod <- Predictor$new(model = model, data = bikeTrain, predict.fun = pfun)
+x.interest <- bikeTest[1, ]
+shapley <- Shapley$new(mod, x.interest = x.interest)
+plot(shapley)
+```
+
+
+## References for further reading Shapley
+
+* Relative weights: @Johnson2000
+* Shapley values with dependent features: @Aas2021
+* Kernel SHAP: @LundbergLee2017
+
+## Software
+
+* R shapr: <https://cran.r‐project.org/web/packages/shapr/shapr.pdf>
+* Python kernel SHAP: <https://github.com/slundberg/shap>
+
+# <a id="further">References</a>
+
+
