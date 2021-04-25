@@ -1,0 +1,612 @@
+---  
+title: "MA8701 Advanced methods in statistical inference and learning"
+author: "Mette Langaas IMF/NTNU"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_download: yes
+    toc_depth: 3
+  slidy_presentation: default
+  beamer_presentation:
+    slide_level: 1
+    keep_tex: yes
+    latex_engine: xelatex
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    latex_engine: xelatex
+  powerpoint_presentation: default
+  ioslides_presentation: default
+subtitle: 'L14: Summing up'
+bibliography: ./Part3/ref.bib
+---
+
+
+```{r,echo=FALSE}
+library(knitr)
+```
+
+# Outline
+
+* Learning outcomes
+* Grading elements: portfolio and oral exam
+* Final reading list
+* Overview: topics and data analysis 
+* Core questions
+* What are difficult concepts? Clarify level
+* From students: Oral exam questions 
+* From students: Take-home messages
+* Closing
+
+
+```{r,out.width="100%",echo=FALSE}
+#http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
+# options in r chunk settings
+# out.width="100%"
+# dpi=72
+
+include_graphics("./drawings/overviewALL.png")
+```
+
+
+#  Learning outcome
+
+**1. Knowledge**
+
+* Understand and explain the central theoretical aspects in statistical inference and learning. 
+* Understand and explain how to use methods from statistical inference and learning to perform a sound data analysis. 
+* Be able to evaluate strengths and weaknesses for the methods and choose between different methods in a given data analysis situation.
+
+
+**2. Skills**
+
+Be able to analyse a dataset using methods from statistical inference and learning in practice (using R or Python), and give a good presentation and discussion of the choices done and the results found.
+
+
+**3. Competence**
+
+* The students will be able to participate in scientific discussions, read research presented in statistical journals, and carry out research in statistics at high international level. 
+* They will be able to participate in applied projects, and analyse data using methods from statistical inference and learning.
+
+# Two grading elements
+
+## 75% Portfolio (Pass/Fail at 70/100)
+
+
+* Written report from data analysis project 1 (Part 1) 
+* Oral article presentation and discussion 
+* Written report from data analysis project 2 (Parts 2-4) . Hand in by May 3. 
+
+
+Grading deadline: May 14
+
+
+## 25% Oral exam (Pass/Fail at 70/100)
+
+May 25-28, 2021
+
+ 
+
+* One week before the exam (May 18) a list of five possible topics (questions) will be available by email and at <https://wiki.math.ntnu.no/ma8701/2021v/exam>.
+* If you want you may prepare a 5-10 minutes presentation of one of the topics (bring notes, but no slides, talk and write by hand) to be held in the start of the oral exam.
+* The rest of the exam is general questions from the reading list (no notes)
+
+Total duration < 30 minutes. 
+
+
+# Final reading list
+
+List with links at <https://wiki.math.ntnu.no/ma8701/2021v/curriculum>
+
+## Book chapters
+
+* Hastie, Tibshirani and Friedman (2009), "The Elements of Statistical Learning": Ch 2.4, 3.2.3, 3.4.1-3.4.2, 4.4.1-4.4.4, 7.1-7.6, 7.10-7.12, 8.7, 9.2, 9.6, 10.10-10.12, 16.1. 
+* Hastie, Tibshirani, Wainwright (2015): "Statistical Learning with Sparsity: The Lasso and Generalizations". Ch 1, 2.1-2.5, 3.1-3.2, 3.7,4 (4.1-4.3, 4.5-4.6 only on an overview level), 6.0, 6.1 (overview), 6.2, 6.5.
+* Goodfellow, Bengio and Courville (2016). "Deep learning": Ch 6.0, 6.2-6.4, 7.0-7.1, 7.8, 7.11, 7.12.
+* Molnar (2019), "Interpretable Machine Learning. Ch 2, 5 (not 5.8), 6.1.
+
+## Other
+<https://wiki.math.ntnu.no/ma8701/2021v/curriculum>
+
+* Taylor and Tibshirani (2015). "Statistical learning and selective inference", p 7629-7634  (skip sequential stopping rule and PCR) [L4]
+* Dezeure, Bühlmann and Meinshausen (2015). "High-Dimensional Inference: Confidence Intervals, p-Values and R-Software hdi". Ch2.1.1, 2.2 [L4]
+*  Chen, T., & Guestrin, C. (2016). "XGBoost: A Scalable Tree Boosting System". (pp. 785–794). The mathematical notation is not in focus [L6]
+* Erin Le Dell (2015): "Scalable Ensemble Learning and Computationally Efficient Variance Estimation". Ch 2.2 [L7]
+* Frazier (2018): "A tutorial on Bayesian optimization", Ch 1,2,3,4.1, 5: only the section "Noisy evaluations", 6, 7 [L8]
+* Slide deck from Jeremy Barnes and Samia Toulieb from [L10].
+* Phd thesis of Gundersen (2020): Ch 2.1-2.3, 3 (3.3. only "concept", not 3.1.1), 4.0-4.1 (only concepts not maths). [L11] 
+
+
+# Overview of topics 
+
+## Problem types
+
+Main focus: 
+
+* regression and classification
+
+But, very briefly 
+
+* time series: turned into regression or classification, or recurrent neural nets
+* text: basic processing and then regression, classification or recurrent neural nets
+* (images: convolutional neural networks)
+
+
+## Methods
+(draw in class)
+
+## Statistical learning - and inference
+
+* (Supervised) learning has focus on prediction: 
+    + predict a continuous response or predict the correct class 
+    + (and interpret with XAI - due to law and ethical AI)
+
+* Inference: 
+    + model assumptions, 
+    + sampling distribution
+    + estimate effects with uncertainty (CI), 
+    + test hypotheses ($p$-values), 
+    + interpret
+    + Bayesian methods for "increased understanding" 
+ 
+* Take home message: we need inference to provide uncertainty estimates!
+
+
+```{r,out.width="80%",echo=FALSE}
+#http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
+# options in r chunk settings
+# out.width="100%"
+# dpi=72
+
+include_graphics("./Part1/StatsvsMLPredInf.jpg")
+```
+
+* Aim in MA8701: move from the right figure towards the left figures. 
+
+* Have we succeeded?
+
+# Data analysis
+
+## First step in data analysis
+
+* Descriptive statistics
+* How to handle missing data (complete case, single imputation, multiple imputation, method-specific solutions)
+* Defining covariates (feature design, non-linearities, interactions) and response 
+* Covariates: center and scale (standardize) or not?
+* Response: center? transform?
+* At the same time: 
+   + need training and test data or do CV for model assessment, 
+   + need validation data or CV for model selection and hyperparameter tuning
+
+
+## Looking at the course elements as "Performing data analysis"
+(draw in class)
+
+
+## Break-out session
+
+**Learning goal (knowledge): Understand and explain the central theoretical aspects in statistical inference and learning. **
+
+* What are core take home messages from the "Performing data analysis" drawing?
+* What are central theoretical aspects that we have learned?
+* Do the two set of answers overlap?
+
+# Difficult concepts
+
+## The 13 lectures
+
+* L1: Model selection and assessment
+* L2: Lasso and ridge for linear model
+* L3: Lasso and ridge for GLM, variants of lasso
+* L4: Statistical inference (after selection)
+* L5: Trees and bagging
+* L6: xgboost
+* L7: Random forest and super learner
+* L8: Hyperparameter tuning, Bayesian optimization, comparisons inference
+* L9: Feed-forward neural networks
+* L10: Text analysis and recurrent networks
+* L11: Uncertainty in neural networks
+* L12: XAI global and LIME
+* L13: Counterfactuals and Shapley
+
+Answers from 13 students.
+
+```{r,echo=FALSE}
+# responses
+#Bayesian statistics=xx
+difficult=list(
+  c(8),
+  c(1,11,13),
+  c(2,3,4,9,10,11),
+  c(1,8),
+  c(4,6,9,10,11),
+  c(6,11),
+  c(6,8),
+  c(11),
+  c(1,2,3),
+  c(1,8,12),
+  c(6,7,8,9,10,11),
+  c(4),
+  c(1,7,8,11))
+res=(table(unlist(difficult)))
+names(res)=paste("L",names(res),sep="")
+barplot(res)
+```
+
+## The role of Bayesian statistics in this course
+
+(write in class)
+
+### Uncertainty in neural networks
+
+#### Drop-out
+
+**During training (at each training step):**
+
+* remove randomly (Bernoulli probability $p$) input or hidden nodes (internal nodes) from the model.
+
+**During test phase (for prediction): **
+
+* use the same drop-out mechanism to get a prediction, 
+* repeat this many times to provide an estimate of the predictive distribution. 
+* Or, just estimate the mean and variance of the sampled distribution, or construct an interval from the samples. 
+
+
+* Then you have a prediction with an uncertainty estimate.
+
+* But, is this a smart thing to do?
+
+
+#### Bayesian neural network
+
+* A Bayesian neural network is a stochastic artificial neural network where weights are estimated using Bayesian inference. 
+
+* Weights thus have distributions - both prior (before we have data) and posterior (conditional on the data we have observed).
+
+* During training (at each training step): update the posterior distribution of the weights.
+
+* The method called variational inference can be used to approximate this posterior distribution (a competitor to Integrated nested Laplace approximations).
+
+* We get a measure of uncertainty by using the posterior distribution of the weights.
+
+* During test phase (for prediction): use the posterior to calculate the predictive distribution.
+
+* This is a costly procedure, and we look for cheap approximate solutions. 
+
+* It turns out that under some restrictions drop-out can produce the predictive distribution for a prediction (during test phase). 
+
+* Drop out is much less costly than this variational inference approach and we can do that instead. 
+
+* This provides a good explaination to why using dropouts is a smart thing to do!
+
+## The role of mathematical results - and the resoning behind
+
+* Error types: understand formulations for variant of errors, and see how that can be useful to arrive at methods for model selection and assessment in data poor situation.
+* Multiple linear regression model (MLR): should know model, model assumptions, properties of parameter estimators, likelihood.
+* Generalized linear models (focus on logistic regression): should know model, model assumptions, likelihood, properties of parameter estimators, optimization with Fisher scoring.
+* Ridge regression: Understand the derivation for MLR and how to work with E and Var, only overall level on interpreting shrinkage with SVD. Know the penalty formulation for both MLR and logistic regression.
+* Lasso regression: Understand the derivation of the soft threshold formula for orthogonal covariates, be familiar with different penalty-variants (no derivation).
+* Inference on lasso and selective inference: mainly ideas and overview.
+* Trees: formulation of the optimization problem, variance of bagged ensemble.
+* Xgboost: only model formulation on overall level. No derivations or details.
+* Hyperparameter tuning: Bayesian optimization involves mainly knowledge of the multivariate normal distribution and the conditional version. * Comparision of results: Being able to translate the problem into a known statistical inference situation.
+* FNN: mathematical formulation for network, connection problem, likelihood vs loss, activition function, shrinkage as compared to Part 1 (overview level).
+* Recurrent network: no maths only a concept understanding.
+* Bayesian neural networks: see above.
+* XAI: understand mathematical formulation for PD plot, LMG/Shapley regression, Shapley values, be able to interpret the set up for optimization for counterfactual explaination.
+
+# Concepts/questions pr lecture
+
+## L1 (and L2): Model assessment and selection
+
+* What is the definition of Err (and Err$_{\cal T}$)?
+* Explain ELS Figure 7.1.
+* What is the difference between model selection and assessment, and how can we split available data into three sets to perform both tasks (in the data rich situation)?
+* What is the average optimism, and how is this related to a covariance formula? What is the average optimism used for?
+* What is the idea behind the effective number of parameters, and how is this estimated?
+* Cross-validation: why is 5 and 10 fold cross-validation so popular? 
+* What refinements need to be done to the vanilla bootstrap estimator for the Err, and why? (not in detail)
+
+## Part 1: Shrinkage 
+or "Regularized linear and generalized linear models".
+
+### Part 1 Shrinkage, L2: Ridge and lasso for linear models
+
+* The statistical treatment of linear models, including least squares (LS)
+* Gauss-Markov theorem result and idea behind proof (not in detail)
+* Comparing variance of estimators: how is that done (definition)
+* Ridge regression for linear models: 
+   + budget and penalty version - drawing
+   + parameter estimation: result 
+   + model selection (penalty parameter): how is it done?
+   + properties of ridge estimators, better than LS?
+   + understanding the shrinkage effect on each covariate (not in detail)
+* Lasso regression for linear models: 
+   + budget and penalty version - drawing
+   + parameter estimation for orthogonal covariates: soft thresholding (explain/draw)
+
+### Part 1 Shrinkage, L3: Ridge and lasso for GLM, lasso variants
+
+* Computations for the lasso solutions (soft thresholding, subgradients): coordinate descent (how does the algorithm work)
+* Lasso penalty generalizations: elastic net, group lasso, fused lasso (idea)
+* The statistical treatment of generalized linear models (focus on logistic regression)
+* Model selection criteria for logistic regression: ROC-AUC, accuracy.
+* Ridge and lasso logistic regression:  what are the changes from LM version
+* Lasso logistic regression: additional loops around the coordinate descent (not in detail)
+
+
+### Part 1 Shrinkage, L4: Inference
+
+* Sampling distribution for ridge and lasso: not available! What do we do then?
+* Bayesian lasso: joint distribution, not only point estimate for regression parameters
+* Bootstrapping to visualize variability in lasso estimation - smart!
+* Multi-sample splitting: provide $p$-values for lasso coefficients (overview level)
+* Inference after selection produces too low $p$-values - selective inference to fix that (overview level).
+* Post selection inference is one cause for the reproduciability crises (overview level).
+
+## Part 2: Ensembles
+
+* trees, bagging and forests
+* general ensembles (similar to super learner)
+* boosting
+* hyperparameter tuning
+
+### Part 2, L5: Trees, missing data and bagging
+
+* Interpretable classification and regression tree: tree and feature space version. Choice of loss function for binary recursive splitting (quadratic, cross-entropy/deviance, Gini, miclassification). Low bias and high variance. Building block.
+* Missing covariates: MCAR, MAR, MNAR. Complete case, mean imputation, multiple imputation. 
+* Trees may handle missing covariates with a missing category or using surrogate splits.
+* Bagging: keep low bias while decreasing variance - of the mean. OOB error.
+* Wisdom of the crowd: the collective knowledge of a diverse and independent body of people typically exceeds the knowledge of any single individual, and can be harnessed by voting.
+
+
+### Part 2, L6: Boosting with xgboost 
+(overview level: ideas most important, not mathematical details)
+
+* Boosting: residuals (generalized to gradients), start with one model - look at errors from first model - create second model to correct errors from first model and so on, weak learners, sequential fit, many many hyperparameters.
+* xgboost: gradient tree boosting is numerical optimization in function space,  second order approximation of loss (exact for quadratic loss), even more hyperparameters to tune. L2-regularization added. Smart algorithm for speed. Focus on the idea, no details required.
+* Only on slides, not on reading list: Automatic GTB: estimate the optimism of the training loss directly and adaptively control the complexity of each tree. Aim: avoid hyperparameter tuning because each tree is automatically optimally large.
+
+
+### Part 2, L7: Random forests and super learner
+
+* Random forest: decorrelate trees. Hyperparameters: B, mtry, min nodesize. 
+* Super learner: overview of algo in L7 slides (Figure 3.2 from Polley 2011)
+   + dates back to stacking (1992), 
+   + level-zero data: CV-prediction on response for each of L base learners
+   + base learner can be different methods or different hyperparameter configurations for the same method
+   + level-one data and responses: fit by using a metalearner to give a weighted sum of the base learners
+   + metalearner can be bagging - but non-negative least squares popular, or lasso (using 1- ROCAUC for classification popular). Should be able to handle correlated "covariates".
+   + discrete super learner use the base learner with the lowest "risk"
+   + difficult theoretical proof as oracle selector
+   + uncertainty of the super learner may be found by an outer cross-validation loop.
+
+
+### Part 2, L8: Hyperparameter tuning and comparing methods
+
+* Hyperparameters:
+  + What are hyperparameters? What is the difference between hyperparameter tuning and model selection?
+  + Grid search most common
+  + What are challenges for hyperparameter tuning?
+  + Selection criterion for the tuning?
+  + Iterative search: surrogate models used.
+* Bayesian optimization use Bayesian regression with Gaussian processes as surrogate model
+  + The multivariate normal is core, with correlation in hyperparameter space from covariance types (exponential and Matern) with (relative) distance between points in hyperparameter space
+  + Conditional distribution in focus
+  + Acquisition function - expected improvement: balance exploitation and exploration= some domains have high expected performance and some high variance - both important to take into account!
+  + Simple algorithm: start with some points, fit model and conditional distribution, maximize acquisition to find new point in hyperparameter space to sample, calulate objective function at this new point and add to available data, repeat. Choose hyperparametes with largest posterior mean.
+* Comparing results:
+  + Data rich situation: then we have a separate test set with independent observations and can use standard statistical methods to compare results and to provide CIs and hypothesis tests. New is that McNemars test can be used to compare miclassification errors on two methods. 
+  + Data poor situation is very difficult: then only CV-results are available on "test data". This is problematic because then the observations are not independent. Observations from the same CV fold are positively correlated and in different folds are negatively correlated. This problem is not realy adequately solved in statistic yet!
+
+## Part 3: Neural nets 
+
+### Part 3, L9: Feed-forward neural networks
+
+* As for ensembles: don´t want to specify non-linearities and interactions
+* Build a network as an acyclic graph with a chained structure of affine transformations combined with simple squashing functions.
+* Vocabulary: Layers (input-hidden-output), units, activation functions. Draw and explain.
+* Output activation function with corresponding loss function (identify pairs)
+* Universal approximation result: hidden units and squashing function (motivation for FNN)
+* Sigmoid and ReLU: what are they and which properties do they have?
+* FNN parameters (=weights) estimated by gradient methods with several twists (not covered), the main message is that gradient methods are rather cheap, and done in mini-batches.
+* FNN optimization methods not studied.
+* Regularization for FNN: because of then the network is chosen too big (overfit)
+   + L2 penalty=weight decay: large effect of weights with small eigenvalues of the Hessian 
+   + L1 penalty: not so much used
+   + Early stopping - similar effect to weight decay
+* Dropout: make bagging practical for ensembles of many networks. What is it in practice? (not in detail, but the idea).
+How is it related to regularization and ensemble methods? How is it related to uncertainty quantification (L11)?
+   
+### Part 3, L10: Analysing text 
+(overview level: ideas most important, no mathematical details)
+
+* What is NLP, and in which fields is it relevant
+* Why is language so challenging? 
+* Describe some preprocessing steps for written text, e.g. tokenization, lemmatization.
+* What is the objective of sentiment analysis?
+* What is a BOW? 
+* Given a text sentence: why would not a FNN (alone) be suitable?
+* Text is sequential, but language is not. What do we mean by local and long-distance dependencies in text?
+* Two solutions for text are LSTM and GRU network building blocks. Since now the book chapters are not on the reading list, it is hard to understand much from the L10 slides on what memory cells, and different types of gates are. Sad. LSTM: Memory cell is not overwritten but hidden state is (over steps), in addition three gates (input, forget, output) - how much of the previous hidden state to forget? GRU: incorporate new and previous states. More information in the video - but will not ask about this at the oral exam.
+
+  
+### Part 3, L11: Uncertainty in neural networks
+(overview level: ideas most important, basic mathematical concepts)
+
+Numbers refer to chapters in Gundersen thesis.
+Ch 2.1-2.3, 3 (3.3. only "concept", not 3.1.1), 4.0-4.1 (only concepts not maths). [L11]
+
+* A Bayesian neural network is a stochastic artificial neural network where weights are estimated using Bayesian inference. Weights (and biases) thus have distributions - both prior and posterior. The choice of prior is connected to regularization outside the Bayesian world.
+* 2.1: Nothing new - covered in L9
+* 2.2: Working with negative loglikelihood instead of loss: Which distributions are used (assumed) to write the cross entropy and the squared loss as negative log likelihoods? The rest of 2.2 is known from L9.
+* 2.3: Nothing new - covered in L9.
+* 3.0: Mention two methods for uncertainty quantification for deep learning. 
+* 3.1: Why is it "a problem" that when we fit a FNN we only obtain point estimates for the weights (and no uncertainty, and we do not know the sampling distribution of the estimated weights)? Compare to what we learned about the Bayesian lasso in L4. 
+* 3.1 equation (3.1) page 18: Bayes theorem gives a formula for the posterior distribution of the deep learning weights. What are the three distributions in the formula for a FNN? 
+* 3.1 page 18: the prior for the weights are chosen to be Gaussian or Laplacian - how does that compare to what we learned about the Bayesian ridge and lasso in L4?
+* 3.1: Why are we interested in finding the posterior distribution of the deep learning weights? What will we use that for?
+* 3.1 equation (3.4) page 19: Explain the formula. Why can this be seen as a mean?
+* 3.1 equation (3.4) page 19: Why can this be seen as an ensemble of prediction models?
+* 3.2: equation (3.6) page 19: Explain the formula.
+* 3.3: Take home message: it is hard to estimate the posterior based on sampling so a surrogate distribution $q_\phi$ is planned to be used, and the concept of Kullback Leibler divergence is used to measure similarity between what we want (the posterior) and the surrogate $q_{\phi}$. The topic of Variational inference is to complex to included in this course, but it is a very interesting topic.
+* 4.1 page 23: Explain what dropout is with focus on the training phase. Either using Figure 4.1 or the dropout-figure from L9. 
+* 4.1 page 23: What is the difference between dropout and MC-dropout? 
+* 4.1 equation (4.1) page 24: here we observe that it is possible to rewrite the prediction by incorporating the drop out Bernoulli  mechanicm into estimated weights. 
+* 4.1. page 24-25: We then get penalized loss functions (objective functions) for the drop-out method.
+* 4.1.1: Now it is shown that using gradient methods on the drop-out objective is equivalent to using the gradient method on the variational inference 
+* 4.1.1 page 26: The conclusion is that under some constraints optimizing a dropout neural network is the same as performing Bayesian analysis with variational inference. This means that we may use dropout to "get an estimate of the uncertainty" of a fitted artificial neural network. 
+
+Interested in learning more about Bayesian nets? The arxiv article "Hands-on Bayesian Neural Networks - a Tutorial for Deep Learning Users" is readble <https://arxiv.org/pdf/2007.06823.pdf>. Other "Suggested reading" on course page reading list. 
+
+
+## Part 4: Explainable AI
+(L12 and L13)
+
+### Core concepts
+
+* global and local methods, agnostic and specific methods
+* partial dependence and ALE plots: easy to start with the ICE plots, the PD is just taking the average at each covariate value.
+* feature importance: we have seen of trees and forests in Part 2.
+* LMG/Shapley regression: is a global method where $R^2$ is of interest. 
+* LIME: is a local agnostic method, where data are sampled near to the observation you want to explain - and the prediction is explained with linear regression.
+* counterfactuals: local method where we want to find out how to change a feature to get a desired effect on the prediction (maybe change class or probability by a given amount).
+* Shapley values: from game theory. General formula (given worth) based on sets with and without player $j$, we looked at taxi and airport-problem. When replacing the player with the feature - we have both a challenge with computational speed and with how to calculate the worth. Formula for the worth is difficult to calculate with correlated feature, and several research front solutions exists. 
+
+### Key take home messages
+
+* We have local and global methods, which method do you need for a specific question? Do you want to see global trends or explain a specific observation?
+* Some methods are preferred in specific situations - end users may need counterfactual explaination while developers may want global methods like the PD plot.
+* There is no ground truth to compare with when you apply the methods to data. Not even if you have simulated data - because the XAI-methods are "true to the model" not true to the data.
+* All (?) methods can be used with independent covariates, while some methods might require - or may give strange results - when covariates are correlated.
+
+# From students: possible oral exam questions
+
+These are the questions from the online form filled in by 13 students (I have made small adjustments), and I have sorted the questions into the topics of the course (but many are on an overall level).
+Some students have provided answers.
+
+## Overall
+
+* Why do we typically use cross-validation to find the optimal hyperparameters, but bootstrapping to find uncertainty estimates for parameters?
+* Given an overview of a dataset (missing values? correlations? high-dimensional?) and a problem description (regression/classification/etc.). What method from the course is (the most) applicable to this problem and why?
+* For each part, what is the motivation for learning such methods? Why do we need them? Pros and Cons? Their corresponding properties? 
+* What are some of the ways to deal with data-poor situations?
+
+## Model selection and assessment
+(Part 0)
+
+* Explain the differences between the different errors in ELS chapter 7. Include the meaning of the optimism.
+
+## Shrinkage
+(Part 1)
+
+* Show that the variance for the ridge regression estimator is smaller or equal to the variance for the LS estimator. (See LX solution in exercises.)
+* Discuss some different variants of the Lasso we discussed in the course, including their properties and what datasets they are suitable for. (Answers: Normal Lasso, Group Lasso, Elastic net maybe? Fused Lasso. See slide by Ben. Should know how different variants correspond to different loss functions?).
+* Ridge regression vs Lasso regression, when would you use which?
+* Maybe state the expressions for lasso and ridge penalty, explain how they differ (maybe using the square/circle plots). Maybe derive the estimators for beta?
+* Explain shrinkage methods and the difference of penalty terms between them.
+* Can you discuss various regularization methods (Ridge, Lasso etc)? How are they different? How are they implemented in R or Python? When would it be good to use one of them versus others? 
+
+## Ensembles
+(Part 2)
+
+* Talk about random forests, bagging, and boosting. Maybe explain xgboost?
+* What is the main idea of the Random Forest and Boosting algorithms?
+* In the shrinkage part, we did (hyper)parameter tuning/selection by Cross-Validation. Why is this no longer as feasible for ensemble methods, and why can hyperparameter tuning be so challenging? (Answers: 1. Super expensive! 2. Unclear what parameters are important, and what range one should investigate for the different parameters. Also, there is most likely some correlation between the different parameters. 3. Generally do not have nice mathematical expressions wrt parameters, so traditional optimization methods are no longer feasible. Need different methods like Bayesian optimization.)
+* Maybe explain some different types of missing data, give examples, and explain why trees can handle missing data well. Or maybe explain why a single tree can suffer from high variance, and how bagging and random forest combats this.
+* What is Ensemble learning? Explain Bagging and Boosting.
+* Explain briefly the main steps in Bayesian optimization with Gaussian processes. What is the meaning of the acquisition function and which two things are of interest, when choosing a new point?
+
+## Neural networks
+(Part 3)
+
+* Explain the basic ingredients in NN. Questions related to text data maybe?
+* Can you mention and briefly describe some regularisation techniques for Neural Networks?
+* How can we quantify uncertainty from neural networks?
+(Answer: Bayesian neural networks?)
+* Maybe explain some of the challenges with nlp, what one has to take care of during preprocessing, or how word vectors and bag of words representations differ and how that affects the results.
+* Explain the structure of the NN and what types of problem can it be used? (Given certain NN equation).
+* What is the difference(s) between a standard feed-forward neural network and a Bayesian neural network? 
+* Why is Bag-Of-Words often not a sufficient method in NLP?
+
+## XAI
+(Part 4)
+
+* Why is it important to be able to explain Black Box models?
+* What is the difference between a local and a global explanation? Mention some methods for each approach (and briefly explain what they do).
+* What is the difference between local and global explainable AI methods, and what are the advantages of either?
+* Describe one method taught in Part4: XAI of the course. (LMG/Shapley regression, LIME, Shapley, Counterfactuals). 
+
+# From students: Core take home message
+
+These are the answers to the question:"For you, what are core take home messages from the course?" from the students.
+
+* That more detailed statistical analysis of methods/procedures can reveal interesting aspects of the data.
+
+* The main things I get out of this course is an understanding of core models/methods in statistical/machine learning. The course elevates my statistical maturity, making me able to dissect and learn other methods building upon what we have learned here. Additionally, the course, to some extent, makes me able to participate in advanced discussions and see connections between different topics. The course also introduces new research and methods (automatic gradient tree boosting) in a way that is understandable and naturally building upon what we have learned. From this, the main take-home message/point for me is that advanced methods and modern research are accessible with what we have learned, which in turns induce confidence to learn more. 
+
+* I think it has been great being introduced to a variety of different topics. Although we have not had the time to go deeply into the different ones, at least know I know where to start looking. Also having projects with other PhD candidates has been useful.
+
+* A bunch of hyperparameter optimization. Interest in model confidence. 
+
+* The trade-off between interpretability and predictive power. 
+
+* Twofold answer:
+   + Inference is an important part of statistical learning. Most research (that I know of) is focused mainly on prediction, and mostly ignores uncertainty, which is hugely dishonest.
+   + Statistical learning/machine learning offers many amazing tools that will become more and more important as methods become more refined and data and computing power becomes more available. I feel like the "end goal of statistical learning is something like superlearners/metalearning with automatic parameter tuning. I feel like there is still a lot of work left to do before we have automatic parameter tuning.
+   
+* There is a vast amount of different models and methods that one can use for statistical learning. Knowing how and when to use each of these is very important as they all have different advantages and disadvantages (before this course, I would really only consider using neural networks).
+
+* To be able to, given a particular problem, identify which methods are suitable in this setting in a sea of different methods. 
+* To be able to properly asses the results of a given method, in relation to inference and uncertainty, and to not simply treat a model as a black box solver.
+* To be able to present either results or an article to peers, and have a flowing discussion around it.
+
+* Basically, I was able to learn about the methods that I can apply to the model in the future. (Shrinkage, Ensembles method, NN). The newest part for me was the Explainable AI.
+
+* Modern supervised machine learning methods are powerful but not plug-and-play. Are we modeling the system or the data? While it may seem that the trained model has high predictive power and/or is certain about its parameters, the choice of hyperparameters (+ loss func, data processing) may lead you to train the model for a different goal than intended. 
+
+* Nice dataset is very important. Rubbish in, rubbish out, regardless of models.
+I mainly got a nice and robust overview of a great set of modeling methods and common pit-falls.  
+
+* The bias-variance tradeoff has been very central throughout this course, and various methods to increase model performance on new data will be very valuable for my future research. The core take home message is therefore not so much a message, but rather a tool-set of models, knowing their limits and different methods to improve and validate them.
+
+# Closing
+
+## All topics in short
+
+The course drawing now includes the different course topics in detail:
+
+* First, I had been rather strict in emphasizing the background knowledge needed - where with basic regression and classification, the multivariate normal distribution, the bias-variance trade-off and skills in optimization.
+* We started with L1 on error estimation with data rich and poor situations, and the cool covariance formula connection to the expected optimism. 
+* Then we moved to the interpretable methods of linear and logistic regression, and had focus on shrinkage with ridge (where closed form solutions where possible) and the famous lasso and friends. We also defined the degrees of freedom from a smoothing matrix (from L1) used for ridge. The cyclic coodinate descent method was central, and closed form solutions with soft thresholding only available for orthogonal covariates.  We also looked at the latest methods for inference for lasso and selective methods in general. 
+* In ensemble methods we first started with the interpretable building block of classification and regression tree, with binary recursive splitting and quadratic and deviance loss, and Gini and misclassification loss. Then we talked about bagging - and the wisdom of the crowd. Random forest decorrelated the bagged trees, while boosting improved errors sequentially. Xgboost was a smart implementation of boosting for trees, where both gradients and hessians played a role due to a second order Taylor approximation to the loss function. The Super learner was an ensemble method using CV to produce predictions and then weighted predictions from many base learner together. Hyperparameter tuning was discussed using grid search and surrogate models with Bayesian optimization. 
+* The neural network part had focus on the basics of FNN, then regularization with L2 loss, and early stopping. Dropout was introduced and could be interpreted in many ways, most importantly as a way to assess uncertainty. The basics of analysing text was briefly covered. 
+* Finally, we divided methods into interpretable and non-interpretable - and for the last we looked at the need for explanations. Global model agnostic methods included PD and ALE plots, global model specific methods feature importance and Shapley regression (LMG). Local methods focus on explaining specific predictions, and we looked at LIME, counterfactuals and Shapley values.
+
+
+```{r,out.width="80%",echo=FALSE}
+#http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
+# options in r chunk settings
+# out.width="100%"
+# dpi=72
+
+include_graphics("./drawings/overviewALL.png")
+```
+
+  
+## Changes for MA8701 in V2023?
+
+Please give feedback on my suggested changes and give general feedback to the reference group. 
+
+Last meeting is April 29. See contact detail so members at <https://wiki.math.ntnu.no/ma8701/2021v/start>
+
+* Should the 75%+25% grading elements split be kept (pre covid it was 30%+70%)? I think it should, but is this too much work for 7.5 ECTS?
+* The article presentation should be more integrated with the reading list (and should them articles be on the reading list?) and I suggest 20 minutes presentation and 25 minutes discussion. Keep discussant role.
+* Is one project enough or is two better? Then one with report and one presented in a flash talk? But both with Rmd/Jupyter notebook on data analysis. The time after Easter is in general packed with projects. 
+* The reading list might be slightly modified, with a bit more time on the ELS chapters in the start. 
+* Bayesian methods should be presented in more detail to be able to be of use. 
+* Other topics might be deleted from the reading list - and for sure in V2023 new methods might then replace the existing state of the art.
+* There could be a core curriculum and then a "know the basics about this"-extended curricullum. (Can be seen like this also in V2021, with suggested reading and articles for presentation.)
+* Focus of the course should still be on statistical learning (=prediction) and inference (=assessing uncertainty in predictions).
