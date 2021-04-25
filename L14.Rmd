@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     toc: yes
-    toc_float: yes
+    toc_float: no
     code_download: yes
     toc_depth: 3
   slidy_presentation: default
