@@ -557,7 +557,7 @@ $~$
 
 *  Please give feedback on course elements and suggestions for changes to the reference group. 
 
-*  Last meeting is April 29. See contact detail so members at <https://wiki.math.ntnu.no/ma8701/2021v/start>
+*  Last meeting is April 29. See contact detail to members at <https://wiki.math.ntnu.no/ma8701/2021v/start>
 
 *  Deadline May 3 for Project 2
 
