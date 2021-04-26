@@ -35,7 +35,7 @@ library(knitr)
 
 $~$
 
-* Overview: parts and topics through data analysis 
+* Overview (problem, methods, learn/infer, data analysis)
 * Discussion: central aspects!
 
 $~$
@@ -312,6 +312,26 @@ include_graphics("./drawings/topicsPart4.png")
 
 ---
 
+## What to know about the methods?
+
+* Model-method-algorithm-prediction
+* The role of mathematical results (pr topic) - see L14.html
+
+$~$
+$~$
+
+
+**Discuss 6 minutes**: 
+
+* What was the most interesting method - and why?
+* What was the most difficult method - and why?
+
+$~$
+
+(Next more on learning vs inference)
+
+---
+
 ## Statistical learning - and inference
 
 >- (Supervised) learning has focus on prediction: 
@@ -354,7 +374,7 @@ include_graphics("./Part1/StatsvsMLPredInf.jpg")
 
 $~$
 
-* Overview: parts and topics through data analysis 
+* Overview (problem, methods, learn/infer, data analysis)
 * Discussion: central aspects!
 
 $~$
@@ -490,6 +510,18 @@ $~$
 
 ---
 
+```{r,out.width="80%",echo=FALSE}
+#http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
+# options in r chunk settings
+# out.width="100%"
+# dpi=72
+
+include_graphics("./drawings/twitterAF.jpeg")
+```
+
+---
+
+
 ### Uncertainty in neural networks
 
 #### Drop-out
@@ -540,6 +572,18 @@ $~$
 >- Drop out is much less costly than this variational inference approach and we can do that instead. 
 
 >- This provides a good explanation to why using dropouts is a smart thing to do!
+
+---
+
+
+```{r,out.width="80%",echo=FALSE}
+#http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/
+# options in r chunk settings
+# out.width="100%"
+# dpi=72
+
+include_graphics("./drawings/twitterFC.jpeg")
+```
 
 ---
 
